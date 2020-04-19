@@ -22,7 +22,6 @@ will offer two prices a day (one in the morning, one in the afternoon), which ma
 the base price that the turnips were bought for from Daisy Mae.
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Look at these smug bastards. They keep lowballing me all the time with the Turnip prices. I&#39;m onto your game Timmy &amp; Tommy. The real Animal Crossing crooks right here. <a href="https://t.co/OWgTCSet7d">pic.twitter.com/OWgTCSet7d</a></p>&mdash; Scott Redmond (@ScottPRedmond) <a href="https://twitter.com/ScottPRedmond/status/1249818533791326209?ref_src=twsrc%5Etfw">April 13, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-* Do not remove this line (it will not be displayed)
 
 ## Uniformly distributed quotes
 
