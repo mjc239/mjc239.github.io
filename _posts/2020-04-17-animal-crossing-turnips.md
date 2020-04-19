@@ -12,6 +12,8 @@ tags:
 This post is done in collaboration with [Jack Bartley](http://jackbartley.com/), while playing 
 [Animal Crossing New Horizons](https://www.youtube.com/watch?v=5LAKjL3p6Gw). 
 
+## Turnip Mania
+
 In the game, one of the fastest ways of earning bells (the in game currency) and pay off your 
 mortgage to Tom Nook is through the __Stalk Market__; essentially, this involves speculating on the 
 price of turnips (chosen because the Japanese word for turnip, 蕪 (kabu) is pronounced in the same way 
@@ -26,15 +28,29 @@ will offer two prices a day (one in the morning, one in the afternoon), which ma
 the base price that the turnips were bought for from Daisy Mae.
 <blockquote class="twitter-tweet"><p lang="en" dir="ltr">Look at these smug bastards. They keep lowballing me all the time with the Turnip prices. I&#39;m onto your game Timmy &amp; Tommy. The real Animal Crossing crooks right here. <a href="https://t.co/OWgTCSet7d">pic.twitter.com/OWgTCSet7d</a></p>&mdash; Scott Redmond (@ScottPRedmond) <a href="https://twitter.com/ScottPRedmond/status/1249818533791326209?ref_src=twsrc%5Etfw">April 13, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
+One of the first questions we can ask is the following: if we know the distribution of prices 
+that Timmy and Tommy offer on any particular day, what is the best way to maximise the
+amount you get for your turnips?
 
 ## Uniformly distributed quotes
 
-Let $X_{1}, ..., X_{n}\sim U[0, 1]$ be iid random variables. Suppose we have the opportunity to 
-sell at $X_{i}$ at time $i$, and turnips spoil at time $n$. Let $X$ be the price the turnips are 
+The easiest distribution to consider is the uniform distribution - specifically, assume that
+on each selling day, Timmy and Tommy offer a price that is uniformly distributed over some interval.
+
+Let $X_{1}, ..., X_{n}\sim U[0, 1]$ be iid random variables, representing the price offered at time
+$i$, and suppose that the turnips spoil at time $n$. Let $X$ be the price the turnips are 
 sold at.
 
 Consider the following strategy:
+
+<p align="center">
 Sell at time $i$ if $X_{i}\geq s_{i}$.
+</p>
+
+Put simply, on each day there is a threshold value $s_{i}$ which represents the minimum price at
+which we will be prepared to sell for on that day. For example, as we need to sell the turnips before 
+they spoil, we should expect to accept any price at tiem $t=n$ - in other words, an optimal strategy 
+should have $s_{n}=0$.
 
 Let $$T_{i}$$ be the event that $$X_{i}\geq s_{i}$$ and $$X_{j}<s_{j}$$ for all $$j<i$$. Also, 
 let $S_{i}$ be the event that $X_{i}\geq s_{i}$. We can write $T_{i}$ in terms of $S_{i}$:
