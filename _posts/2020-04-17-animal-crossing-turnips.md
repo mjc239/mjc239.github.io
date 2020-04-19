@@ -1,6 +1,7 @@
 ---
 title: "Animal Crossing Turnip Market - When to sell?"
-image: https://www.nintendo.com/content/dam/noa/en_US/games/switch/a/animal-crossing-new-horizons-switch/animal-crossing-new-horizons-switch-hero.jpg
+header:
+    image: https://www.nintendo.com/content/dam/noa/en_US/games/switch/a/animal-crossing-new-horizons-switch/animal-crossing-new-horizons-switch-hero.jpg
 toc: true
 toc_label: "Contents:"
 tags:
