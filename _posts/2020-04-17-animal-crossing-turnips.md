@@ -49,7 +49,7 @@ Sell at time $i$ if $X_{i}\geq s_{i}$.
 
 Put simply, on each day there is a threshold value $s_{i}$ which represents the minimum price at
 which we will be prepared to sell for on that day. For example, as we need to sell the turnips before 
-they spoil, we should expect to accept any price at tiem $t=n$ - in other words, an optimal strategy 
+they spoil, we should expect to accept any price at time $t=n$; in other words, an optimal strategy 
 should have $s_{n}=0$.
 
 Let $$T_{i}$$ be the event that $$X_{i}\geq s_{i}$$ and $$X_{j}<s_{j}$$ for all $$j<i$$. Also, 
@@ -59,7 +59,7 @@ $$
 T_{i} = S_{i}\cap\bigcap_{j<i}S_{j}^{c}
 $$
 
-Then:
+Then, using the law of total expectation:
 
 $$
 \begin{align}
@@ -68,7 +68,7 @@ E(X) &= \sum_{i=1}^{n}E\left(X_{i}|T_{i}\right)P\left(T_{i}\right) \\
 \end{align}
 $$
 
-As $P\left(S_i\right)=1-s_{i}$ and all the $X_{i}$ are iid, we have
+For the uniform distribution we have $P\left(S_i\right)=1-s_{i}$, and all the quotes $X_{i}$ are iid, so we have
 
 $$
 \begin{equation}
@@ -76,7 +76,7 @@ P\left(S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right) = (1-s_{i})\prod_{j<i}s_{j}
 \end{equation}
 $$
 
-and
+Also, the expected value of $X_{i}$ is independent of any other quote, so the conditional expectation simplifies:
 
 $$
 \begin{align}
@@ -101,7 +101,9 @@ $$
 \end{align}
 $$
 
-where in the first line the sum is split into terms with $i<k$ (which vanish when hit by the derivative), the term with $i=k$ (the first insise the square brackets), and those with $i>k$; in the second line, the terms are differentiated and $s_{j}$ factors are taken out. When the expectation is maximised, this partial derivative will be zero for each $1\leq k\leq n$. We can assume that $s_{j}\neq 0$ for all $j\neq n$ - in other words, for any non-final date, the strategy always assigns a non-zero probability to waiting for a future date. 
+where in the first line the sum is split into terms with $i<k$ (which vanish when hit by the derivative), 
+the term with $i=k$ (the first inside the square brackets), and those with $i>k$; in the second line, 
+the terms are differentiated and $s_{j}$ factors are taken out. When the expectation is maximised, this partial derivative will be zero for each $1\leq k\leq n$. We can assume that $s_{j}\neq 0$ for all $j\neq n$ - in other words, for any non-final date, the strategy always assigns a non-zero probability to waiting for a future date. 
 
 Letting $\tilde{s}_{i}$ be expectation-maximising values of the thresholds, 
 we obtain a recurrence relation:
@@ -139,7 +141,7 @@ t_{i+1} = t_{i}(1-t_{i}), \quad t_{0} = \frac{1}{2}
 $$
 
 Hopefully, this rings some bells! It should be familiar to any first year undergraduates as 
-a special case of the __logistic map__, with reproductive parameter $\lambda=1$, and initial 
+a special case of the __logistic map__, with reproductive parameter $r=1$, and initial 
 value $t_{0}=\frac{1}{2}$. This recurrence relation is often first encountered when 
 considering the dynamics of a population of animals living in an environment with limited 
 resources, and is often used as an introduction to chaos theory. In this context, it suffices 
@@ -148,6 +150,8 @@ and gets arbitrarily close to $0$ for sufficiently large $i$. If there are a lar
 days over which prices can be tracked, then over the first few days the price needs to be very 
 high in order to tempt the seller!
 
+![Logistic map bifurcation](https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Logistic_Bifurcation_map_High_Resolution.png/1280px-Logistic_Bifurcation_map_High_Resolution.png)
+*One of the many exciting plots you get to see when studying the logistic function, showing the convergence value as $i\rightarrow\infty$ for various values of $r$, the reproductive parameter*
 This recurrence relation can be solved numerically using a simple python function:
 
 
