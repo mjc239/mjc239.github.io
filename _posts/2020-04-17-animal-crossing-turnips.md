@@ -154,7 +154,8 @@ high in order to tempt the seller!
 ![Logistic map bifurcation](https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Logistic_Bifurcation_map_High_Resolution.png/1280px-Logistic_Bifurcation_map_High_Resolution.png)
 *One of the many exciting plots you get to see when studying the logistic function, showing the convergence value as $i\rightarrow\infty$ for various values of $r$, the reproductive parameter*
 <p>
-<a title="Jordan Pierce / CC0" href="https://commons.wikimedia.org/wiki/File:Logistic_Bifurcation_map_High_Resolution.png"><img width="512" alt="Logistic Bifurcation map High Resolution" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Logistic_Bifurcation_map_High_Resolution.png/512px-Logistic_Bifurcation_map_High_Resolution.png"></a>
+<a title="Jordan Pierce / CC0" href="https://commons.wikimedia.org/wiki/File:Logistic_Bifurcation_map_High_Resolution.png">
+<img width="100%" alt="Logistic Bifurcation map High Resolution" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Logistic_Bifurcation_map_High_Resolution.png/512px-Logistic_Bifurcation_map_High_Resolution.png"></a>
 <em>
 One of the many exciting plots you get to see when studying the logistic function, showing the convergence value as $i\rightarrow\infty$ for various values of $r$, the reproductive parameter
 </em>
