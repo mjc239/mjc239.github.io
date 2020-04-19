@@ -4,6 +4,7 @@ image: https://www.nintendo.com/content/dam/noa/en_US/games/switch/a/animal-cros
 tags:
   - probability
 ---
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
 
 This post is done in collaboration with [Jack Bartley](http://jackbartley.com/), while playing 
 [Animal Crossing New Horizons](https://www.youtube.com/watch?v=5LAKjL3p6Gw). 
