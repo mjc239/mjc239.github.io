@@ -152,6 +152,7 @@ high in order to tempt the seller!
 
 ![Logistic map bifurcation](https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Logistic_Bifurcation_map_High_Resolution.png/1280px-Logistic_Bifurcation_map_High_Resolution.png)
 *One of the many exciting plots you get to see when studying the logistic function, showing the convergence value as $i\rightarrow\infty$ for various values of $r$, the reproductive parameter*
+
 This recurrence relation can be solved numerically using a simple python function:
 
 
