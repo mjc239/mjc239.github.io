@@ -232,16 +232,18 @@ for day in range(1, 15):
     13 days: 0.886407072790247
     14 days: 0.892858749346287
     
-## Quotes with an arbitrary distribution
-
+    
 So far, we have assumed the daily quoted prices $X_{i}$ have been uniformly distributed over $[0, 1]$. 
 The results derived above extend easily to the case of a uniform distribution over and arbitary 
 interval $[a, b]$, by linear scaling - specifically, by letting $Y_{i} = a + (b-a)X_{i}$.
 
-But what about more general distributions? In particular, if the distribution is known for prices $x>0$, 
+## Quotes with an arbitrary distribution
+
+What about more general distributions? In particular, if the distribution is known for prices $x>0$, 
 what can we infer about the optimal threshold values $\tilde{s}_{i}$?
 
-Let $f(x), x>0$ be the probability density function of the daily quotes $X_{i}$, with corresponding cumulative density function $F(x)$. The expected sold price takes the same form as given earlier:
+Let $f(x),\, x\in [0, \infty)$ be the probability density function of the daily quotes $X_{i}$, with corresponding cumulative density function $F(x)$. The expected sold price takes the same form as given earlier:
+
 $$
 \begin{align}
 E(X) &= \sum_{i=1}^{n}E\left(X_{i}|T_{i}\right)P\left(T_{i}\right) \\
@@ -252,12 +254,14 @@ $$
 However, this time we have that
 
 $$
-P\left(S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right) = \left(1 - F(s_{i})\right)
+P\left(S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right) = \left(1 - F(s_{i})\right)\prod_{i<j}F(s_{j})
 $$
+
 and
+
 $$
 \begin{align}
 E\left(X_{i}\;\middle|\; S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right) &= E\left(X_{i}\;\middle|\;S_{i}\right) \\
-&=
+&=\frac{\int_{s_{i}}^{\infty}xf(x)dx}{\int_{s_{i}}^{\infty}f(x)dx}
 \end{align}
 $$
