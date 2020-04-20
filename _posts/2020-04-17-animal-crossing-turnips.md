@@ -247,7 +247,8 @@ Let $f(x),\, x\in [0, \infty)$ be the probability density function of the daily 
 $$
 \begin{align}
 E(X) &= \sum_{i=1}^{n}E\left(X_{i}|T_{i}\right)P\left(T_{i}\right) \\
-&= \sum_{i=1}^{n}E\left(X_{i}\;\middle|\; S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right)P\left(S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right)
+&= \sum_{i=1}^{n}E\left(X_{i}\;\middle|\; S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right)P\left(S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right) \\
+&= g(s_{i})
 \end{align}
 $$
 
@@ -257,11 +258,19 @@ $$
 P\left(S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right) = \left(1 - F(s_{i})\right)\prod_{i<j}F(s_{j})
 $$
 
-and
+and,
 
 $$
 \begin{align}
-E\left(X_{i}\;\middle|\; S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right) &= E\left(X_{i}\;\middle|\;S_{i}\right) \\
-&=\frac{\int_{s_{i}}^{\infty}xf(x)dx}{\int_{s_{i}}^{\infty}f(x)dx}
+g(s_{i}) &:= E\left(X_{i}\;\middle|\; S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right) \\
+&= E\left(X_{i}\;\middle|\;S_{i}\right) \\
+&=\frac{\int_{s_{i}}^{\infty}xf(x)dx}{1-F(s_{i})}.
 \end{align}
 $$
+
+Putting this together again:
+
+$$
+E(X) = -\sum_{i=1}^{n}\left[\int_{s_{i}}^{\infty}xf(x)dx\right]\prod_{i<j}F(s_{j}).
+$$
+
