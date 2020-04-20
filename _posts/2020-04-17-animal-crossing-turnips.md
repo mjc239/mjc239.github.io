@@ -262,8 +262,7 @@ and,
 
 $$
 \begin{align}
-g(s_{i}) &:= E\left(X_{i}\;\middle|\; S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right) \\
-&= E\left(X_{i}\;\middle|\;S_{i}\right) \\
+E\left(X_{i}\;\middle|\; S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right) &= E\left(X_{i}\;\middle|\;S_{i}\right) \\
 &=\frac{\int_{s_{i}}^{\infty}xf(x)dx}{1-F(s_{i})}.
 \end{align}
 $$
@@ -271,6 +270,14 @@ $$
 Putting this together again:
 
 $$
-E(X) = -\sum_{i=1}^{n}\left[\int_{s_{i}}^{\infty}xf(x)dx\right]\prod_{i<j}F(s_{j}).
+E(X) = \sum_{i=1}^{n}\left[\int_{s_{i}}^{\infty}xf(x)dx\right]\prod_{i<j}F(s_{j}).
 $$
 
+So we have an expression for the expected price in terms of the fixed distribution functions $f, F$ and
+the threshold values $\{s_{i}\}$. To maximise the expected price, we do as we did before and find the
+stationary point of the expectation. The steps follow the same logic as for the uniform case, and give a set
+ of equations for the optimal threshold values $\tilde{s}_{k}$.
+
+$$
+s_{k}f(s_{k}) = \int_{s_{k+1}}^{\infty}xf(x)dx + s_{k+1}f(s_{k+1})F(s_{k+1})
+$$
