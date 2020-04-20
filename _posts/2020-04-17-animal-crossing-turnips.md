@@ -38,7 +38,7 @@ amount you get for your turnips?
 The easiest distribution to consider is the uniform distribution - specifically, assume that
 on each selling day, Timmy and Tommy offer a price that is uniformly distributed over some interval.
 
-Let $X_{1}, ..., X_{n}\sim U[0, 1]$ be iid random variables, representing the price offered at time
+Let $X_{1}, ..., X_{n}\sim U[0, 1]$ be [iid](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables) random variables, representing the price offered at time
 $i$, and suppose that the turnips spoil at time $n$. Let $X$ be the price the turnips are 
 sold at.
 
