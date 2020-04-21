@@ -279,5 +279,8 @@ stationary point of the expectation. The steps follow the same logic as for the 
  of equations for the optimal threshold values $\tilde{s}_{k}$.
 
 $$
-s_{k}f(s_{k}) = \int_{s_{k+1}}^{\infty}xf(x)dx + s_{k+1}f(s_{k+1})F(s_{k+1})
+\begin{align}
+\tilde{s}_{k} &= \tilde{s}_{k+1}F(\tilde{s}_{k+1}) + \int_{\tilde{s}_{k+1}}^{\infty}xf(x)dx \\
+&= \tilde{s}_{k+1}F(\tilde{s}_{k+1}) + E(X_{0}) - \int_{0}^{\tilde{s}_{k+1}}xf(x)dx
+\end{align}
 $$
