@@ -38,8 +38,9 @@ amount you get for your turnips?
 The easiest distribution to consider is the uniform distribution - specifically, assume that
 on each selling day, Timmy and Tommy offer a price that is uniformly distributed over some interval.
 
-Let $X_{1}, ..., X_{n}\sim U[0, 1]$ be [iid](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables) random variables, representing the price offered at time
-$i$, and suppose that the turnips spoil at time $n$. Let $X$ be the price the turnips are 
+Let $X_{1}, ..., X_{n}\sim U[0, 1]$ be 
+[iid](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables) random variables, 
+representing the price offered at time $i$, and suppose that the turnips spoil at time $n$. Let $X$ be the price the turnips are 
 sold at.
 
 Consider the following strategy:
@@ -104,7 +105,9 @@ $$
 
 where in the first line the sum is split into terms with $i<k$ (which vanish when hit by the derivative), 
 the term with $i=k$ (the first inside the square brackets), and those with $i>k$; in the second line, 
-the terms are differentiated and $s_{j}$ factors are taken out. When the expectation is maximised, this partial derivative will be zero for each $1\leq k\leq n$. We can assume that $s_{j}\neq 0$ for all $j\neq n$ - in other words, for any non-final date, the strategy always assigns a non-zero probability to waiting for a future date. 
+the terms are differentiated and $s_{j}$ factors are taken out. When the expectation is maximised, this partial 
+derivative will be zero for each $1\leq k\leq n$. We can assume that $s_{j}\neq 0$ for all $j\neq n$ - in other 
+words, for any non-final date, the strategy always assigns a non-zero probability to waiting for a future date. 
 
 Letting $\tilde{s}_{i}$ be expectation-maximising values of the thresholds, 
 we obtain a recurrence relation:
@@ -155,7 +158,8 @@ high in order to tempt the seller!
 <a title="Jordan Pierce / CC0" href="https://commons.wikimedia.org/wiki/File:Logistic_Bifurcation_map_High_Resolution.png">
 <img width="100%" alt="Logistic Bifurcation map High Resolution" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Logistic_Bifurcation_map_High_Resolution.png/512px-Logistic_Bifurcation_map_High_Resolution.png"></a>
 <em>
-One of the many exciting plots you get to see when studying the logistic function, showing the convergence value as $i\rightarrow\infty$ for various values of $r$, the reproductive parameter
+One of the many exciting plots you get to see when studying the logistic function, showing the convergence 
+value as $i\rightarrow\infty$ for various values of $r$, the reproductive parameter
 </em>
 </p>
 
@@ -163,45 +167,63 @@ This recurrence relation can be solved numerically using a simple python functio
 
 ```python
 def compute_exp(s):
+    """Expected value of the strategy.
+    
+    Computes the expected value of the strategy, defined by
+    the vector of strategy thresholds.
+
+    Args:
+        s (numpy.ndarray): Vector of threshold values.
+
+    Returns:
+        expectation (float): Expected value of the strategy
+    """
     expectation = 0
     for i in range(len(s)):
         expectation += 0.5*(1 - s[i]**2)*np.prod(s[:i])
     return expectation
 
-def strat_thresholds(n, return_exp=False):
+def strat_thresholds(n):
+    """Strategy thresholds for uniformly distributed prices.
+    
+    Computes the threshold values of the optimal strategy, when 
+    prices are drawn from an uniform distribution.
+
+    Args:
+        n (int): Number of days over which to prices are offered.
+
+    Returns:
+        s (numpy.ndarray): vector of optimal strategy values.
+    """
     s = np.zeros(n)
     
     for i in range(n-1):
         s[i+1] = 0.5*(1 + s[i]**2)
     s = s[::-1]
     
-    if return_exp:
-        return s, compute_exp(s)
-    else:
-        return s
+    return s
 ```
 
-For example, if prices are provided over 7 days, the threshold on the first day is about 0.8, 
+For example, if prices are provided over 6 days, the threshold on the first day is about 0.8, 
 decreasing to 0 on the last day when any price has to be taken:
 
 
 ```python
-thresholds, expectation = strat_thresholds(n=7, return_exp=True)
+thresholds = strat_thresholds(n=6)
 print(f'Thresholds are: ')
 for day, threshold in enumerate(thresholds):
     print(f'Day {day+1}: {threshold}')
-print(f'giving an expected sold price of {expectation}')
+print(f'giving an expected sold price of {compute_exp(thresholds)}')
 ```
 
     Thresholds are: 
-    Day 1: 0.800375666500635
-    Day 2: 0.7750815008766949
-    Day 3: 0.741729736328125
-    Day 4: 0.6953125
-    Day 5: 0.625
-    Day 6: 0.5
-    Day 7: 0.0
-    giving an expected sold price of 0.8203006037631679
+    Day 1: 0.7750815008766949
+    Day 2: 0.741729736328125
+    Day 3: 0.6953125
+    Day 4: 0.625
+    Day 5: 0.5
+    Day 6: 0.0
+    giving an expected sold price of 0.800375666500635
     
 
 It can also be seen that as the number of days increases, the expected price that the 
@@ -212,8 +234,8 @@ larger price:
 ```python
 print('Expectation for n days:')
 for day in range(1, 15):
-    _, expectation = strat_thresholds(n=day, return_exp=True)
-    print(f'{day} days: {expectation}')
+    thresholds = strat_thresholds(n=day)
+    print(f'{day} days: {compute_exp(thresholds)}')
 ```
 
     Expectation for n days:
@@ -232,8 +254,16 @@ for day in range(1, 15):
     13 days: 0.886407072790247
     14 days: 0.892858749346287
     
-    
-So far, we have assumed the daily quoted prices $X_{i}$ have been uniformly distributed over $[0, 1]$. 
+An interesting thing to note here is that the expected values of the strategy 
+over $n$ days are equal to the threshold values $(n+1)$ days from the end. 
+There is a straightforward way to see why this is: first, recall that, by definition, 
+this threshold value is the minimum selling price to accept with $n$ days remaining.
+When making the decision whether to accept, you are comparing the offered price to 
+the expected price you hope to receive by waiting. Therefore, the threshold value is
+exactly the expected value of the strategy over the remaining $n$ days - any price less
+than this can be expected to be beaten (in the probabilistic sense) in the future.
+
+Also, we have assumed the daily quoted prices $X_{i}$ have been uniformly distributed over $[0, 1]$. 
 The results derived above extend easily to the case of a uniform distribution over and arbitary 
 interval $[a, b]$, by linear scaling - specifically, by letting $Y_{i} = a + (b-a)X_{i}$.
 
@@ -242,7 +272,8 @@ interval $[a, b]$, by linear scaling - specifically, by letting $Y_{i} = a + (b-
 What about more general distributions? In particular, if the distribution is known for prices $x>0$, 
 what can we infer about the optimal threshold values $\tilde{s}_{i}$?
 
-Let $f(x),\, x\in [0, \infty)$ be the probability density function of the daily quotes $X_{i}$, with corresponding cumulative density function $F(x)$. The expected sold price takes the same form as given earlier:
+Let $f(x),\, x\in [0, \infty)$ be the probability density function of the daily quotes $X_{i}$, with 
+corresponding cumulative density function $F(x)$. The expected sold price takes the same form as given earlier:
 
 $$
 \begin{align}
@@ -284,3 +315,78 @@ $$
 &= \tilde{s}_{k+1}F(\tilde{s}_{k+1}) + E(X_{0}) - \int_{0}^{\tilde{s}_{k+1}}xf(x)dx
 \end{align}
 $$
+
+In this formula, $X_{0}$ has pdf $f(x)$, and this step is only done to avoid the computation of repeated infinite
+integrals. Once again, we obtain a first order recurrence relation for the threshold values, which can be solved
+using a generalised version of the python function used earlier:
+
+```python
+def strat_thresholds_arb(n, f, F):
+    """Strategy thresholds for prices from an arbitrary distribution
+    
+    Computes the threshold values of the optimal strategy, when prices 
+    are drawn from an arbitrary continuous distribution. The only 
+    restriction on the distribution is that the prices are assumed to be 
+    positive, so P(price < 0) = 0.
+
+    Args:
+        n (int): Number of days over which to prices are offered.
+        f (function): The pdf of the price distribution.
+        F (function): The cdf of the price distribution.
+
+    Returns:
+        s (numpy.ndarray): vector of optimal strategy values.
+    """
+    exp_f = scipy.integrate.quad(lambda x: x*f(x), -np.inf, np.inf)[0]
+    s = np.zeros(n)
+    
+    for i in range(n-1):
+        s[i+1] = s[i]*F(s[i]) \
+                    + exp_f \
+                    - scipy.integrate.quad(lambda x: x*f(x), 0, s[i])[0]
+    
+    s = s[::-1]
+
+    return s
+```
+
+This allows the optimal threshold values to be computed, given the pdf and cdf of the
+chosen price distribution. For example, consider the 
+[beta distribution](https://en.wikipedia.org/wiki/Beta_distribution) on the interval
+$[0, 1]$, with parameters $\alpha=\beta=2$. 
+
+<p>
+<img width="100%" alt="Beta Distribution pdf" src="/assets/images/beta_dist.png">
+<em>
+The pdf of the Beta distribution with $\alpha=\beta=2$, with support on the finite
+interval $[0, 1]$.
+</em>
+</p>
+
+```python
+a = 2
+b = 2
+from scipy.stats import beta
+f = lambda x: beta.pdf(x, a, b)
+F = lambda x: beta.cdf(x, a, b)
+
+thresholds_and_exp = strat_thresholds_arb(7, f, F)
+expectation = thresholds_and_exp[0]
+thresholds = thresholds_and_exp[1:]
+
+print(f'Thresholds are: ')
+for day, threshold in enumerate(thresholds):
+    print(f'Day {day+1}: {threshold}')
+print(f'giving an expected sold price of {expectation}')
+```
+    Thresholds are: 
+    Day 1: 0.7100732691913013
+    Day 2: 0.6833505390608796
+    Day 3: 0.6471781730651854
+    Day 4: 0.5937499999999999
+    Day 5: 0.4999999999999999
+    Day 6: 0.0
+    giving an expected sold price of 0.7309109556148288
+    
+As mentioned earlier, the expected value of the strategy over 6 days is computed by
+finding the optimal threshold for the 7th day.
