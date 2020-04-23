@@ -190,7 +190,7 @@ def strat_thresholds(n):
     prices are drawn from an uniform distribution.
 
     Args:
-        n (int): Number of days over which to prices are offered.
+        n (int): Number of days over which prices are offered.
 
     Returns:
         s (numpy.ndarray): vector of optimal strategy values.
@@ -210,10 +210,11 @@ decreasing to 0 on the last day when any price has to be taken:
 
 ```python
 thresholds = strat_thresholds(n=6)
+expectation = compute_exp(thresholds)
 print(f'Thresholds are: ')
 for day, threshold in enumerate(thresholds):
     print(f'Day {day+1}: {threshold}')
-print(f'giving an expected sold price of {compute_exp(thresholds)}')
+print(f'giving an expected sold price of {expectation}')
 ```
 
     Thresholds are: 
@@ -322,28 +323,33 @@ using a generalised version of the python function used earlier:
 
 ```python
 def strat_thresholds_arb(n, f, F):
-    """Strategy thresholds for prices from an arbitrary distribution
+    """Strategy thresholds for an arbitrary distribution
     
-    Computes the threshold values of the optimal strategy, when prices 
-    are drawn from an arbitrary continuous distribution. The only 
-    restriction on the distribution is that the prices are assumed to be 
-    positive, so P(price < 0) = 0.
+    Computes the threshold values of the optimal strategy, 
+    when prices are drawn from an arbitrary continuous 
+    distribution. The only restriction on the distribution 
+    is that the prices are assumed to be positive, so 
+    P(price < 0) = 0.
 
     Args:
-        n (int): Number of days over which to prices are offered.
+        n (int): Number of days over which prices are offered.
         f (function): The pdf of the price distribution.
         F (function): The cdf of the price distribution.
 
     Returns:
         s (numpy.ndarray): vector of optimal strategy values.
     """
-    exp_f = scipy.integrate.quad(lambda x: x*f(x), -np.inf, np.inf)[0]
+    exp_f = scipy.integrate.quad(lambda x: x*f(x), 
+                                 -np.inf, 
+                                 np.inf)[0]
     s = np.zeros(n)
     
     for i in range(n-1):
         s[i+1] = s[i]*F(s[i]) \
                     + exp_f \
-                    - scipy.integrate.quad(lambda x: x*f(x), 0, s[i])[0]
+                    - scipy.integrate.quad(lambda x: x*f(x), 
+                                           0, 
+                                           s[i])[0]
     
     s = s[::-1]
 
