@@ -23,11 +23,11 @@ as 株 (kabu), the word for stock).
 So how does it work? The way in which turnips can be used to make a profit (or loss!) is as follows:
 -  Every Sunday, a character called Daisy Mae can be found wandering around the island. She will offer 
 to sell the player turnips at a randomly chosen (integer between 90 and 110) base price. 
-![Timmy and Tommy](/assets/images/timmytommy.jpeg)
+![Timmy and Tommy](/assets/images/timmytommy.jpeg){: .align-center}
 - On every other day of the week, Timmy and Tommy in Nook's Cranny will offer to buy turnips from you. They
 will offer two prices a day (one in the morning, one in the afternoon), which may be higher or lower than
 the base price that the turnips were bought for from Daisy Mae.
-![Daisy Mae](/assets/images/daisymae.jpeg)
+![Daisy Mae](/assets/images/daisymae.jpeg){: .align-center}
 
 One of the first questions we can ask is the following: if we know the distribution of prices 
 that Timmy and Tommy offer on any particular day, what is the best way to maximise the
