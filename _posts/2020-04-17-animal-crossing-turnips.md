@@ -23,11 +23,11 @@ as 株 (kabu), the word for stock).
 So how does it work? The way in which turnips can be used to make a profit (or loss!) is as follows:
 -  Every Sunday, a character called Daisy Mae can be found wandering around the island. She will offer 
 to sell the player turnips at a randomly chosen (integer between 90 and 110) base price. 
-<blockquote class="twitter-tweet"><p lang="en" dir="ltr">It&#39;s Sunday, and that means it&#39;s turnip time! How much are you investing in Sow Joan&#39;s Stalk Market today? <a href="https://twitter.com/hashtag/ACNH?src=hash&amp;ref_src=twsrc%5Etfw">#ACNH</a> <a href="https://twitter.com/hashtag/AnimalCrossing?src=hash&amp;ref_src=twsrc%5Etfw">#AnimalCrossing</a> <a href="https://t.co/jlzVXSvT6V">pic.twitter.com/jlzVXSvT6V</a></p>&mdash; Nintendo of America (@NintendoAmerica) <a href="https://twitter.com/NintendoAmerica/status/1246849300958556160?ref_src=twsrc%5Etfw">April 5, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+![Timmy and Tommy](/assets/images/timmytommy.jpeg)
 - On every other day of the week, Timmy and Tommy in Nook's Cranny will offer to buy turnips from you. They
 will offer two prices a day (one in the morning, one in the afternoon), which may be higher or lower than
 the base price that the turnips were bought for from Daisy Mae.
-<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Look at these smug bastards. They keep lowballing me all the time with the Turnip prices. I&#39;m onto your game Timmy &amp; Tommy. The real Animal Crossing crooks right here. <a href="https://t.co/OWgTCSet7d">pic.twitter.com/OWgTCSet7d</a></p>&mdash; Scott Redmond (@ScottPRedmond) <a href="https://twitter.com/ScottPRedmond/status/1249818533791326209?ref_src=twsrc%5Etfw">April 13, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+![Daisy Mae](/assets/images/daisymae.jpeg)
 
 One of the first questions we can ask is the following: if we know the distribution of prices 
 that Timmy and Tommy offer on any particular day, what is the best way to maximise the
