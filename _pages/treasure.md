@@ -1,8 +1,9 @@
 ---
 layout: single
 title: "Next clue:"
-author_profile: true
 permalink: /birthday_treasure_hunt/
 ---
 
-Contents
+![pic1](/assets/images/bday_hunt_pic1.jpeg){: .align-center}
+
+![pic2](/assets/images/bday_hunt_pic2.jpeg){: .align-center}
