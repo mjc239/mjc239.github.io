@@ -267,6 +267,30 @@ the expected price you hope to receive by waiting. Therefore, the threshold valu
 exactly the expected value of the strategy over the remaining $n$ days - any price less
 than this can be expected to be beaten (in the probabilistic sense) in the future.
 
+In fact, it is not terribly hard to obtain some reasonably strong bounds on the sequence. First, note that defining $r_{i} = 1/t_{i}$ for all $i$ the recurrence
+
+$$
+t_{i+1} = t_{i}(1-t_{i}), \quad t_{0} = \frac{1}{2}
+$$
+
+becomes
+
+$$
+r_{i+1} = r_{i} + 1 + \frac{1}{r_{i}-1}, \quad r_{0} = 2.
+$$
+
+Thus $r_{i+1}\geq r_{i} + 1$ for $i > 0$ (since we certainly have $r_{i}> 1$ for all $i$) and we get the lower bound 
+$$r_{i}\geq i + 2$$
+for all $i$. In the other direction, since we now have $r_{i} - 1\geq i + 1$ for all $i$, we have $r_{i+1}\leq r_{i} + 1 + \frac{1}{i + 1}$ for $i > 0$, and thus obtain the upper bound 
+$$r_{i}\leq i + 2  + \sum_{j = 1}^{n}\frac{1}{j}$$
+for all $i$. Putting this all together gives
+$$r_{i} = i + 2  + O(\log{i}),$$
+then unfolding we see that
+$$t_{i} = \frac{1}{i + 2  + O(\log{i})}$$
+and (recalling that $t_{k}=\frac{1}{2}(1-\tilde{s}_{n-k})$)
+$$s_{i} = 1 - \frac{2}{n - i + 2  + O(\log{n - i})}.$$
+
+
 Also, we have assumed the daily quoted prices $X_{i}$ have been uniformly distributed over $[0, 1]$. 
 The results derived above extend easily to the case of a uniform distribution over and arbitary 
 interval $[a, b]$, by linear scaling - specifically, by letting $Y_{i} = a + (b-a)X_{i}$.
@@ -321,7 +345,24 @@ $$
 $$
 
 In this formula, $X_{0}$ has pdf $f(x)$, and this step is only done to avoid the computation of repeated infinite
-integrals. Once again, we obtain a first order recurrence relation for the threshold values, which can be solved
+integrals. 
+
+By integration by parts (or simply differentiating the right hand side with respect to $\tilde{s}_{k + 1}$) we obtain the following equivalent recurrence:
+$$
+\begin{align}
+\tilde{s}_{k} &= E(X) + \int_{0}^{\tilde{s}_{k+1}}F(x)dx.
+\end{align}
+$$
+In the case that the $X_{i}$ are non-negative, writing $\bar{F}(x) = 1 - F(x)$, we have
+$$
+\begin{align}
+\tilde{s}_{k} &= \tilde{s}_{k+1} + \int_{\tilde{s}_{k+1}}^{\infty}\bar{F}(x)dx.
+\end{align}
+$$
+
+### Numerical example: the Beta distribution
+
+Once again, we obtain a first order recurrence relation for the threshold values, which can be solved
 using a generalised version of the python function used earlier:
 
 ```python
@@ -399,3 +440,95 @@ print(f'giving an expected sold price of {expectation}')
     
 As mentioned earlier, the expected value of the strategy over 6 days is computed by
 finding the optimal threshold for the 7th day.
+
+### Exponentially distributed quotes
+
+Suppose that $X_{1}, \ldots, X_{n}\sim\textnormal{Exp}(\lambda)$ are iid. Then the optimal threshold values are given by
+
+$$
+\tilde{s}_{i} = \tilde{s}_{i + 1} + \lambda^{ - 1}e^{-\lambda \tilde{s}_{i + 1}}, \quad \tilde{s}_{n} = 0.
+$$
+
+Performing the substitution $t_{i}=e^{\lambda\tilde{s}_{n-i}}$, we obtain
+
+$$
+t_{i+1} = t_{i}e^{1/t_{i}}, \quad t_{0} = 1.
+$$
+
+Now note that $1 + x\leq e^x \leq 1 + x + x^2$ for $x\leq 1$ (indeed, $(e^x - 1 - x)/x^2$ is increasing for $x\leq 1$). Thus since we clearly have $t_i\geq 1$ for all $i$, we have
+$$
+t_{i+1} \geq t_{i} + 1
+$$
+and
+$$
+t_{i+1} \leq t_{i} + 1 + 1/t_{i}.
+$$
+
+Then, much as before, the first gives $t_i\geq i + 1$ and the latter $t_i\leq i + 1 + H_i$. Putting this all together we see that
+$$
+t_i = i + O(\log{i})
+$$
+
+and unfolding gives
+$$
+\tilde{s}_{i} = \log{n - i} + O(\frac{\log{n - i}}{n - i}).
+$$
+
+In particular we see that
+$$
+\tilde{s}_0 = (1 + O(1/n))\log{n}.
+$$
+
+## The Oracle and perfect play
+
+Even with perfect information of the prices to come, there is evidently only so well you could do. Indeed, the optimal strategy in the event of perfect information is simply to sell for the maximum price. The performance of this "strategy" provides a natural benchmark for the performance of others. Let's quickly work out how well this Oracle would do in expectation in the case of uniform and exponential quotes.
+
+### A simple expression for the expectation of the maximum (for non-negative quotes)
+
+Given $X_{1}, \ldots, X_{n}$ iid, we write $X_{(1)}, \ldots, X_{(n)}$ for the [order statistics](https://en.wikipedia.org/wiki/Order_statistic), noting that $X_{(n)} = \max_i X_{i}$. Now since
+$$
+\begin{align}
+F_{X_{(n)}}(x) &= P(X_{(n)}\leq x)\\
+&= P(X_{1}, \ldots, X_{n}\leq x)\\
+&= F_X(x)^n\\
+\end{align}
+$$
+using the well known expression for the expectation of a nonnegative random variable gives
+$$
+E(X_{(n)}) = \int_0^\infty 1 - F_{X}(x)^n dx.
+$$
+
+### The Oracle: uniform quotes
+
+Suppose $X_{1}, \ldots, X_{n}\sim\textnormal{U}[0, 1]$ are iid. Then
+$$
+\begin{align}
+E(X_{(n)}) &= \int_0^1 1 - x^n dx
+&= 1 - \frac{1}{n + 1}.
+\end{align}
+$$
+
+It is interesting to compare this to the estimates were obtained earlier on the expected return of our strategy
+$$s_{0} = 1 - \frac{2}{n + O(\log{n})}.$$
+
+### The Oracle: exponential quotes
+
+Suppose $X_{1}, \ldots, X_{n}\sim\textnormal{Exp}(\lambda)$ are iid. Then
+$$
+E(X_{(n)}) = \int_0^\infty 1 - (1 - e^{ - \lambda x})^n dx.
+$$
+Substituting $u = 1 - e^{ - \lambda x}$ gives
+$$
+\begin{align}
+E(X_{(n)}) &= \lambda^{ - 1}\int_0^1 \frac{1 - u^n}{1 - u} dx
+&= \lambda^{ - 1}\int_0^1 \sum_{i = 0}^{n - 1\}u^i dx
+&= \lambda^{ - 1}\sum_{i = 1}^n \frac{1}{i}.
+\end{align}
+$$
+
+In other words, we have 
+$$
+E(X_{(n)}) = \lambda^{ - 1}\log{n} + O(1)
+$$
+(see for example the Wikipedia entry for the [Euler-Mascheroni](https://en.wikipedia.org/wiki/Euler%E2%80%93Mascheroni_constant) though of course this is rather more than we need here).
+
