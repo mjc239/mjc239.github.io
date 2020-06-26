@@ -535,7 +535,7 @@ Suppose $X_{1}, \ldots, X_{n}\sim\text{U}[0, 1]$ are iid. Then
 
 $$
 \begin{align}
-E(X_{(n)}) &= \int_0^1 1 - x^n dx
+E(X_{(n)}) &= \int_0^1 1 - x^n dx \\
 &= 1 - \frac{1}{n + 1}.
 \end{align}
 $$
@@ -558,8 +558,8 @@ Substituting $u = 1 - e^{ - \lambda x}$ gives
 
 $$
 \begin{align}
-E(X_{(n)}) &= \lambda^{ - 1}\int_0^1 \frac{1 - u^n}{1 - u} dx
-&= \lambda^{ - 1}\int_0^1 \sum_{i = 0}^{n - 1\}u^i dx
+E(X_{(n)}) &= \lambda^{ - 1}\int_0^1 \frac{1 - u^n}{1 - u} dx \\
+&= \lambda^{ - 1}\int_0^1 \sum_{i = 0}^{n - 1}u^i dx \\
 &= \lambda^{ - 1}\sum_{i = 1}^n \frac{1}{i}.
 \end{align}
 $$
