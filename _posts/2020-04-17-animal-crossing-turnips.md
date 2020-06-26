@@ -10,41 +10,29 @@ tags:
 
 {% include mathjax.html %}
 
-This post is done in collaboration with [Jack Bartley](http://jackbartley.com/), while playing 
-[Animal Crossing New Horizons](https://www.youtube.com/watch?v=5LAKjL3p6Gw). 
+This post is written in collaboration with [Jack Bartley](http://jackbartley.com/), while playing [Animal Crossing New Horizons](https://www.youtube.com/watch?v=5LAKjL3p6Gw). 
 
 ## Turnip Mania
 
-In the game, one of the fastest ways of earning bells (the in game currency) and pay off your 
-mortgage to Tom Nook is through the __Stalk Market__; essentially, this involves speculating on the 
-price of turnips (chosen because the Japanese word for turnip, 蕪 (kabu) is pronounced in the same way 
-as 株 (kabu), the word for stock).
+In the game, one of the fastest ways of earning bells (the in game currency) and pay off your mortgage to Tom Nook is through the __Stalk Market__; essentially, this involves speculating on the price of turnips (chosen because the Japanese word for turnip, 蕪 (kabu) is pronounced in the same way as 株 (kabu), the word for stock).
 
 So how does it work? The way in which turnips can be used to make a profit (or loss!) is as follows:
--  Every Sunday, a character called Daisy Mae can be found wandering around the island. She will offer 
-to sell the player turnips at a randomly chosen (integer between 90 and 110) base price. 
+-  Every Sunday, a character called Daisy Mae can be found wandering around the island. She will offer to sell the player turnips at a randomly chosen (integer between 90 and 110) base price. 
 
 ![Daisy Mae](/assets/images/daisymae.jpeg){: .align-center}
 
-- On every other day of the week, Timmy and Tommy in Nook's Cranny will offer to buy turnips from you. They
-will offer two prices a day (one in the morning, one in the afternoon), which may be higher or lower than
-the base price that the turnips were bought for from Daisy Mae.
+- On every other day of the week, Timmy and Tommy in Nook's Cranny will offer to buy turnips from you. They will offer two prices a day (one in the morning, one in the afternoon), which may be higher or lower than the base price that the turnips were bought for from Daisy Mae.
 
 ![Timmy and Tommy](/assets/images/timmytommy.jpeg){: .align-center}
 
-One of the first questions we can ask is the following: if we know the distribution of prices 
-that Timmy and Tommy offer on any particular day, what is the best way to maximise the
-amount you get for your turnips?
+One of the first questions we can ask is the following: if we know the distribution of prices that Timmy and Tommy offer on any particular day, what is the best way to maximise the amount you get for your turnips?
 
-## Uniformly distributed quotes
+## An instructive example: Uniformly distributed quotes
 
-The easiest distribution to consider is the uniform distribution - specifically, assume that
-on each selling day, Timmy and Tommy offer a price that is uniformly distributed over some interval.
+The easiest distribution to consider is the uniform distribution - specifically, assume that on each selling day, Timmy and Tommy offer a price that is uniformly distributed over some interval.
 
 Let $X_{1}, ..., X_{n}\sim U[0, 1]$ be 
-[iid](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables) random variables, 
-representing the price offered at time $i$, and suppose that the turnips spoil at time $n$. Let $X$ be the price the turnips are 
-sold at.
+[iid](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables) random variables, representing the price offered at time $i$, and suppose that the turnips spoil before another price is offered. Let $S$ be the price the turnips are sold at.
 
 Consider the following strategy:
 
@@ -52,27 +40,64 @@ Consider the following strategy:
 Sell at time $i$ if $X_{i}\geq s_{i}$.
 </p>
 
-Put simply, on each day there is a threshold value $s_{i}$ which represents the minimum price at
-which we will be prepared to sell for on that day. For example, as we need to sell the turnips before 
-they spoil, we should expect to accept any price at time $t=n$; in other words, an optimal strategy 
-should have $s_{n}=0$.
+Put simply, on each day there is a threshold value $s_{i}$ which represents the minimum price at which we will be prepared to sell for on that day. For example, as we need to sell the turnips before they spoil, we should expect to accept any price at time $t=n$; in other words, an optimal strategy should have $s_{n}=0$. 
 
-Let $T_{i}$ be the event that $X_{i}\geq s_{i}$ and $X_{j}<s_{j}$ for all $j<i$. Also, 
-let $S_{i}$ be the event that $X_{i}\geq s_{i}$. We can write $T_{i}$ in terms of $S_{i}$:
+Let $\tau$ be the time at which we sell, that is $\tau = \min i:X_{i}\geq s_{i}$. Then, by the law of total expectation, we see that for any $i$, we have
 
 $$
-T_{i} = S_{i}\cap\bigcap_{j<i}S_{j}^{c}
+E(S) = E(S|\tau < i)P(\tau < i) + E(S|\tau \geq i)P(\tau \geq i).
 $$
 
-Then, using the law of total expectation:
+Note that $E(S:\tau < i)$, $P(\tau < i)$ and $P(\tau \geq i)$ depend only upon $s_{1}, \ldots, s_{i - 1}$, whereas $E(S:\tau \geq i)$ depends only upon $s_{i}, \ldots, s_{n}$. Therefore, the optimal choice of $s_{i}$ depends only upon $s_{i + 1}, \ldots, s_{n}$. Indeed, it suffices to choose $s_{i}$ so as to maximise $E(S:\tau \geq i)$.
+
+Next,
+
+$$
+E(S|\tau \geq i) = E(X_i:X_i\geq s_i)P(X_i\geq s_i) + E(S:X_i < s_i)P(X_i < s_i).
+$$
+
+Now since $E(X_{i}:X_{i}\geq s_{i}) = \frac{1}{2}(1+s_{i})$ and $P(X_i\geq s_i) = 1 - s_{i}$ we have 
+
+$$
+E(S|\tau \geq i) = \frac{1}{2}(1 - s_i^2) + s_i E(S:X_i < s_i).
+$$
+
+Clearly this is maximised when $s_i = E(S:X_i < s_i)$. Write $\tilde{s}_i$ for this optimal threshold value. Then we see that
+
+$$
+\tilde{s}_i = E(S:X_i < s_i)
+$$
+
+where, as noted earlier, the right hand expression depends only upon $s_{i + 1}, \ldots, s_n$. Define $e_{n-j}$ to be the expected return of the strategy
+
+<p align="center">
+Sell at time $i > j$ if $X_{i}\geq s_{i}$.
+</p>
+
+That is, the expected return, were we to see all but the first $j$ prices. Moreover, writing $\tilde{e}_{n - j}$ for the expected return of this strategy with the optimal thresholds, we see that $E(S:X_{i} < s_{i}) = e_{n - i}$ and this gives the recurrence:
+
+$$
+\tilde{s}_i = \tilde{e}_{n - i}.
+$$
+
+This tells us that at time $n$ we should accept any price; at time $n - 1$ we should accept exactly the expected value of $X_n$; at time $n - 2$ we should settle for the exactly the expected value were we to pass on $X_{n - 2}$; and so on and so forth.
+
+Indeed, it is possible to do one better and express the right hand side solely in terms of $\tilde{s}_{i+1}$, and ultimately to find a recursive relationship between $\tilde{s}_{i}$ and $\tilde{s}_{i+1}$.
+
+
+Again, using the total law of expectation we see that
 
 $$
 \begin{align}
-E(X) &= \sum_{i=1}^{n}E\left(X_{i}|T_{i}\right)P\left(T_{i}\right) \\
-&= \sum_{i=1}^{n}E\left(X_{i}\;\middle|\; S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right)P\left(S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right)
+\tilde{e}_{n - i} &= E(X_{i + 1}:X_{i + 1}\geq \tilde{s}_{i + 1})P(X_{i + 1}\geq \tilde{s}_{i + 1}) + E(S:X_{i + 1} < \tilde{s}_{i + 1})P(X_{i + 1} < \tilde{s}_{i + 1})\\
+&= \frac{1}{2}(1 - \tilde{s}_{i + 1}^2) + \tilde{s}_{i + 1}^2\\
+&= \frac{1}{2}(1 + \tilde{s}_{i + 1}^2)
 \end{align}
 $$
 
+where in the second inequality we make critial use of the fact that $E(X_{i+1}:X_{i+1}\geq\tilde{s}_{i+1})=\frac{1}{2}(1+\tilde{s}_{i + 1})$ and $E(S:X_{i + 1} < \tilde{s}_{i + 1}) = \tilde{s}_{i + 1}$.
+
+<!--
 For the uniform distribution we have $P\left(S_i\right)=1-s_{i}$, and all the quotes $X_{i}$ are iid, so we have
 
 $$
@@ -110,7 +135,8 @@ where in the first line the sum is split into terms with $i<k$ (which vanish whe
 the term with $i=k$ (the first inside the square brackets), and those with $i>k$; in the second line, 
 the terms are differentiated and $s_{j}$ factors are taken out. When the expectation is maximised, this partial 
 derivative will be zero for each $1\leq k\leq n$. We can assume that $s_{j}\neq 0$ for all $j\neq n$ - in other 
-words, for any non-final date, the strategy always assigns a non-zero probability to waiting for a future date. 
+words, for any non-final date, the strategy always assigns a non-zero probability to waiting for a future date.
+
 
 Letting $\tilde{s}_{i}$ be expectation-maximising values of the thresholds, 
 we obtain a recurrence relation:
@@ -139,6 +165,8 @@ $$
 
 Therefore, the recurrence relation is first order, meaning the value of each $\tilde{s}\_{i}$ can 
 be computed directly from a single successive value $\tilde{s}\_{i+1}$. 
+
+-->
 
 At first glance, this recurrence relation is not particular familiar; however, by performing 
 the substitution $t_{k}=\frac{1}{2}(1-\tilde{s}_{n-k})$, we obtain
