@@ -1,3 +1,4 @@
+
 ---
 title: "Animal Crossing Turnip Market - When to sell?"
 header:
@@ -194,6 +195,8 @@ value as $i\rightarrow\infty$ for various values of $r$, the reproductive parame
 </em>
 </p>
 
+### Numerical solution: Uniformly distributed quotes
+
 This recurrence relation can be solved numerically using a simple python function:
 
 ```python
@@ -294,6 +297,8 @@ When making the decision whether to accept, you are comparing the offered price 
 the expected price you hope to receive by waiting. Therefore, the threshold value is
 exactly the expected value of the strategy over the remaining $n$ days - any price less
 than this can be expected to be beaten (in the probabilistic sense) in the future.
+
+### An approximate solution: Uniformly distributed quotes
 
 In fact, it is not terribly hard to obtain some reasonably strong bounds on the sequence. First, note that defining $r_{i} = 1/t_{i}$ for all $i$ the recurrence
 
@@ -491,7 +496,7 @@ print(f'giving an expected sold price of {expectation}')
 As mentioned earlier, the expected value of the strategy over 6 days is computed by
 finding the optimal threshold for the 7th day.
 
-### Exponentially distributed quotes
+### An approximate solution: Exponentially distributed quotes
 
 Suppose that $X_{1}, \ldots, X_{n}\sim\text{Exp}(\lambda)$ are iid. Then the optimal threshold values are given by
 
@@ -534,6 +539,135 @@ In particular we see that
 $$
 \tilde{s}_0 = (1 + O(1/n))\log{n}.
 $$
+
+## An approximate solution for an arbitrary non-negative distribution
+
+Recall that the optimal thresholds are the solutions to the backwards first order recurrence
+
+$$
+\tilde{s}_{n} = 0
+$$
+
+and
+
+$$
+\tilde{s}_{k} = \tilde{s}_{k+1} + \int_{\tilde{s}_{k+1}}^{\infty}\bar{F}(x)dx
+$$
+
+for $0\leq k < n$.
+
+Or equivalently, writing $\varphi(s) = \int_{s}^{\infty}\bar{F}(x)dx$
+
+$$
+\tilde{e}_{0} = 0
+$$
+
+and
+
+$$
+\tilde{e}_{i+1} = \tilde{e}_{i} + \varphi(\tilde{e}_{i})
+$$
+
+for $0\leq i < n$.
+
+### A "continuized" system
+
+Presented with such a non-linear recurrence, it's interesting to consider if there is anything to be learned from the "continuized" system:
+
+$$
+e'(t) = \varphi(e(t))
+$$
+
+for $t\geq 0$ and $e(0) = 0$. Our system is simply the approximant to this continuous system given by the Euler method (with a step size of one). With this in mind we define
+
+$$
+\Phi(t) = \int_0^t \frac{1}{\varphi(\zeta)}d\zeta
+$$
+
+noting that $e(t) = \Phi^{-1}(t)$ is the solution to the continuized system.
+
+### A lower bound
+
+We will estimate $e_i$ by considering the quantity
+
+$$
+\Phi(e_{i+1}) - \Phi(e_i).
+$$
+
+First, we will show that $\Phi(t + \varphi(t)) - \Phi(t)\geq 1$ for any $t\geq 0$. Note that since $e_{i+1} = e_i + \varphi(e_i)$, this implies that
+
+$$
+\begin{align}
+\Phi(e_i) &= \sum_{j=0}^{i-1}\Phi(e_{j+1}) - \Phi(e_j)\\
+&\geq i
+\end{align}
+$$
+
+and so $e_i\geq \Phi^{-1}(i)$.
+
+In fact this follows immediately since
+
+$$
+\begin{align}
+\Phi(t + \varphi(t)) - \Phi(t) &= \int_t^{t+\varphi(t)}1/\varphi(\zeta)d\zeta\\
+&\geq \varphi(t)\min_{t\leq\zeta\leq t+\varphi(t)}1/\varphi(\zeta)\\
+&\geq 1
+\end{align}
+$$
+
+as $\varphi(\zeta)$ being decreasing ensures $1/\varphi(\zeta)$ is increasing.
+
+In the other direction
+
+$$
+\begin{align}
+\Phi(t + \varphi(t)) - \Phi(t) &= \int_t^{t+\varphi(t)}1/\varphi(\zeta)d\zeta\\
+&\leq \varphi(t)\max_{t\leq\zeta\leq t+\varphi(t)}1/\varphi(\zeta)\\
+&\leq \varphi(t)/\varphi(t+\varphi(t))
+\end{align}
+$$
+
+Now, since $\frac{d}{dt}\varphi(t) = -\bar{F}(x)$ and the cdf is increasing, by IVT we have $\varphi(t+\varphi{t})-\varphi(t)\geq -\varphi(t)\bar{F}(t)$ and so $\varphi(t+\varphi(t))\geq\varphi(t)F(t)$ and in particular
+
+$$
+\Phi(e_{i+1}) - \Phi(e_i) \leq 1/F(e_i).
+$$
+
+From this it's just a small jump to a decent upper bound in terms of $i$. Writing $\alpha = E(\Phi(X))$ we have
+
+$$
+\begin{align}
+\bar{F}(e_i) &= P(X\geq e_i)\\
+&= P(\Phi(X)\geq \Phi(e_i))\\
+&\leq P(\Phi(X)\geq i)\\
+&\leq \frac{\alpha}{i}
+\end{align}
+$$
+
+where the first inequality follows since $\Phi(e_i)\geq i$, and the second by Markov's inequality. This in turn gives 
+
+$$
+\begin{align}
+\frac{1}{F(e_i)} &\leq \frac{1}{1-\frac{\alpha}{i}}\\
+&\leq 1 + O(\frac{1}{i})
+\end{align}
+$$
+
+for an implicit constant depending only upon $\alpha$. Therefore we have 
+
+$$
+\begin{align}
+\Phi(e_i) &= \sum_{i=0}^{n-1}\Phi(e_{i+1}) - \Phi(e_i)\\
+&\leq \sum_{j=1}^i 1 + O(1/j)\\
+&\leq i + O(\log{i}).
+\end{align}
+$$
+
+Putting this all together we see that $\Phi(e_n) = n + O(\log{n})$ and so $e_n = \Phi^{-1}(n + O(\log{n}))$. All this is to say that the solutions to the discrete and continuized systems are indeed quite closely related.
+
+
+
+
 
 ## The Oracle and perfect play
 
