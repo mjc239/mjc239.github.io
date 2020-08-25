@@ -1,17 +1,18 @@
-
 ---
-title: "Animal Crossing Turnip Market - When to sell?"
+title: "Animal Crossing Turnip Market -- When to sell?"
 header:
     image: assets/images/turniproom.jpeg
 toc: true
 toc_label: "Contents:"
 tags:
-  - probability
+ - probability
 ---
 
 {% include mathjax.html %}
 
 This post is written in collaboration with [Jack Bartley](http://jackbartley.com/), while playing [Animal Crossing New Horizons](https://www.youtube.com/watch?v=5LAKjL3p6Gw). 
+
+# Post 1: Turnip Mania
 
 ## Turnip Mania
 
@@ -30,73 +31,99 @@ One of the first questions we can ask is the following: if we know the distribut
 
 ## An instructive example: Uniformly distributed quotes
 
-The easiest distribution to consider is the uniform distribution - specifically, assume that on each selling day, Timmy and Tommy offer a price that is uniformly distributed over some interval.
+## An instructive example revisited: Uniformly distributed quotes
 
-Let $X_{1}, ..., X_{n}\sim U[0, 1]$ be 
-[iid](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables) random variables, representing the price offered at time $i$, and suppose that the turnips spoil before another price is offered. Let $S$ be the price the turnips are sold at.
+The easiest distribution to consider is the uniform distribution -- specifically, assume that on each selling day, Timmy and Tommy offer a price that is uniformly distributed over some interval.
+
+Let $X\_{1}, ..., X\_{n}\sim U[0, 1]$ be 
+[iid](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables) random variables, representing the price offered at time $i$, and suppose that the turnips spoil before another price is offered.
 
 Consider the following strategy:
 
 <p align="center">
-Sell at time $i$ if $X_{i}\geq s_{i}$.
+Sell at time $i$ if $X_{i}\geq s_{i}$
 </p>
 
-Put simply, on each day there is a threshold value $s_{i}$ which represents the minimum price at which we will be prepared to sell for on that day. For example, as we need to sell the turnips before they spoil, we should expect to accept any price at time $t=n$; in other words, an optimal strategy should have $s_{n}=0$. 
+and write $S$ for the price the turnips are consequently sold at.
 
-Let $\tau$ be the time at which we sell, that is $\tau = \min i:X_{i}\geq s_{i}$. Then, by the law of total expectation, we see that for any $i$, we have
+Put simply, on each day there is a threshold $s\_{i}$ which represents the minimum price at which we would be prepared to sell on that day. For example, as we need to sell the turnips before they spoil, we should accept any price at time $t=n$; in other words, the optimal such strategy should have $s\_{n}=0$. 
+
+Let $\tau$ be the time at which we sell, that is $\tau = \min\\{ i:X\_{i}\geq s\_{i}\\}$. Then, by the law of total expectation, we see that for any $i$, we have
 
 $$
 E(S) = E(S|\tau < i)P(\tau < i) + E(S|\tau \geq i)P(\tau \geq i).
 $$
 
-Note that $E(S:\tau < i)$, $P(\tau < i)$ and $P(\tau \geq i)$ depend only upon $s_{1}, \ldots, s_{i - 1}$, whereas $E(S:\tau \geq i)$ depends only upon $s_{i}, \ldots, s_{n}$. Therefore, the optimal choice of $s_{i}$ depends only upon $s_{i + 1}, \ldots, s_{n}$. Indeed, it suffices to choose $s_{i}$ so as to maximise $E(S:\tau \geq i)$.
+Note that $E(S\|\tau < i)$, $P(\tau < i)$ and $P(\tau \geq i)$ depend only upon $s\_{1}, \ldots, s\_{i - 1}$, whereas $E(S\|\tau \geq i)$ depends only upon $s\_{i}, \ldots, s\_{n}$. Therefore, the optimal choice of $s\_{i}$ depends only upon $s\_{i + 1}, \ldots, s\_{n}$. Indeed, it suffices to choose $s\_{i}$ so as to maximise $E(S\|\tau \geq i)$.
 
 Next,
 
 $$
-E(S|\tau \geq i) = E(X_i:X_i\geq s_i)P(X_i\geq s_i) + E(S:X_i < s_i)P(X_i < s_i).
+\begin{align}
+E(S|\tau \geq i) &= E(S|\tau = i)P(\tau = i | \tau \geq i) + E(S|\tau > i)P(\tau>i|\tau\geq i)\\
+	&= E(X_i|X_i\geq s_i)P(X_i\geq s_i) + E(S|\tau>i)P(X_i < s_i).
+\end{align}
 $$
 
-Now since $E(X_{i}:X_{i}\geq s_{i}) = \frac{1}{2}(1+s_{i})$ and $P(X_i\geq s_i) = 1 - s_{i}$ we have 
+Now since $E(X\_{i}\|X\_{i}\geq s\_{i}) = \frac{1}{2}(1+s\_{i})$ and $P(X\_i\geq s\_i) = 1 - s\_{i}$ we have 
 
 $$
-E(S|\tau \geq i) = \frac{1}{2}(1 - s_i^2) + s_i E(S:X_i < s_i).
+E(S|\tau \geq i) = \frac{1}{2}(1 - s_i^2) + s_i E(S|\tau > i).
 $$
 
-Clearly this is maximised when $s_i = E(S:X_i < s_i)$. Write $\tilde{s}_i$ for this optimal threshold value. Then we see that
+Writing $\tilde{s}\_i$ for the optimal choice of $s_i$, we then have
 
 $$
-\tilde{s}_i = E(S:X_i < s_i)
+\tilde{s}_i = E(S|X_i < s_i)
 $$
 
-where, as noted earlier, the right hand expression depends only upon $s_{i + 1}, \ldots, s_n$. Define $e_{n-j}$ to be the expected return of the strategy
+where, as noted earlier, the right hand expression depends only upon $s\_{i + 1}, \ldots, s\_n$. 
 
-<p align="center">
-Sell at time $i > j$ if $X_{i}\geq s_{i}$.
-</p>
-
-That is, the expected return, were we to see all but the first $j$ prices. Moreover, writing $\tilde{e}_{n - j}$ for the expected return of this strategy with the optimal thresholds, we see that $E(S:X_{i} < s_{i}) = e_{n - i}$ and this gives the recurrence:
+Now define $\tilde{e}\_n$ to be the expectation of the optimal strategy of this form when this game is played over $n$ days. Then noting that $E(S\|\tau > i)$ is simply the expectation of this game played over $n-j$ days with thresholds $s\_{i+1}, \ldots, s\_n$ we obtain the recurrence:
 
 $$
 \tilde{s}_i = \tilde{e}_{n - i}.
 $$
 
-This tells us that at time $n$ we should accept any price; at time $n - 1$ we should accept exactly the expected value of $X_n$; at time $n - 2$ we should settle for the exactly the expected value were we to pass on $X_{n - 2}$; and so on and so forth.
+<!--
 
-Indeed, it is possible to do one better and express the right hand side solely in terms of $\tilde{s}_{i+1}$, and ultimately to find a recursive relationship between $\tilde{s}_{i}$ and $\tilde{s}_{i+1}$.
+Define $e\_{n-j}$ to be the expected return of the strategy
+
+<p align="center">
+Sell at time $i > j$ if $X_{i}\geq s_{i}$.
+</p>
+
+That is, the expected return, were we to see all but the first $j$ prices. Moreover, writing $\tilde{e}\_{n-j}$ for the expected return of this strategy with the optimal thresholds, we see that 
+
+$$
+E(S|X_{i}<s_{i})=e_{n-i}
+$$
+
+and this gives the recurrence:
+
+$$
+\tilde{s}_i = \tilde{e}_{n - i}.
+$$
+
+-->
+
+This tells us that at time $n$ we should accept any price; at time $n - 1$ we should accept exactly the expected value of $X\_n$; at time $n - 2$ we should settle for exactly the expected return of our strategy were we to pass on $X\_{n - 2}$ and play on for the final two days; and so on and so forth.
+
+Indeed, it is possible to do one better and express the right hand side (that is, $\tilde{e}\_{n-i}$) solely in terms of $\tilde{s}\_{i+1}$, finding a recursive relationship between $\tilde{s}\_{i}$ and $\tilde{s}\_{i+1}$ alone.
 
 
 Again, using the total law of expectation we see that
 
 $$
 \begin{align}
-\tilde{e}_{n - i} &= E(X_{i + 1}:X_{i + 1}\geq \tilde{s}_{i + 1})P(X_{i + 1}\geq \tilde{s}_{i + 1}) + E(S:X_{i + 1} < \tilde{s}_{i + 1})P(X_{i + 1} < \tilde{s}_{i + 1})\\
-&= \frac{1}{2}(1 - \tilde{s}_{i + 1}^2) + \tilde{s}_{i + 1}^2\\
-&= \frac{1}{2}(1 + \tilde{s}_{i + 1}^2)
+\tilde{e}_{n - i} &= E(S|\tau = i + 1)P(\tau = i + 1 | \tau > i) + E(S| \tau > i + 1)P( \tau > i + 1 | \tau > i)\\
+	&= E(X_{i + 1}|X_{i + 1}\geq \tilde{s}_{i + 1})P(X_{i + 1}\geq \tilde{s}_{i + 1}) + E(S|X_{i + 1} < \tilde{s}_{i + 1})P(X_{i + 1} < \tilde{s}_{i + 1})\\
+	&= \frac{1}{2}(1 - \tilde{s}_{i + 1}^2) + \tilde{s}_{i + 1}^2\\
+	&= \frac{1}{2}(1 + \tilde{s}_{i + 1}^2)
 \end{align}
 $$
 
-where in the second inequality we make critial use of the fact that $E(X_{i+1}:X_{i+1}\geq\tilde{s}_{i+1})=\frac{1}{2}(1+\tilde{s}_{i + 1})$ and $E(S:X_{i + 1} < \tilde{s}_{i + 1}) = \tilde{s}_{i + 1}$.
+where in the third equality we make critial use of the fact that $E(X\_{i+1}\|X\_{i+1}\geq\tilde{s}\_{i+1})=\frac{1}{2}(1+\tilde{s}\_{i + 1})$ and $E(S\|X\_{i + 1} < \tilde{s}\_{i + 1}) = \tilde{s}\_{i + 1}$.
 
 <!--
 For the uniform distribution we have $P\left(S_i\right)=1-s_{i}$, and all the quotes $X_{i}$ are iid, so we have
@@ -170,7 +197,7 @@ be computed directly from a single successive value $\tilde{s}\_{i+1}$.
 -->
 
 At first glance, this recurrence relation is not particular familiar; however, by performing 
-the substitution $t_{k}=\frac{1}{2}(1-\tilde{s}_{n-k})$, we obtain
+the substitution $t\_{k}=\frac{1}{2}(1-\tilde{s}\_{n-k})$, we obtain
 
 $$
 t_{i+1} = t_{i}(1-t_{i}), \quad t_{0} = \frac{1}{2}
@@ -178,10 +205,10 @@ $$
 
 Hopefully, this rings some bells! It should be familiar to any first year undergraduates as 
 a special case of the __logistic map__, with reproductive parameter $r=1$, and initial 
-value $t_{0}=\frac{1}{2}$. This recurrence relation is often first encountered when 
+value $t\_{0}=\frac{1}{2}$. This recurrence relation is often first encountered when 
 considering the dynamics of a population of animals living in an environment with limited 
 resources, and is often used as an introduction to chaos theory. In this context, it suffices 
-to say that for this choice of reproductive parameter, $t_{i}$ is decreasing as $i$ increases, 
+to say that for this choice of reproductive parameter, $t\_{i}$ is decreasing as $i$ increases, 
 and gets arbitrarily close to $0$ for sufficiently large $i$. If there are a large number of 
 days over which prices can be tracked, then over the first few days the price needs to be very 
 high in order to tempt the seller!
@@ -300,7 +327,7 @@ than this can be expected to be beaten (in the probabilistic sense) in the futur
 
 ### An approximate solution: Uniformly distributed quotes
 
-In fact, it is not terribly hard to obtain some reasonably strong bounds on the sequence. First, note that defining $r_{i} = 1/t_{i}$ for all $i$ the recurrence
+In fact, it is not terribly hard to obtain some reasonably strong bounds on the sequence. First, note that defining $r\_{i} = 1/t\_{i}$ for all $i$ the recurrence
 
 $$
 t_{i+1} = t_{i}(1-t_{i}), \quad t_{0} = \frac{1}{2}
@@ -312,13 +339,13 @@ $$
 r_{i+1} = r_{i} + 1 + \frac{1}{r_{i}-1}, \quad r_{0} = 2.
 $$
 
-Thus $r_{i+1}\geq r_{i} + 1$ for $i > 0$ (since we certainly have $r_{i}> 1$ for all $i$) and we get the lower bound 
+Thus $r\_{i+1}\geq r\_{i} + 1$ for $i > 0$ (since we certainly have $r\_{i}> 1$ for all $i$) and we get the lower bound 
 
 $$
 r_{i}\geq i + 2
 $$
 
-for all $i$. In the other direction, since we now have $r_{i} - 1\geq i + 1$ for all $i$, we have $r_{i+1}\leq r_{i} + 1 + \frac{1}{i + 1}$ for $i > 0$, and thus obtain the upper bound 
+for all $i$. In the other direction, since we now have $r\_{i} - 1\geq i + 1$ for all $i$, we have $r\_{i+1}\leq r\_{i} + 1 + \frac{1}{i + 1}$ for $i > 0$, and thus obtain the upper bound 
 
 $$
 r_{i}\leq i + 2  + \sum_{j = 1}^{n}\frac{1}{j}
@@ -336,23 +363,23 @@ $$
 t_{i} = \frac{1}{i + 2  + O(\log{i})}
 $$
 
-and (recalling that $t_{k}=\frac{1}{2}(1-\tilde{s}_{n-k})$)
+and (recalling that $t\_{k}=\frac{1}{2}(1-\tilde{s}\_{n-k})$)
 
 $$
 s_{i} = 1 - \frac{2}{n - i + 2  + O(\log{n - i})}.
 $$
 
 
-Also, we have assumed the daily quoted prices $X_{i}$ have been uniformly distributed over $[0, 1]$. 
+Also, we have assumed the daily quoted prices $X\_{i}$ have been uniformly distributed over $[0, 1]$. 
 The results derived above extend easily to the case of a uniform distribution over and arbitary 
-interval $[a, b]$, by linear scaling - specifically, by letting $Y_{i} = a + (b-a)X_{i}$.
+interval $[a, b]$, by linear scaling - specifically, by letting $Y\_{i} = a + (b-a)X\_{i}$.
 
 ## Quotes with an arbitrary distribution
 
 What about more general distributions? In particular, if the distribution is known for prices $x>0$, 
-what can we infer about the optimal threshold values $\tilde{s}_{i}$?
+what can we infer about the optimal threshold values $\tilde{s}\_{i}$?
 
-Let $f(x),\, x\in [0, \infty)$ be the probability density function of the daily quotes $X_{i}$, with 
+Let $f(x),\, x\in [0, \infty)$ be the probability density function of the daily quotes $X\_{i}$, with 
 corresponding cumulative density function $F(x)$. The expected sold price takes the same form as given earlier:
 
 $$
@@ -385,9 +412,9 @@ E(X) = \sum_{i=1}^{n}\left[\int_{s_{i}}^{\infty}xf(x)dx\right]\prod_{i<j}F(s_{j}
 $$
 
 So we have an expression for the expected price in terms of the fixed distribution functions $f, F$ and
-the threshold values $\{s_{i}\}$. To maximise the expected price, we do as we did before and find the
+the threshold values $\{s\_{i}\}$. To maximise the expected price, we do as we did before and find the
 stationary point of the expectation. The steps follow the same logic as for the uniform case, and give a set
- of equations for the optimal threshold values $\tilde{s}_{k}$.
+ of equations for the optimal threshold values $\tilde{s}\_{k}$.
 
 $$
 \begin{align}
@@ -396,10 +423,10 @@ $$
 \end{align}
 $$
 
-In this formula, $X_{0}$ has pdf $f(x)$, and this step is only done to avoid the computation of repeated infinite
+In this formula, $X\_{0}$ has pdf $f(x)$, and this step is only done to avoid the computation of repeated infinite
 integrals. 
 
-By integration by parts (or simply differentiating the right hand side with respect to $\tilde{s}_{k + 1}$) we obtain the following equivalent recurrence:
+By integration by parts (or simply differentiating the right hand side with respect to $\tilde{s}\_{k + 1}$) we obtain the following equivalent recurrence:
 
 $$
 \begin{align}
@@ -407,7 +434,7 @@ $$
 \end{align}
 $$
 
-In the case that the $X_{i}$ are non-negative, writing $\bar{F}(x) = 1 - F(x)$, we have
+In the case that the $X\_{i}$ are non-negative, writing $\bar{F}(x) = 1 - F(x)$, we have
 
 $$
 \begin{align}
@@ -498,19 +525,19 @@ finding the optimal threshold for the 7th day.
 
 ### An approximate solution: Exponentially distributed quotes
 
-Suppose that $X_{1}, \ldots, X_{n}\sim\text{Exp}(\lambda)$ are iid. Then the optimal threshold values are given by
+Suppose that $X\_{1}, \ldots, X\_{n}\sim\text{Exp}(\lambda)$ are iid. Then the optimal threshold values are given by
 
 $$
 \tilde{s}_{i} = \tilde{s}_{i + 1} + \lambda^{ - 1}e^{-\lambda \tilde{s}_{i + 1}}, \quad \tilde{s}_{n} = 0.
 $$
 
-Performing the substitution $t_{i}=e^{\lambda\tilde{s}_{n-i}}$, we obtain
+Performing the substitution $t\_{i}=e^{\lambda\tilde{s}\_{n-i}}$, we obtain
 
 $$
 t_{i+1} = t_{i}e^{1/t_{i}}, \quad t_{0} = 1.
 $$
 
-Now note that $1 + x\leq e^x \leq 1 + x + x^2$ for $x\leq 1$ (indeed, $(e^x - 1 - x)/x^2$ is increasing for $x\leq 1$). Thus since we clearly have $t_i\geq 1$ for all $i$, we have
+Now note that $1 + x\leq e^x \leq 1 + x + x^2$ for $x\leq 1$ (indeed, $(e^x - 1 - x)/x^2$ is increasing for $x\leq 1$). Thus since we clearly have $t\_i\geq 1$ for all $i$, we have
 
 $$
 t_{i+1} \geq t_{i} + 1
@@ -522,7 +549,7 @@ $$
 t_{i+1} \leq t_{i} + 1 + 1/t_{i}.
 $$
 
-Then, much as before, the first gives $t_i\geq i + 1$ and the latter $t_i\leq i + 1 + H_i$. Putting this all together we see that
+Then, much as before, the first gives $t\_i\geq i + 1$ and the latter $t\_i\leq i + 1 + H\_i$. Putting this all together we see that
 
 $$
 t_i = i + O(\log{i})
@@ -588,13 +615,13 @@ noting that $e(t) = \Phi^{-1}(t)$ is the solution to the continuized system.
 
 ### A lower bound
 
-We will estimate $e_i$ by considering the quantity
+We will estimate $e\_i$ by considering the quantity
 
 $$
 \Phi(e_{i+1}) - \Phi(e_i).
 $$
 
-First, we will show that $\Phi(t + \varphi(t)) - \Phi(t)\geq 1$ for any $t\geq 0$. Note that since $e_{i+1} = e_i + \varphi(e_i)$, this implies that
+First, we will show that $\Phi(t + \varphi(t)) - \Phi(t)\geq 1$ for any $t\geq 0$. Note that since $e\_{i+1} = e\_i + \varphi(e\_i)$, this implies that
 
 $$
 \begin{align}
@@ -603,7 +630,7 @@ $$
 \end{align}
 $$
 
-and so $e_i\geq \Phi^{-1}(i)$.
+and so $e\_i\geq \Phi^{-1}(i)$.
 
 In fact this follows immediately since
 
@@ -644,7 +671,7 @@ $$
 \end{align}
 $$
 
-where the first inequality follows since $\Phi(e_i)\geq i$, and the second by Markov's inequality. This in turn gives 
+where the first inequality follows since $\Phi(e\_i)\geq i$, and the second by Markov's inequality. This in turn gives 
 
 $$
 \begin{align}
@@ -663,11 +690,11 @@ $$
 \end{align}
 $$
 
-Putting this all together we see that $\Phi(e_n) = n + O(\log{n})$ and so $e_n = \Phi^{-1}(n + O(\log{n}))$. All this is to say that the solutions to the discrete and continuized systems are indeed quite closely related.
+Putting this all together we see that $\Phi(e\_n) = n + O(\log{n})$ and so $e\_n = \Phi^{-1}(n + O(\log{n}))$. All this is to say that the solutions to the discrete and continuized systems are indeed quite closely related.
 
 
 
-
+# Post 4: The Oracle 
 
 ## The Oracle and perfect play
 
@@ -675,7 +702,7 @@ Even with perfect information of the prices to come, there is evidently only so 
 
 ### A simple expression for the expectation of the maximum (for non-negative quotes)
 
-Given $X_{1}, \ldots, X_{n}$ iid, we write $X_{(1)}, \ldots, X_{(n)}$ for the [order statistics](https://en.wikipedia.org/wiki/Order_statistic), noting that $X_{(n)} = \max_i X_{i}$. Now since
+Given $X\_{1}, \ldots, X\_{n}$ iid, we write $X\_{(1)}, \ldots, X\_{(n)}$ for the [order statistics](https://en.wikipedia.org/wiki/Order_statistic), noting that $X\_{(n)} = \max\_i X\_{i}$. Now since
 
 $$
 \begin{align}
@@ -693,7 +720,7 @@ $$
 
 ### The Oracle: uniform quotes
 
-Suppose $X_{1}, \ldots, X_{n}\sim\text{U}[0, 1]$ are iid. Then
+Suppose $X\_{1}, \ldots, X\_{n}\sim\text{U}[0, 1]$ are iid. Then
 
 $$
 \begin{align}
@@ -710,7 +737,7 @@ $$
 
 ### The Oracle: exponential quotes
 
-Suppose $X_{1}, \ldots, X_{n}\sim\text{Exp}(\lambda)$ are iid. Then
+Suppose $X\_{1}, \ldots, X\_{n}\sim\text{Exp}(\lambda)$ are iid. Then
 
 $$
 E(X_{(n)}) = \int_0^\infty 1 - (1 - e^{ - \lambda x})^n dx.
