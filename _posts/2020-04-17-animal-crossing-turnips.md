@@ -16,7 +16,7 @@ This post is written in collaboration with [Jack Bartley](http://jackbartley.com
 
 ## Turnip Mania
 
-In the game, one of the fastest ways of earning bells (the in game currency) and pay off your mortgage to Tom Nook is through the __Stalk Market__; essentially, this involves speculating on the price of turnips (chosen because the Japanese word for turnip, 蕪 (kabu) is pronounced in the same way as 株 (kabu), the word for stock).
+In the game, one of the fastest ways of earning bells (the in game currency) and pay off your mortgage to Tom Nook is through the __Stalk Market__; essentially, this involves speculating on the price of turnips (chosen because the Japanese word for turnip, èª (kabu) is pronounced in the same way as æ ª (kabu), the word for stock).
 
 So how does it work? The way in which turnips can be used to make a profit (or loss!) is as follows:
 -  Every Sunday, a character called Daisy Mae can be found wandering around the island. She will offer to sell the player turnips at a randomly chosen (integer between 90 and 110) base price. 
@@ -31,169 +31,7 @@ One of the first questions we can ask is the following: if we know the distribut
 
 ## An instructive example: Uniformly distributed quotes
 
-## An instructive example revisited: Uniformly distributed quotes
-
-The easiest distribution to consider is the uniform distribution -- specifically, assume that on each selling day, Timmy and Tommy offer a price that is uniformly distributed over some interval.
-
-Let $X\_{1}, ..., X\_{n}\sim U[0, 1]$ be 
-[iid](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables) random variables, representing the price offered at time $i$, and suppose that the turnips spoil before another price is offered.
-
-Consider the following strategy:
-
-<p align="center">
-Sell at time $i$ if $X_{i}\geq s_{i}$
-</p>
-
-and write $S$ for the price the turnips are consequently sold at.
-
-Put simply, on each day there is a threshold $s\_{i}$ which represents the minimum price at which we would be prepared to sell on that day. For example, as we need to sell the turnips before they spoil, we should accept any price at time $t=n$; in other words, the optimal such strategy should have $s\_{n}=0$. 
-
-Let $\tau$ be the time at which we sell, that is $\tau = \min\\{ i:X\_{i}\geq s\_{i}\\}$. Then, by the law of total expectation, we see that for any $i$, we have
-
-$$
-E(S) = E(S|\tau < i)P(\tau < i) + E(S|\tau \geq i)P(\tau \geq i).
-$$
-
-Note that $E(S\|\tau < i)$, $P(\tau < i)$ and $P(\tau \geq i)$ depend only upon $s\_{1}, \ldots, s\_{i - 1}$, whereas $E(S\|\tau \geq i)$ depends only upon $s\_{i}, \ldots, s\_{n}$. Therefore, the optimal choice of $s\_{i}$ depends only upon $s\_{i + 1}, \ldots, s\_{n}$. Indeed, it suffices to choose $s\_{i}$ so as to maximise $E(S\|\tau \geq i)$.
-
-Next,
-
-$$
-\begin{align}
-E(S|\tau \geq i) &= E(S|\tau = i)P(\tau = i | \tau \geq i) + E(S|\tau > i)P(\tau>i|\tau\geq i)\\
-	&= E(X_i|X_i\geq s_i)P(X_i\geq s_i) + E(S|\tau>i)P(X_i < s_i).
-\end{align}
-$$
-
-Now since $E(X\_{i}\|X\_{i}\geq s\_{i}) = \frac{1}{2}(1+s\_{i})$ and $P(X\_i\geq s\_i) = 1 - s\_{i}$ we have 
-
-$$
-E(S|\tau \geq i) = \frac{1}{2}(1 - s_i^2) + s_i E(S|\tau > i).
-$$
-
-Writing $\tilde{s}\_i$ for the optimal choice of $s_i$, we then have
-
-$$
-\tilde{s}_i = E(S|X_i < s_i)
-$$
-
-where, as noted earlier, the right hand expression depends only upon $s\_{i + 1}, \ldots, s\_n$. 
-
-Now define $\tilde{e}\_n$ to be the expectation of the optimal strategy of this form when this game is played over $n$ days. Then noting that $E(S\|\tau > i)$ is simply the expectation of this game played over $n-j$ days with thresholds $s\_{i+1}, \ldots, s\_n$ we obtain the recurrence:
-
-$$
-\tilde{s}_i = \tilde{e}_{n - i}.
-$$
-
-<!--
-
-Define $e\_{n-j}$ to be the expected return of the strategy
-
-<p align="center">
-Sell at time $i > j$ if $X_{i}\geq s_{i}$.
-</p>
-
-That is, the expected return, were we to see all but the first $j$ prices. Moreover, writing $\tilde{e}\_{n-j}$ for the expected return of this strategy with the optimal thresholds, we see that 
-
-$$
-E(S|X_{i}<s_{i})=e_{n-i}
-$$
-
-and this gives the recurrence:
-
-$$
-\tilde{s}_i = \tilde{e}_{n - i}.
-$$
-
--->
-
-This tells us that at time $n$ we should accept any price; at time $n - 1$ we should accept exactly the expected value of $X\_n$; at time $n - 2$ we should settle for exactly the expected return of our strategy were we to pass on $X\_{n - 2}$ and play on for the final two days; and so on and so forth.
-
-Indeed, it is possible to do one better and express the right hand side (that is, $\tilde{e}\_{n-i}$) solely in terms of $\tilde{s}\_{i+1}$, finding a recursive relationship between $\tilde{s}\_{i}$ and $\tilde{s}\_{i+1}$ alone.
-
-
-Again, using the total law of expectation we see that
-
-$$
-\begin{align}
-\tilde{e}_{n - i} &= E(S|\tau = i + 1)P(\tau = i + 1 | \tau > i) + E(S| \tau > i + 1)P( \tau > i + 1 | \tau > i)\\
-	&= E(X_{i + 1}|X_{i + 1}\geq \tilde{s}_{i + 1})P(X_{i + 1}\geq \tilde{s}_{i + 1}) + E(S|X_{i + 1} < \tilde{s}_{i + 1})P(X_{i + 1} < \tilde{s}_{i + 1})\\
-	&= \frac{1}{2}(1 - \tilde{s}_{i + 1}^2) + \tilde{s}_{i + 1}^2\\
-	&= \frac{1}{2}(1 + \tilde{s}_{i + 1}^2)
-\end{align}
-$$
-
-where in the third equality we make critial use of the fact that $E(X\_{i+1}\|X\_{i+1}\geq\tilde{s}\_{i+1})=\frac{1}{2}(1+\tilde{s}\_{i + 1})$ and $E(S\|X\_{i + 1} < \tilde{s}\_{i + 1}) = \tilde{s}\_{i + 1}$.
-
-<!--
-For the uniform distribution we have $P\left(S_i\right)=1-s_{i}$, and all the quotes $X_{i}$ are iid, so we have
-
-$$
-\begin{equation}
-P\left(S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right) = (1-s_{i})\prod_{j<i}s_{j}
-\end{equation}
-$$
-
-Also, the expected value of $X_{i}$ is independent of any other quote, so the conditional expectation simplifies:
-
-$$
-\begin{align}
-E\left(X_{i}\;\middle|\; S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right) &= E\left(X_{i}\;\middle|\;S_{i}\right) \\
-&= \frac{1}{2}\left(1+s_{i}\right)
-\end{align}
-$$
-
-Putting this together,
-
-$$
-E(X) = \sum_{i=1}^{n}\frac{1}{2}(1-s_{i}^{2})\prod_{j<i}s_{j}
-$$
-
-We seek to maximise this expectation with respect the strategy values $s_{i}$. 
-This can be done by differentiating:
-
-$$
-\begin{align}
-\frac{\partial}{\partial s_{k}}E(X) &= \frac{\partial}{\partial s_{k}}\left[\frac{1}{2}(1-s_{k}^{2})\prod_{j<k}s_{j} + \sum_{i>k}\frac{1}{2}(1-s_{i}^{2})\prod_{j<i}s_{j}\right] \\
-&= \prod_{j<k}s_{j}\left[-s_{k} + \frac{1}{2}\sum_{i>k}(1-s_{i}^{2})\prod_{k<j<i}s_{j}\right]
-\end{align}
-$$
-
-where in the first line the sum is split into terms with $i<k$ (which vanish when hit by the derivative), 
-the term with $i=k$ (the first inside the square brackets), and those with $i>k$; in the second line, 
-the terms are differentiated and $s_{j}$ factors are taken out. When the expectation is maximised, this partial 
-derivative will be zero for each $1\leq k\leq n$. We can assume that $s_{j}\neq 0$ for all $j\neq n$ - in other 
-words, for any non-final date, the strategy always assigns a non-zero probability to waiting for a future date.
-
-
-Letting $\tilde{s}_{i}$ be expectation-maximising values of the thresholds, 
-we obtain a recurrence relation:
-
-$$
-\begin{equation}
-\tilde{s}_{k} = \frac{1}{2}\sum_{i>k}(1-\tilde{s}_{i}^{2})\prod_{k<j<i}\tilde{s}_{j}
-\end{equation}
-$$
-
-This is a recurrence relation allowing the calculation of $\tilde{s}\_{k}$, given the values of 
-$\\{\tilde{s}\_{k+1},...,\tilde{s}\_{n}\\}$. This, along with the observation that $\tilde{s}\_{n}=0$
-(as on the final day, the turnips __must__ be sold whatever the quoted price, otherwise they 
-will spoil and become worthless) allows the computation of all of the optimal threshold values. 
-
-In fact, this recurrence relation can be simplified by observing that a factor of 
-$\tilde{s}_{k+1}$ can be identified:
-
-$$
-\begin{align}
-\tilde{s}_{k} &= \left(\frac{1}{2}\sum_{i>k+1}(1-\tilde{s}_{i}^{2})\prod_{k+1<j<i}\tilde{s}_{j}\right)\tilde{s}_{k+1} + \frac{1}{2}(1-\tilde{s}_{k+1}^{2}) \\
-&= \left(\tilde{s}_{k+1}\right)\tilde{s}_{k+1} + \frac{1}{2}(1-\tilde{s}_{k+1}^{2}) \\
-&= \frac{1}{2}\left(1+\tilde{s}_{k+1}^{2}\right).
-\end{align}
-$$
-
-Therefore, the recurrence relation is first order, meaning the value of each $\tilde{s}\_{i}$ can 
-be computed directly from a single successive value $\tilde{s}\_{i+1}$. 
-
+<!--"Hands on" proof in uniform case goes here
 -->
 
 At first glance, this recurrence relation is not particular familiar; however, by performing 
@@ -222,7 +60,7 @@ value as $i\rightarrow\infty$ for various values of $r$, the reproductive parame
 </em>
 </p>
 
-### Numerical solution: Uniformly distributed quotes
+### Uniformly distributed quotes: a numerical solution
 
 This recurrence relation can be solved numerically using a simple python function:
 
@@ -325,7 +163,16 @@ the expected price you hope to receive by waiting. Therefore, the threshold valu
 exactly the expected value of the strategy over the remaining $n$ days - any price less
 than this can be expected to be beaten (in the probabilistic sense) in the future.
 
-### An approximate solution: Uniformly distributed quotes
+## Outstanding questions
+
+# Post 2: Non-uniform Turnips
+
+## Last time: Turnip mania
+
+<!--V. brief recap of set up
+Recap what was proven last time and what we'll cover in this post-->
+
+## An approximate solution: Uniformly distributed quotes
 
 In fact, it is not terribly hard to obtain some reasonably strong bounds on the sequence. First, note that defining $r\_{i} = 1/t\_{i}$ for all $i$ the recurrence
 
@@ -374,7 +221,92 @@ Also, we have assumed the daily quoted prices $X\_{i}$ have been uniformly distr
 The results derived above extend easily to the case of a uniform distribution over and arbitary 
 interval $[a, b]$, by linear scaling - specifically, by letting $Y\_{i} = a + (b-a)X\_{i}$.
 
-## Quotes with an arbitrary distribution
+## Carpe rāpum!: optimality and sticking to your guns
+
+<!-- Sketch proof that the optimal strategy is forgetful -->
+
+## Arbitrary (non-negative) turnips
+
+<!-- Intro to the arbitrary non-neg distribution case -->
+
+### An instructive example revisited: Uniformly distributed quotes
+
+The easiest distribution to consider is the uniform distribution -- specifically, assume that on each selling day, Timmy and Tommy offer a price that is uniformly distributed over some interval.
+
+Let $X\_{1}, ..., X\_{n}\sim U[0, 1]$ be 
+[iid](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables) random variables, representing the price offered at time $i$, and suppose that the turnips spoil before another price is offered.
+
+Consider the following strategy:
+
+<p align="center">
+Sell at time $i$ if $X_{i}\geq s_{i}$
+</p>
+
+and write $S$ for the price the turnips are consequently sold at.
+
+Put simply, on each day there is a threshold $s\_{i}$ which represents the minimum price at which we would be prepared to sell on that day. For example, as we need to sell the turnips before they spoil, we should accept any price at time $t=n$; in other words, the optimal such strategy should have $s\_{n}=0$. 
+
+Let $\tau$ be the time at which we sell, that is $\tau = \min\\{ i:X\_{i}\geq s\_{i}\\}$. Then, by the law of total expectation, we see that for any $i$, we have
+
+$$
+E(S) = E(S|\tau < i)P(\tau < i) + E(S|\tau \geq i)P(\tau \geq i).
+$$
+
+Note that $E(S\|\tau < i)$, $P(\tau < i)$ and $P(\tau \geq i)$ depend only upon $s\_{1}, \ldots, s\_{i - 1}$, whereas $E(S\|\tau \geq i)$ depends only upon $s\_{i}, \ldots, s\_{n}$. Therefore, the optimal choice of $s\_{i}$ depends only upon $s\_{i + 1}, \ldots, s\_{n}$. Indeed, it suffices to choose $s\_{i}$ so as to maximise $E(S\|\tau \geq i)$.
+
+Next,
+
+$$
+\begin{align}
+E(S|\tau \geq i) &= E(S|\tau = i)P(\tau = i | \tau \geq i) + E(S|\tau > i)P(\tau>i|\tau\geq i)\\
+	&= E(X_i|X_i\geq s_i)P(X_i\geq s_i) + E(S|\tau>i)P(X_i < s_i).
+\end{align}
+$$
+
+Now since $E(X\_{i}\|X\_{i}\geq s\_{i}) = \frac{1}{2}(1+s\_{i})$ and $P(X\_i\geq s\_i) = 1 - s\_{i}$ we have 
+
+$$
+E(S|\tau \geq i) = \frac{1}{2}(1 - s_i^2) + s_i E(S|\tau > i).
+$$
+
+Writing $\tilde{s}\_i$ for the optimal choice of $s_i$, we then have
+
+$$
+\tilde{s}_i = E(S|X_i < s_i)
+$$
+
+where, as noted earlier, the right hand expression depends only upon $s\_{i + 1}, \ldots, s\_n$. 
+
+Now define $\tilde{e}\_n$ to be the expectation of the optimal strategy of this form when this game is played over $n$ days. Then noting that $E(S\|\tau > i)$ is simply the expectation of this game played over $n-j$ days with thresholds $s\_{i+1}, \ldots, s\_n$ we obtain the recurrence:
+
+$$
+\tilde{s}_i = \tilde{e}_{n - i}.
+$$
+
+
+This tells us that at time $n$ we should accept any price; at time $n - 1$ we should accept exactly the expected value of $X\_n$; at time $n - 2$ we should settle for exactly the expected return of our strategy were we to pass on $X\_{n - 2}$ and play on for the final two days; and so on and so forth.
+
+Indeed, it is possible to do one better and express the right hand side (that is, $\tilde{e}\_{n-i}$) solely in terms of $\tilde{s}\_{i+1}$, finding a recursive relationship between $\tilde{s}\_{i}$ and $\tilde{s}\_{i+1}$ alone.
+
+
+Again, using the total law of expectation we see that
+
+$$
+\begin{align}
+\tilde{e}_{n - i} &= E(S|\tau = i + 1)P(\tau = i + 1 | \tau > i) + E(S| \tau > i + 1)P( \tau > i + 1 | \tau > i)\\
+	&= E(X_{i + 1}|X_{i + 1}\geq \tilde{s}_{i + 1})P(X_{i + 1}\geq \tilde{s}_{i + 1}) + E(S|X_{i + 1} < \tilde{s}_{i + 1})P(X_{i + 1} < \tilde{s}_{i + 1})\\
+	&= \frac{1}{2}(1 - \tilde{s}_{i + 1}^2) + \tilde{s}_{i + 1}^2\\
+	&= \frac{1}{2}(1 + \tilde{s}_{i + 1}^2)
+\end{align}
+$$
+
+where in the third equality we make critial use of the fact that $E(X\_{i+1}\|X\_{i+1}\geq\tilde{s}\_{i+1})=\frac{1}{2}(1+\tilde{s}\_{i + 1})$ and $E(S\|X\_{i + 1} < \tilde{s}\_{i + 1}) = \tilde{s}\_{i + 1}$.
+
+### Non-negative Turnips
+
+<!-- Below is the old version of the arbitrary distribution -->
+
+<!-- ## Quotes with an arbitrary distribution
 
 What about more general distributions? In particular, if the distribution is known for prices $x>0$, 
 what can we infer about the optimal threshold values $\tilde{s}\_{i}$?
@@ -441,89 +373,23 @@ $$
 \tilde{s}_{k} &= \tilde{s}_{k+1} + \int_{\tilde{s}_{k+1}}^{\infty}\bar{F}(x)dx.
 \end{align}
 $$
+-->
+ 
+### Arbitrary (non-negative) turnips: a recurrence
 
-### Numerical example: the Beta distribution
+<!-- Give the cleaner version of the recurrence -->
 
-Once again, we obtain a first order recurrence relation for the threshold values, which can be solved
-using a generalised version of the python function used earlier:
+## Outstanding questions
 
-```python
-def strat_thresholds_arb(n, f, F):
-    """Strategy thresholds for an arbitrary distribution
-    
-    Computes the threshold values of the optimal strategy, 
-    when prices are drawn from an arbitrary continuous 
-    distribution. The only restriction on the distribution 
-    is that the prices are assumed to be positive, so 
-    P(price < 0) = 0.
+# Post 3: Asymptotic Swede
 
-    Args:
-        n (int): Number of days over which prices are offered.
-        f (function): The pdf of the price distribution.
-        F (function): The cdf of the price distribution.
+(or is it Turnips?<sup>[1](#myfootnote1)</sup>)
 
-    Returns:
-        s (numpy.ndarray): vector of optimal strategy values.
-    """
-    exp_f = scipy.integrate.quad(lambda x: x*f(x), 
-                                 -np.inf, 
-                                 np.inf)[0]
-    s = np.zeros(n)
-    
-    for i in range(n-1):
-        s[i+1] = s[i]*F(s[i]) \
-                    + exp_f \
-                    - scipy.integrate.quad(lambda x: x*f(x), 
-                                           0, 
-                                           s[i])[0]
-    
-    s = s[::-1]
+## Last time: Non-uniform Turnips
 
-    return s
-```
+<!-- Brief recap -->
 
-This allows the optimal threshold values to be computed, given the pdf and cdf of the
-chosen price distribution. For example, consider the 
-[beta distribution](https://en.wikipedia.org/wiki/Beta_distribution) on the interval
-$[0, 1]$, with parameters $\alpha=\beta=2$. 
-
-<p>
-<img width="100%" alt="Beta Distribution pdf" src="/assets/images/beta_dist.png">
-<em>
-The pdf of the Beta distribution with $\alpha=\beta=2$, with support on the finite
-interval $[0, 1]$.
-</em>
-</p>
-
-```python
-a = 2
-b = 2
-from scipy.stats import beta
-f = lambda x: beta.pdf(x, a, b)
-F = lambda x: beta.cdf(x, a, b)
-
-thresholds_and_exp = strat_thresholds_arb(7, f, F)
-expectation = thresholds_and_exp[0]
-thresholds = thresholds_and_exp[1:]
-
-print(f'Thresholds are: ')
-for day, threshold in enumerate(thresholds):
-    print(f'Day {day+1}: {threshold}')
-print(f'giving an expected sold price of {expectation}')
-```
-    Thresholds are: 
-    Day 1: 0.7100732691913013
-    Day 2: 0.6833505390608796
-    Day 3: 0.6471781730651854
-    Day 4: 0.5937499999999999
-    Day 5: 0.4999999999999999
-    Day 6: 0.0
-    giving an expected sold price of 0.7309109556148288
-    
-As mentioned earlier, the expected value of the strategy over 6 days is computed by
-finding the optimal threshold for the 7th day.
-
-### An approximate solution: Exponentially distributed quotes
+## An approximate solution: Exponentially distributed quotes
 
 Suppose that $X\_{1}, \ldots, X\_{n}\sim\text{Exp}(\lambda)$ are iid. Then the optimal threshold values are given by
 
@@ -644,6 +510,8 @@ $$
 
 as $\varphi(\zeta)$ being decreasing ensures $1/\varphi(\zeta)$ is increasing.
 
+### An upper bound
+
 In the other direction
 
 $$
@@ -692,9 +560,9 @@ $$
 
 Putting this all together we see that $\Phi(e\_n) = n + O(\log{n})$ and so $e\_n = \Phi^{-1}(n + O(\log{n}))$. All this is to say that the solutions to the discrete and continuized systems are indeed quite closely related.
 
+<a name="myfootnote1">1</a>: Oddly enough there is a bit of a discrepancy in [what is meant by turnips in the UK](https://en.wikipedia.org/wiki/Turnip).
 
-
-# Post 4: The Oracle 
+# Post 4: "Turnip" Townshend<sup>[2](#myfootnote2)</sup> The Oracle
 
 ## The Oracle and perfect play
 
@@ -761,3 +629,86 @@ $$
 
 (see for example the Wikipedia entry for the [Euler-Mascheroni](https://en.wikipedia.org/wiki/Euler%E2%80%93Mascheroni_constant) though of course this is rather more than we need here).
 
+### Numerical example: the Beta distribution
+
+Once again, we obtain a first order recurrence relation for the threshold values, which can be solved
+using a generalised version of the python function used earlier:
+
+```python
+def strat_thresholds_arb(n, f, F):
+    """Strategy thresholds for an arbitrary distribution
+    
+    Computes the threshold values of the optimal strategy, 
+    when prices are drawn from an arbitrary continuous 
+    distribution. The only restriction on the distribution 
+    is that the prices are assumed to be positive, so 
+    P(price < 0) = 0.
+
+    Args:
+        n (int): Number of days over which prices are offered.
+        f (function): The pdf of the price distribution.
+        F (function): The cdf of the price distribution.
+
+    Returns:
+        s (numpy.ndarray): vector of optimal strategy values.
+    """
+    exp_f = scipy.integrate.quad(lambda x: x*f(x), 
+                                 -np.inf, 
+                                 np.inf)[0]
+    s = np.zeros(n)
+    
+    for i in range(n-1):
+        s[i+1] = s[i]*F(s[i]) \
+                    + exp_f \
+                    - scipy.integrate.quad(lambda x: x*f(x), 
+                                           0, 
+                                           s[i])[0]
+    
+    s = s[::-1]
+
+    return s
+```
+
+This allows the optimal threshold values to be computed, given the pdf and cdf of the
+chosen price distribution. For example, consider the 
+[beta distribution](https://en.wikipedia.org/wiki/Beta_distribution) on the interval
+$[0, 1]$, with parameters $\alpha=\beta=2$. 
+
+<p>
+<img width="100%" alt="Beta Distribution pdf" src="/assets/images/beta_dist.png">
+<em>
+The pdf of the Beta distribution with $\alpha=\beta=2$, with support on the finite
+interval $[0, 1]$.
+</em>
+</p>
+
+```python
+a = 2
+b = 2
+from scipy.stats import beta
+f = lambda x: beta.pdf(x, a, b)
+F = lambda x: beta.cdf(x, a, b)
+
+thresholds_and_exp = strat_thresholds_arb(7, f, F)
+expectation = thresholds_and_exp[0]
+thresholds = thresholds_and_exp[1:]
+
+print(f'Thresholds are: ')
+for day, threshold in enumerate(thresholds):
+    print(f'Day {day+1}: {threshold}')
+print(f'giving an expected sold price of {expectation}')
+```
+    Thresholds are: 
+    Day 1: 0.7100732691913013
+    Day 2: 0.6833505390608796
+    Day 3: 0.6471781730651854
+    Day 4: 0.5937499999999999
+    Day 5: 0.4999999999999999
+    Day 6: 0.0
+    giving an expected sold price of 0.7309109556148288
+    
+As mentioned earlier, the expected value of the strategy over 6 days is computed by
+finding the optimal threshold for the 7th day.
+
+
+<a name="myfootnote2">1</a>: [Charles Townshend, 2nd Viscount Townshend](https://en.wikipedia.org/wiki/Charles_Townshend,_2nd_Viscount_Townshend#%22Turnip%22_Townshend).
