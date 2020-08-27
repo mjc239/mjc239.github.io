@@ -27,7 +27,7 @@ So how does it work? The way in which turnips can be used to make a profit (or l
 
 ![Timmy and Tommy](/assets/images/timmytommy.jpeg){: .align-center}
 
-One of the first questions we can ask is the following: if we know the distribution of prices that Timmy and Tommy offer on any particular day, what is the best way to maximise the amount you get for your turnips?
+One of the first questions we can ask is the following: if we know the distribution of prices that Timmy and Tommy offer on any particular day, what is the best way to maximise the amount you get for your turnips? As is common we are interested in trying to maximise the expected profit.
 
 ## An instructive example: Uniformly distributed quotes
 
@@ -49,14 +49,14 @@ resources, and is often used as an introduction to chaos theory. In this context
 to say that for this choice of reproductive parameter, $t\_{i}$ is decreasing as $i$ increases, 
 and gets arbitrarily close to $0$ for sufficiently large $i$. If there are a large number of 
 days over which prices can be tracked, then over the first few days the price needs to be very 
-high in order to tempt the seller!
+high in order to tempt the seller.
 
 <p>
 <a title="Jordan Pierce / CC0" href="https://commons.wikimedia.org/wiki/File:Logistic_Bifurcation_map_High_Resolution.png">
 <img width="100%" alt="Logistic Bifurcation map High Resolution" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Logistic_Bifurcation_map_High_Resolution.png/512px-Logistic_Bifurcation_map_High_Resolution.png"></a>
 <em>
 One of the many exciting plots you get to see when studying the logistic function, showing the convergence 
-value as $i\rightarrow\infty$ for various values of $r$, the reproductive parameter
+value as $i\rightarrow\infty$ for various values of $r$, the reproductive parameter.
 </em>
 </p>
 
@@ -164,6 +164,36 @@ exactly the expected value of the strategy over the remaining $n$ days - any pri
 than this can be expected to be beaten (in the probabilistic sense) in the future.
 
 ## Outstanding questions
+
+After a bit of playing around with the uniform case we've managed to find first order recurrence describing the optimal threshold values for a strategy of this sort. This begs a few natural questions.
+
+### Seize the day!
+
+In the above we only considered strategies of the form:
+
+<p align="center">
+Sell at time $i$ if $X_{i}\geq s_{i}$
+</p>
+
+That is to say, the price we would settle for on each day depended only upon the day itself and not upon the prices we had seen so far. Indeed, as we tacitly assume that the buyer only has knowledge of past and not future prices, a generic strategy would be of the form:
+
+<p align="center">
+Sell at time $i$ if $X_{i}\geq s_{i}(X_1, \ldots, X_{i-1})$
+</p>
+
+where here $s_i$ is now a function of $i-1$ variables. Can we convince ourselves that optimal strategies must be of the former type?
+
+### Solving the recurrence
+
+Having found the recurrence governing the optimal thresholds, while it may not be possible to find an exact formula for them it would be nice to be able to say something more about the solutions. Perhaps we could say something about their asymptotics?
+
+### Flying the nest
+
+Now that we've cut our teeth on this simple case, we would like to say something about other distributions. In particular, can we find a simple recurrence governing the thresholds of an optimal strategy? Can we show that it is always the case the these optimal thresholds are the expected returns if we choose to play on, as discussed earlier?
+
+## Next time: Non-uniform Turnips
+
+In the [next post](post2hyperlink) we give give an answer to each of the questions posed above.
 
 # Post 2: Non-uniform Turnips
 
@@ -711,4 +741,4 @@ As mentioned earlier, the expected value of the strategy over 6 days is computed
 finding the optimal threshold for the 7th day.
 
 
-<a name="myfootnote2">1</a>: [Charles Townshend, 2nd Viscount Townshend](https://en.wikipedia.org/wiki/Charles_Townshend,_2nd_Viscount_Townshend#%22Turnip%22_Townshend).
+<a name="myfootnote2">2</a>: [Charles Townshend, 2nd Viscount Townshend](https://en.wikipedia.org/wiki/Charles_Townshend,_2nd_Viscount_Townshend#%22Turnip%22_Townshend).
