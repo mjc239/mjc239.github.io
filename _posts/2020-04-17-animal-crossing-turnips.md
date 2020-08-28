@@ -199,22 +199,55 @@ In the [next post](post2hyperlink) we give give an answer to each of the questio
 
 ## Last time: Turnip mania
 
-<!--V. brief recap of set up
-Recap what was proven last time and what we'll cover in this post-->
+Following on from [last time](post1hyperlink), in this post we're looking again at optimal strategies in turnip selling for Animal Crossing. Readers are advise to consult the [first post](post1hyperlink) for details on what has been covered so far, but we give a very brief summary here for the uninitiated.
+
+We consider the following game -- a simple model for turnip selling in Animal Crossing. Let $X\_1, \ldots, X\_n$ be iid random variables. At each time $t=1, 2, \ldots, n$ the player is offered to sell all the turnips they have for a price of $X\_i$. If the player accepts the game is over and the player ends with a revenue of $X\_i$, if the player refuses then they move to the next timestamp. If the turnips are not sold on or before time $n$ then the turnips spoil and the player walks away with nothing.
+
+Last time we considered the special case that the $X\_i$ were iid uniform on $[0,1]$, and more than that, focused our attention on the following strategy:
+
+<p align="center">
+Sell at time $i$ if $X_{i}\geq s_{i}$.
+</p>
+
+We write $\tilde{s}\_i$ for the expectation maximising choices of these thresholds and $\tilde{e}_n$ for the expectation of such an optimal strategy. The main result from last time was that
+
+<p align="center">
+$\tilde{s}_i = \frac{1}{2}(1 +\tilde{s}_{i + 1}^2)$.
+</p>
+
+In today's post we hope to address the questions posed at the end of the last. That is, we wish to give an asymptotic solution to this non-linear recurrence and generalise some of our results from last time to arbitrary distributions.
+
+### A disclaimer
+
+At this point it is worth saying that anybody expecting to use our analysis to improve their turnip game would be better off looking elsewhere. Perhaps unsurprisingly it is reasonably well understood<sup>[1](#post2footnote1)</sup> how the prices in Animal Crossing are **actually** generated. Some people have even been so helpful as to make [tools](turnipprophet.io) to help people with their turnip selling, though to say much more than this might constitute **SPOILERS** (in fact one could argue that the existence of these tools is in itself [**SPOILERS**](https://www.youtube.com/watch?v=KSRWJMM98pM)). 
+
+In a sense it is the assumption that the random variables are independent that renders this a poor model of the actual behaviour of the turnips prices in Animal Crossing. It 
+
+<!--
+V. brief recap of set up
+
+Recap what was proven last time and what we'll cover in this post
+-->
 
 ## An approximate solution: Uniformly distributed quotes
 
-In fact, it is not terribly hard to obtain some reasonably strong bounds on the sequence. First, note that defining $r\_{i} = 1/t\_{i}$ for all $i$ the recurrence
+In fact, it is not terribly hard to obtain some reasonably strong bounds on the sequence of optimal thresholds in the uniform case. As observed last time we note that if we first perform the substitution $t_i = \frac{1}{2}(1 - \tilde{s}_{n-i})$ then we arrive at the logistic map with initial value $1/2$. That is
 
-$$
-t_{i+1} = t_{i}(1-t_{i}), \quad t_{0} = \frac{1}{2}
-$$
+<p align="center">
+$t_{i+1} = t_{i}(1-t_{i})$ for $0\leq i <n$, with initial value $t_{0} = \frac{1}{2}$
+</p>
 
-becomes
+Next we perform one more change of variables. Defining $r\_{i} = 1/t\_{i}$ for all $i$ we obtain 
 
-$$
-r_{i+1} = r_{i} + 1 + \frac{1}{r_{i}-1}, \quad r_{0} = 2.
-$$
+<p align="center">
+$r_{i+1} = r_{i} + 1 + \frac{1}{r_{i}-1}$ for $0\leq i < n - 1$, with initial condition $r_{0} = 2$.
+</p>
+
+<!-- $$ -->
+<!-- r_{i+1} = r_{i} + 1 + \frac{1}{r_{i}-1}, \quad r_{0} = 2. -->
+<!-- $$ -->
+
+<!-- BOOKMARK -->
 
 Thus $r\_{i+1}\geq r\_{i} + 1$ for $i > 0$ (since we certainly have $r\_{i}> 1$ for all $i$) and we get the lower bound 
 
@@ -410,6 +443,10 @@ $$
 <!-- Give the cleaner version of the recurrence -->
 
 ## Outstanding questions
+
+<!-- Add outstanding questions -->
+
+<a name="post2footnote1">1</a> This author doesn't know to what degree people know their models to be correct. It's my understanding that the way the prices are generated hasn't changed a great deal for earlier games in the series but I'm unsure if at any point people were certain of the model.
 
 # Post 3: Asymptotic Swede
 
