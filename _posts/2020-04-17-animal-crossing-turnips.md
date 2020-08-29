@@ -231,10 +231,16 @@ Recap what was proven last time and what we'll cover in this post
 
 ## An approximate solution: Uniformly distributed quotes
 
-In fact, it is not terribly hard to obtain some reasonably strong bounds on the sequence of optimal thresholds in the uniform case. As observed last time we note that if we first perform the substitution $t_i = \frac{1}{2}(1 - \tilde{s}_{n-i})$ then we arrive at the logistic map with initial value $1/2$. That is
+To kick things off, starting from
 
 <p align="center">
-$t_{i+1} = t_{i}(1-t_{i})$ for $0\leq i <n$, with initial value $t_{0} = \frac{1}{2}$
+$\tilde{s}_i = \frac{1}{2}(1 +\tilde{s}_{i + 1}^2)$ for $1\leq i< n$ and $\tilde{s}_n = 0$,
+</p>
+
+we perform the substitution $t_i = \frac{1}{2}(1 - \tilde{s}_{n-i})$ to arrive at the logistic map with initial value $1/2$, as noted last time. That is
+
+<p align="center">
+$t_{i+1} = t_{i}(1-t_{i})$ for $0\leq i <n - 1$, with initial value $t_{0} = \frac{1}{2}$.
 </p>
 
 Next we perform one more change of variables. Defining $r\_{i} = 1/t\_{i}$ for all $i$ we obtain 
@@ -243,46 +249,97 @@ Next we perform one more change of variables. Defining $r\_{i} = 1/t\_{i}$ for a
 $r_{i+1} = r_{i} + 1 + \frac{1}{r_{i}-1}$ for $0\leq i < n - 1$, with initial condition $r_{0} = 2$.
 </p>
 
-<!-- $$ -->
-<!-- r_{i+1} = r_{i} + 1 + \frac{1}{r_{i}-1}, \quad r_{0} = 2. -->
-<!-- $$ -->
-
-<!-- BOOKMARK -->
-
-Thus $r\_{i+1}\geq r\_{i} + 1$ for $i > 0$ (since we certainly have $r\_{i}> 1$ for all $i$) and we get the lower bound 
+Thus $r\_{i+1}\geq r\_{i} + 1$ for $0\leq i < n - 1$ (since by induction we certainly have $r\_{i}> 1$ for all $i$) and we get the lower bound 
 
 $$
 r_{i}\geq i + 2
 $$
 
-for all $i$. In the other direction, since we now have $r\_{i} - 1\geq i + 1$ for all $i$, we have $r\_{i+1}\leq r\_{i} + 1 + \frac{1}{i + 1}$ for $i > 0$, and thus obtain the upper bound 
+for all $i$ (that is, $0\leq i \leq n - 1$). In the other direction, since we now have $r\_{i} - 1\geq i + 1$ for all $i$, it follows that $r\_{i+1}\leq r\_{i} + 1 + \frac{1}{i + 1}$ for $0\leq i < n - 1$, and thus obtain the upper bound 
 
 $$
-r_{i}\leq i + 2  + \sum_{j = 1}^{n}\frac{1}{j}
+r_{i}\leq i + 2  + H_i
 $$
 
-for all $i$. Putting this all together gives
+for all $0\leq i < n, where we write 
+
+$$\sum_{j = 1}^{i}\frac{1}{j}$$
+
+for the $i$-th [harmonic number](https://en.wikipedia.org/wiki/Harmonic_number). Putting this all together gives
 
 $$
-r_{i} = i + 2  + O(\log{i}),
+r_{i} = i + O(\log{i}),
 $$
 
-then unfolding we see that
+for an implicit constant independent of $i$ and $n$. Unfolding we see that
 
 $$
-t_{i} = \frac{1}{i + 2  + O(\log{i})}
+t_{i} = \frac{1}{i + O(\log{i})}
 $$
 
 and (recalling that $t\_{k}=\frac{1}{2}(1-\tilde{s}\_{n-k})$)
 
 $$
-s_{i} = 1 - \frac{2}{n - i + 2  + O(\log{n - i})}.
+\tilde{s}_{i} = 1 - \frac{2}{n - i + O(\log{(n - i)})}.
 $$
 
+### Overdoing it
 
-Also, we have assumed the daily quoted prices $X\_{i}$ have been uniformly distributed over $[0, 1]$. 
-The results derived above extend easily to the case of a uniform distribution over and arbitary 
-interval $[a, b]$, by linear scaling - specifically, by letting $Y\_{i} = a + (b-a)X\_{i}$.
+In fact, taking this one step further and substituting the upper bound $
+r_{i}\leq i + 2  + H_i$ into the recurrence $r_{i+1} = r_{i} + 1 + \frac{1}{r_{i}-1}$, we see that
+
+$$r_{i+1}\geq r_{i} + 1 + \frac{1}{i + 1 + H_i}$$
+
+for all $i$. This then gives
+
+$$r_{i}\geq i + 2 + \sum_{j=1}^i\frac{1}{j + H_{j-1}}$$
+
+for $0\leq i < n$. Now since $1/(1+x)\geq 1-x$ for all $x$, we have 
+
+$$
+\begin{align}
+\frac{1}{j + H_{j-1}}&\geq\frac{1}{j^2}(j - H_{j-1})\\
+	&=\frac{1}{j} - \frac{H_{j-1}}{j^2}.
+\end{align}
+$$
+
+and so, since $\sum\_{j=1}^\infty\frac{H_{j-1}}{j^2}$ is convergent, we have 
+
+$$r_i\geq i + 2 + H_i + O(1).$$
+
+Combining this with the earlier lower bound we see that
+
+$$r_i= i + 2 + H_i + O(1),$$
+
+Then using the fact that $H\_i = \log i + \gamma + o(1)$, where $\gamma$ is the [Euler-Mascharoni constant](https://en.wikipedia.org/wiki/Euler%E2%80%93Mascheroni_constant), we have
+
+$$r_i= i + 2 + \log i + O(1),$$
+
+and
+
+$$
+\tilde{s}_{i} = 1 - \frac{2}{n - i + \log{(n - i)} + O(1)}.
+$$
+
+### Overdoing it a bit more: The "Bartley-Cole" constant
+
+In fact, by flipping this argument around one more time it is possible to show that 
+
+$$r_i= i + 2 + \log i + \tau + o(1),$$
+
+where $\tau$ is the [Bartley-Cole constant](citationneeded)
+
+and
+
+$$
+\tilde{s}_{i} = 1 - \frac{2}{n - i + \log{(n - i)} + \tau + o(1)}.
+$$
+
+(as $n - i$ goes to infinity).
+
+### Uniform on an arbitrary interval
+
+While we have assumed the daily quoted prices $X\_{i}$ have been uniformly distributed over $[0, 1]$ it is clear that the results derived above extend easily to the case of a uniform distribution over an arbitary interval $[a, b]$, by linear scaling -- specifically, by letting $Y\_{i} = a + (b-a)X\_{i}$.
 
 ## Carpe rāpum!: optimality and sticking to your guns
 
