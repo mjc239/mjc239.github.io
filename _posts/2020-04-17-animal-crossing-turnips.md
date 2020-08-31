@@ -261,40 +261,50 @@ $$
 r_{i}\leq i + 2  + H_i
 $$
 
-for all $0\leq i < n, where we write 
+for all $0\leq i < n$, where we write 
 
 $$\sum_{j = 1}^{i}\frac{1}{j}$$
 
 for the $i$-th [harmonic number](https://en.wikipedia.org/wiki/Harmonic_number). Putting this all together gives
 
 $$
-r_{i} = i + O(\log{i}),
+r_{i} = i + O(\log{i + 1}),
 $$
 
 for an implicit constant independent of $i$ and $n$. Unfolding we see that
 
 $$
-t_{i} = \frac{1}{i + O(\log{i})}
+t_{i} = \frac{1}{i + O(\log{i + 1})}
 $$
 
 and (recalling that $t\_{k}=\frac{1}{2}(1-\tilde{s}\_{n-k})$)
 
 $$
-\tilde{s}_{i} = 1 - \frac{2}{n - i + O(\log{(n - i)})}.
+\tilde{s}_{i} = 1 - \frac{2}{n - i + O(\log{(n - i + 1)})}.
 $$
 
-### Overdoing it
+That is to say, we have ascertained the value of the optimal thresholds up to a rather small error. We note that this last observation gives the cleaner looking: 
+
+$$
+\tilde{s}_{i} = 1 - \frac{2}{n - i + 2} + O\left(\frac{\log{(n - i + 1)}}{(n - i + 1)^2}\right).
+$$
+
+Those of an anxious disposition might be left wondering if we can't do a little better. Indeed, we used a very crude estimate to lower bound thte $r_i$, which we then used to get our upper bound. Perhaps we can flip this around and use our upper bound to improve the lower bound?
+
+### Overdoing it: amplification
 
 In fact, taking this one step further and substituting the upper bound $
 r_{i}\leq i + 2  + H_i$ into the recurrence $r_{i+1} = r_{i} + 1 + \frac{1}{r_{i}-1}$, we see that
 
-$$r_{i+1}\geq r_{i} + 1 + \frac{1}{i + 1 + H_i}$$
+$$
+r_{i+1}\geq r_{i} + 1 + \frac{1}{i + 1 + H_i}
+$$
 
 for all $i$. This then gives
 
 $$r_{i}\geq i + 2 + \sum_{j=1}^i\frac{1}{j + H_{j-1}}$$
 
-for $0\leq i < n$. Now since $1/(1+x)\geq 1-x$ for all $x$, we have 
+for $0\leq i < n$. Now since $1/(1+x)\geq 1-x$ for all $x$ (a handy consequence of the [difference of two square](https://en.wikipedia.org/wiki/Difference_of_two_squares)), we have 
 
 $$
 \begin{align}
@@ -311,35 +321,67 @@ Combining this with the earlier lower bound we see that
 
 $$r_i= i + 2 + H_i + O(1),$$
 
-Then using the fact that $H\_i = \log i + O(1)$, we have
+Then using the fact that $H\_i = \log(i + 1) + O(1)$, we have
 
-$$r_i= i + 2 + \log i + O(1),$$
+$$r_i= i + 2 + \log(i + 1) + O(1),$$
 
 and
 
 $$
-\tilde{s}_{i} = 1 - \frac{2}{n - i + \log{(n - i)} + O(1)}.
+\tilde{s}_{i} = 1 - \frac{2}{n - i + \log{(n - i + 1)} + O(1)}.
+$$
+
+Expressing in terms of an additive error this gives
+
+$$
+\tilde{s}_{i} = 1 - \frac{2}{n - i + 1} + \frac{2\log{(n - i + 1)}}{(n - i + 1)^2}+ O\left(\frac{1}{(n - i + 1)^2}\right).
 $$
 
 #### The Euler-Mascharoni constant
 
-Of course, we actually have $H\_i = \log i + \gamma + o(1)$, where $\gamma$ is the [Euler-Mascharoni constant](https://en.wikipedia.org/wiki/Euler%E2%80%93Mascheroni_constant), but since our additive error is $O(1)$ this named constant would be eaten up by our error. As it happens, we can push this a bit further and obtain an analogous result, but it's not the Euler-Mascharoni constant we would see.
+Of course, we actually have $H\_i = \log(i + 1) + \gamma + o(1)$, where $\gamma$ is the [Euler-Mascharoni constant](https://en.wikipedia.org/wiki/Euler%E2%80%93Mascheroni_constant), but since our additive error is otherwise $O(1)$ this named constant would be eaten up by our error. As it happens, we can push our argument a bit further and, in a sense, obtain an analogous result for the $r_i$ themselves. Here there will be a constant of some importance, but it will not be the Euler-Mascharoni constant.
 
-### Overdoing it a bit more: The "Bartley-Cole" constant
+### Overdoing just one last time: The "Bartley-Cole" constant
 
-In fact, by flipping this argument around one more time it is possible to show that 
 
-$$r_i= i + 2 + \log i + \tau + o(1),$$
+Consider $\varepsilon_i = r_i - (i + 2) - H_i$, then we have 
 
-where $\tau$ is the [Bartley-Cole constant](citationneeded)
+$$
+r_{i+1} - (i+3) - H_{i+1} = r_{i} -(i+2) - H_i -\left(\frac{1}{i+1}-\frac{1}{r_i - 1}\right)
+$$
 
 and
 
 $$
-\tilde{s}_{i} = 1 - \frac{2}{n - i + \log{(n - i)} + \tau + o(1)}.
+\begin{align}
+\varepsilon_i - \varepsilon_0 &= \sum_{j=0}^{i-1}(\varepsilon_{j+1} - \varepsilon_{j})\\
+	&=-\sum_{j=0}^{i-1}(\frac{1}{j+1} - \frac{1}{r_j - 1})\\
+\end{align}
+$$
+
+Now, since we've already established that $i+2 < r_i\leq i+2+O(\log{i+1})$, we have $0<\frac{1}{j+1} - \frac{1}{r\_j - 1}\leq O\left(\frac{\log(j+1)}{(j+1)^2}\right)$ as before. Thus by the comparison test this series converges to some limit and combining this with the fact that $H\_i = \log(i+1) + \gamma + o(1)$ we see that
+
+$$
+r_i= i + 2 + \log i + \tau + o(1),
+$$
+
+where $\tau$ is the [Bartley-Cole constant](citationneeded). This then gives
+
+$$
+\tilde{s}_{i} = 1 - \frac{2}{n - i + \log{(n - i + 1)} + \tau + o(1)}.
+$$
+
+and
+
+$$
+\tilde{s}_{i} = 1 - \frac{2}{n - i + 1} + \frac{2\log{(n - i + 1)}}{(n - i + 1)^2}+ \frac{2\tau}{(n - i + 1)^2} + o\left(\frac{1}{(n - i + 1)^2}\right)
 $$
 
 (as $n - i$ goes to infinity).
+
+### Overdoing it yet again
+
+Naturally this sort of thing could go on forever, but we'll leave it there!
 
 ### Uniform on an arbitrary interval
 
