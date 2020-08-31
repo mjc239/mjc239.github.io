@@ -311,7 +311,7 @@ Combining this with the earlier lower bound we see that
 
 $$r_i= i + 2 + H_i + O(1),$$
 
-Then using the fact that $H\_i = \log i + \gamma + o(1)$, where $\gamma$ is the [Euler-Mascharoni constant](https://en.wikipedia.org/wiki/Euler%E2%80%93Mascheroni_constant), we have
+Then using the fact that $H\_i = \log i + O(1)$, we have
 
 $$r_i= i + 2 + \log i + O(1),$$
 
@@ -320,6 +320,10 @@ and
 $$
 \tilde{s}_{i} = 1 - \frac{2}{n - i + \log{(n - i)} + O(1)}.
 $$
+
+#### The Euler-Mascharoni constant
+
+Of course, we actually have $H\_i = \log i + \gamma + o(1)$, where $\gamma$ is the [Euler-Mascharoni constant](https://en.wikipedia.org/wiki/Euler%E2%80%93Mascheroni_constant), but since our additive error is $O(1)$ this named constant would be eaten up by our error. As it happens, we can push this a bit further and obtain an analogous result, but it's not the Euler-Mascharoni constant we would see.
 
 ### Overdoing it a bit more: The "Bartley-Cole" constant
 
