@@ -1,4 +1,3 @@
-
 ---
 title: "Animal Crossing Turnip Market - When to sell?"
 header:
@@ -49,24 +48,24 @@ $$
 E(S) = E(S|\tau < i)P(\tau < i) + E(S|\tau \geq i)P(\tau \geq i).
 $$
 
-Note that $E(S:\tau < i)$, $P(\tau < i)$ and $P(\tau \geq i)$ depend only upon $s_{1}, \ldots, s_{i - 1}$, whereas $E(S:\tau \geq i)$ depends only upon $s_{i}, \ldots, s_{n}$. Therefore, the optimal choice of $s_{i}$ depends only upon $s_{i + 1}, \ldots, s_{n}$. Indeed, it suffices to choose $s_{i}$ so as to maximise $E(S:\tau \geq i)$.
+Note that $E(S\|\tau < i)$, $P(\tau < i)$ and $P(\tau \geq i)$ depend only upon $s_{1}, \ldots, s_{i - 1}$, whereas $E(S\|\tau \geq i)$ depends only upon $s_{i}, \ldots, s_{n}$. Therefore, the optimal choice of $s_{i}$ depends only upon $s_{i + 1}, \ldots, s_{n}$. Indeed, it suffices to choose $s_{i}$ so as to maximise $E(S\|\tau \geq i)$.
 
 Next,
 
 $$
-E(S|\tau \geq i) = E(X_i:X_i\geq s_i)P(X_i\geq s_i) + E(S:X_i < s_i)P(X_i < s_i).
+E(S|\tau \geq i) = E(X_i|X_i\geq s_i)P(X_i\geq s_i) + E(S|X_i < s_i)P(X_i < s_i).
 $$
 
-Now since $E(X_{i}:X_{i}\geq s_{i}) = \frac{1}{2}(1+s_{i})$ and $P(X_i\geq s_i) = 1 - s_{i}$ we have 
+Now since $E(X_{i}\|X_{i}\geq s_{i}) = \frac{1}{2}(1+s_{i})$ and $P(X_i\geq s_i) = 1 - s_{i}$ we have 
 
 $$
-E(S|\tau \geq i) = \frac{1}{2}(1 - s_i^2) + s_i E(S:X_i < s_i).
+E(S|\tau \geq i) = \frac{1}{2}(1 - s_i^2) + s_i E(S|X_i < s_i).
 $$
 
-Clearly this is maximised when $s_i = E(S:X_i < s_i)$. Write $\tilde{s}_i$ for this optimal threshold value. Then we see that
+Clearly this is maximised when $s_i = E(S\|X_i < s_i)$. Write $\tilde{s}_i$ for this optimal threshold value. Then we see that
 
 $$
-\tilde{s}_i = E(S:X_i < s_i)
+\tilde{s}_i = E(S|X_i < s_i)
 $$
 
 where, as noted earlier, the right hand expression depends only upon $s_{i + 1}, \ldots, s_n$. Define $e_{n-j}$ to be the expected return of the strategy
@@ -75,7 +74,7 @@ where, as noted earlier, the right hand expression depends only upon $s_{i + 1},
 Sell at time $i > j$ if $X_{i}\geq s_{i}$.
 </p>
 
-That is, the expected return, were we to see all but the first $j$ prices. Moreover, writing $\tilde{e}_{n - j}$ for the expected return of this strategy with the optimal thresholds, we see that $E(S:X_{i} < s_{i}) = e_{n - i}$ and this gives the recurrence:
+That is, the expected return, were we to see all but the first $j$ prices. Moreover, writing $\tilde{e}\_{n - j}$ for the expected return of this strategy with the optimal thresholds, we see that $E(S\|X_{i} < s_{i}) = e_{n - i}$ and this gives the recurrence:
 
 $$
 \tilde{s}_i = \tilde{e}_{n - i}.
@@ -83,20 +82,19 @@ $$
 
 This tells us that at time $n$ we should accept any price; at time $n - 1$ we should accept exactly the expected value of $X_n$; at time $n - 2$ we should settle for the exactly the expected value were we to pass on $X_{n - 2}$; and so on and so forth.
 
-Indeed, it is possible to do one better and express the right hand side solely in terms of $\tilde{s}_{i+1}$, and ultimately to find a recursive relationship between $\tilde{s}_{i}$ and $\tilde{s}_{i+1}$.
-
+Indeed, it is possible to do one better and express the right hand side solely in terms of $\tilde{s}\_{i+1}$, and ultimately to find a recursive relationship between $\tilde{s}\_{i}$ and $\tilde{s}\_{i+1}$.
 
 Again, using the total law of expectation we see that
 
 $$
 \begin{align}
-\tilde{e}_{n - i} &= E(X_{i + 1}:X_{i + 1}\geq \tilde{s}_{i + 1})P(X_{i + 1}\geq \tilde{s}_{i + 1}) + E(S:X_{i + 1} < \tilde{s}_{i + 1})P(X_{i + 1} < \tilde{s}_{i + 1})\\
+\tilde{e}_{n - i} &= E(X_{i + 1}|X_{i + 1}\geq \tilde{s}_{i + 1})P(X_{i + 1}\geq \tilde{s}_{i + 1}) + E(S|X_{i + 1} < \tilde{s}_{i + 1})P(X_{i + 1} < \tilde{s}_{i + 1})\\
 &= \frac{1}{2}(1 - \tilde{s}_{i + 1}^2) + \tilde{s}_{i + 1}^2\\
 &= \frac{1}{2}(1 + \tilde{s}_{i + 1}^2)
 \end{align}
 $$
 
-where in the second inequality we make critial use of the fact that $E(X_{i+1}:X_{i+1}\geq\tilde{s}_{i+1})=\frac{1}{2}(1+\tilde{s}_{i + 1})$ and $E(S:X_{i + 1} < \tilde{s}_{i + 1}) = \tilde{s}_{i + 1}$.
+where in the second inequality we make critial use of the fact that $E(X\_{i+1}\|X\_{i+1}\geq\tilde{s}\_{i+1})=\frac{1}{2}(1+\tilde{s}\_{i + 1})$ and $E(S\|X\_{i + 1} < \tilde{s}\_{i + 1}) = \tilde{s}\_{i + 1}$.
 
 <!--
 For the uniform distribution we have $P\left(S_i\right)=1-s_{i}$, and all the quotes $X_{i}$ are iid, so we have
