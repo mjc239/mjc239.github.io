@@ -199,35 +199,31 @@ In the [next post](post2hyperlink) we give give an answer to each of the questio
 
 ## Last time: Turnip mania
 
-Following on from [last time](post1hyperlink), in this post we're looking again at optimal strategies in turnip selling for Animal Crossing. Readers are advise to consult the [first post](post1hyperlink) for details on what has been covered so far, but we give a very brief summary here for the uninitiated.
+Following on from [last time](post1hyperlink), in this post we're looking again at optimal strategies for turnip selling in Animal Crossing. Readers are advise to consult the [first post](post1hyperlink) for details on what has been covered so far, but we give a very brief summary here for the uninitiated.
 
-We consider the following game -- a simple model for turnip selling in Animal Crossing. Let $X\_1, \ldots, X\_n$ be iid random variables. At each time $t=1, 2, \ldots, n$ the player is offered to sell all the turnips they have for a price of $X\_i$. If the player accepts the game is over and the player ends with a revenue of $X\_i$, if the player refuses then they move to the next timestamp. If the turnips are not sold on or before time $n$ then the turnips spoil and the player walks away with nothing.
+We consider the following game -- a simple model for turnip selling in Animal Crossing. Let $X\_1, \ldots, X\_n$ be iid random variables. At each time $t=1, 2, \ldots, n$ the player is offered the opportunity to sell all the turnips they have for a price of $X\_i$. If the player accepts this offer then the game ends and the player ends with a revenue of $X\_i$, if the player refuses then they move to the next timestamp. If the turnips are not sold on or before time $n$ then the turnips spoil and the player walks away with nothing.
 
-Last time we considered the special case that the $X\_i$ were iid uniform on $[0,1]$, and more than that, focused our attention on the following strategy:
+Last time we considered the special case that the $X\_i$ are iid uniform on $[0,1]$, and considered the following strategy:
 
 <p align="center">
 Sell at time $i$ if $X_{i}\geq s_{i}$.
 </p>
 
-We write $\tilde{s}\_i$ for the expectation maximising choices of these thresholds and $\tilde{e}_n$ for the expectation of such an optimal strategy. The main result from last time was that
+We write $\tilde{s}\_i$ for the expectation maximising choices of these thresholds and $\tilde{e}_n$ for the expected winnings when choosing these optimal thresholds. Last time we found that these optimal thresholds satisfy the following first order recurrence:
 
 <p align="center">
-$\tilde{s}_i = \frac{1}{2}(1 +\tilde{s}_{i + 1}^2)$.
+$\tilde{s}_i = \frac{1}{2}(1 +\tilde{s}_{i + 1}^2)$ for $1\leq i<n$, with $\tilde{s}_n = 0$.
 </p>
 
-In today's post we hope to address the questions posed at the end of the last. That is, we wish to give an asymptotic solution to this non-linear recurrence and generalise some of our results from last time to arbitrary distributions.
+In today's post we seek to address the questions posed at the end of the last. That is, we wish to give an asymptotic solution to this non-linear recurrence and generalise some of our results from last time to arbitrary distributions.
 
 ### A disclaimer
 
-At this point it is worth saying that anybody expecting to use our analysis to improve their turnip game would be better off looking elsewhere. Perhaps unsurprisingly it is reasonably well understood<sup>[1](#post2footnote1)</sup> how the prices in Animal Crossing are **actually** generated. Some people have even been so helpful as to make [tools](turnipprophet.io) to help people with their turnip selling, though to say much more than this might constitute **SPOILERS** (in fact one could argue that the existence of these tools is in itself [**SPOILERS**](https://www.youtube.com/watch?v=KSRWJMM98pM)). 
-
-In a sense it is the assumption that the random variables are independent that renders this a poor model of the actual behaviour of the turnips prices in Animal Crossing. It 
-
-<!--
-V. brief recap of set up
-
-Recap what was proven last time and what we'll cover in this post
--->
+At this point it is worth saying that anybody expecting to use our analysis to improve their turnip game would be better off looking elsewhere. Perhaps unsurprisingly it is reasonably well understood<sup>[1](#post2footnote1)</sup> how the prices in Animal Crossing are *actually* generated. Some people have even been so helpful as to make [tools](turnipprophet.io) to help people with their turnip selling, though to say much more than this might constitute **SPOILERS** (one could argue that the existence of these tools is in itself [**SPOILERS**](https://www.youtube.com/watch?v=KSRWJMM98pM)). Indeed, to identify what part of our model renders it ineffective would certain be 
+<details> 
+<summary> SPOILERS </summary> 
+Of course, it is the assumption that the prices are independent. 
+</details>
 
 ## An approximate solution: Uniformly distributed quotes
 
@@ -237,7 +233,7 @@ To kick things off, starting from
 $\tilde{s}_i = \frac{1}{2}(1 +\tilde{s}_{i + 1}^2)$ for $1\leq i< n$ and $\tilde{s}_n = 0$,
 </p>
 
-we perform the substitution $t_i = \frac{1}{2}(1 - \tilde{s}_{n-i})$ to arrive at the logistic map with initial value $1/2$, as noted last time. That is
+we perform the substitution $t_i = \frac{1}{2}(1 - \tilde{s}_{n-i})$ to arrive at the logistic map with initial value $1/2$ (as noted last time). That is
 
 <p align="center">
 $t_{i+1} = t_{i}(1-t_{i})$ for $0\leq i <n - 1$, with initial value $t_{0} = \frac{1}{2}$.
@@ -249,13 +245,25 @@ Next we perform one more change of variables. Defining $r\_{i} = 1/t\_{i}$ for a
 $r_{i+1} = r_{i} + 1 + \frac{1}{r_{i}-1}$ for $0\leq i < n - 1$, with initial condition $r_{0} = 2$.
 </p>
 
-Thus $r\_{i+1}\geq r\_{i} + 1$ for $0\leq i < n - 1$ (since by induction we certainly have $r\_{i}> 1$ for all $i$) and we get the lower bound 
+<details>
+<summary> CLICK FOR ALGEBRA </summary>
+$$
+\begin{align}
+	\frac{1}{t_{i+1}}&=\frac{1}{t_i(1-t_i)}\\
+	&=\frac{1}{t_i}\frac{\frac{1}{t_i}}{(\frac{1}{t_i}-1)}\\
+	&=\frac{r_i^2}{r_i-1}\\
+	&=r_i + 1 + \frac{1}{r_i-1}.
+\end{align}
+$$
+</details>
+
+Thus, since we certainly have $r\_{i}> 1$ for all $i$ by induction, we have $\frac{1}{r_i-1}>0$ for all $i$ and so $r\_{i+1}\geq r\_{i} + 1$ for $0\leq i < n - 1$ and we get the lower bound
 
 $$
 r_{i}\geq i + 2
 $$
 
-for all $i$ (that is, $0\leq i \leq n - 1$). In the other direction, since we now have $r\_{i} - 1\geq i + 1$ for all $i$, it follows that $r\_{i+1}\leq r\_{i} + 1 + \frac{1}{i + 1}$ for $0\leq i < n - 1$, and thus obtain the upper bound 
+for all $i$ (that is, for $0\leq i < n$). In the other direction, since we now have $r\_{i} - 1\geq i + 1$ for all $i$, it follows that $r\_{i+1}\leq r\_{i} + 1 + \frac{1}{i + 1}$ for $0\leq i < n - 1$, and we obtain the upper bound 
 
 $$
 r_{i}\leq i + 2  + H_i
@@ -263,38 +271,39 @@ $$
 
 for all $0\leq i < n$, where we write 
 
-$$\sum_{j = 1}^{i}\frac{1}{j}$$
+$$
+H_i = \sum_{j = 1}^{i}\frac{1}{j}
+$$
 
 for the $i$-th [harmonic number](https://en.wikipedia.org/wiki/Harmonic_number). Putting this all together gives
 
 $$
-r_{i} = i + O(\log{i + 1}),
+r_{i} = i + O(\log{(i + 1)}),
 $$
 
 for an implicit constant independent of $i$ and $n$. Unfolding we see that
 
 $$
-t_{i} = \frac{1}{i + O(\log{i + 1})}
+t_{i} = \frac{1}{i + O(\log{(i + 1)})}
 $$
 
-and (recalling that $t\_{k}=\frac{1}{2}(1-\tilde{s}\_{n-k})$)
+and, recalling that $t\_{k}=\frac{1}{2}(1-\tilde{s}\_{n-k})$,
 
 $$
 \tilde{s}_{i} = 1 - \frac{2}{n - i + O(\log{(n - i + 1)})}.
 $$
 
-That is to say, we have ascertained the value of the optimal thresholds up to a rather small error. We note that this last observation gives the cleaner looking: 
+That is to say, we have ascertained the value of the optimal thresholds up to a rather small error. We note that this last observation can be stated in terms of an additive error as follows: 
 
 $$
 \tilde{s}_{i} = 1 - \frac{2}{n - i + 2} + O\left(\frac{\log{(n - i + 1)}}{(n - i + 1)^2}\right).
 $$
 
-Those of an anxious disposition might be left wondering if we can't do a little better. Indeed, we used a very crude estimate to lower bound thte $r_i$, which we then used to get our upper bound. Perhaps we can flip this around and use our upper bound to improve the lower bound?
+Those of an anxious disposition might be left wondering if we can't do a little better. Indeed, we used a very crude argument to lower bound the $r_i$, which we then used to get an upper bound. Perhaps we can flip this around and use our upper bound to improve the lower bound?
 
 ### Overdoing it: amplification
 
-In fact, taking this one step further and substituting the upper bound $
-r_{i}\leq i + 2  + H_i$ into the recurrence $r_{i+1} = r_{i} + 1 + \frac{1}{r_{i}-1}$, we see that
+Taking this one step further and substituting the upper bound $r_{i}\leq i + 2  + H_i$ into the recurrence $r_{i+1} = r_{i} + 1 + \frac{1}{r_{i}-1}$, we see that
 
 $$
 r_{i+1}\geq r_{i} + 1 + \frac{1}{i + 1 + H_i}
@@ -304,7 +313,7 @@ for all $i$. This then gives
 
 $$r_{i}\geq i + 2 + \sum_{j=1}^i\frac{1}{j + H_{j-1}}$$
 
-for $0\leq i < n$. Now since $1/(1+x)\geq 1-x$ for all $x$ (a handy consequence of the [difference of two square](https://en.wikipedia.org/wiki/Difference_of_two_squares)), we have 
+for $0\leq i < n$. Now since $1/(1+x)\geq 1-x$ for all $x$ (a handy consequence of the [difference of two squares](https://en.wikipedia.org/wiki/Difference_of_two_squares)), we have 
 
 $$
 \begin{align}
@@ -339,7 +348,7 @@ $$
 
 #### The Euler-Mascharoni constant
 
-Of course, we actually have $H\_i = \log(i + 1) + \gamma + o(1)$, where $\gamma$ is the [Euler-Mascharoni constant](https://en.wikipedia.org/wiki/Euler%E2%80%93Mascheroni_constant), but since our additive error is otherwise $O(1)$ this named constant would be eaten up by our error. As it happens, we can push our argument a bit further and, in a sense, obtain an analogous result for the $r_i$ themselves. Here there will be a constant of some importance, but it will not be the Euler-Mascharoni constant.
+Of course, we actually have $H\_i = \log(i + 1) + \gamma + o(1)$, where $\gamma$ is the [Euler-Mascharoni constant](https://en.wikipedia.org/wiki/Euler%E2%80%93Mascheroni_constant), but since the additive error in our estimate for $r_i$ is otherwise $O(1)$ this named constant would be eaten up by our error. As it happens, we can push our argument a bit further and, in a sense, obtain an analogous result for the $r_i$ themselves. Here there will be a fixed constant cropping up, but it will not be the Euler-Mascharoni constant.
 
 ### Overdoing just one last time: The "Bartley-Cole" constant
 
@@ -350,25 +359,25 @@ $$
 r_{i+1} - (i+3) - H_{i+1} = r_{i} -(i+2) - H_i -\left(\frac{1}{i+1}-\frac{1}{r_i - 1}\right)
 $$
 
-and
+or, in other words,
 
 $$
 \begin{align}
 \varepsilon_i - \varepsilon_0 &= \sum_{j=0}^{i-1}(\varepsilon_{j+1} - \varepsilon_{j})\\
-	&=-\sum_{j=0}^{i-1}(\frac{1}{j+1} - \frac{1}{r_j - 1})\\
+	&=-\sum_{j=0}^{i-1}\left(\frac{1}{j+1} - \frac{1}{r_j - 1}\right)\\
 \end{align}
 $$
 
-Now, since we've already established that $i+2 < r_i\leq i+2+O(\log{i+1})$, we have $0<\frac{1}{j+1} - \frac{1}{r\_j - 1}\leq O\left(\frac{\log(j+1)}{(j+1)^2}\right)$ as before. Thus by the comparison test this series converges to some limit and combining this with the fact that $H\_i = \log(i+1) + \gamma + o(1)$ we see that
+Now, since we've already established that $i+2 < r_i\leq i+2+O(\log(i+1))$, we have $0<\frac{1}{j+1} - \frac{1}{r\_j - 1}\leq O\left(\frac{\log(j+1)}{(j+1)^2}\right)$ as before. Thus this series converges to some limit and combining this with the fact that $H\_i = \log(i+1) + \gamma + o(1)$ we see that
 
 $$
-r_i= i + 2 + \log i + \tau + o(1),
+r_i= i + 2 + \log(i+1) + \tau + o(1),
 $$
 
-where $\tau$ is the [Bartley-Cole constant](citationneeded). This then gives
+for some fixed constant $\tau$, which we call the [Bartley-Cole constant](citationneeded). This then gives
 
 $$
-\tilde{s}_{i} = 1 - \frac{2}{n - i + \log{(n - i + 1)} + \tau + o(1)}.
+\tilde{s}_{i} = 1 - \frac{2}{n - i + 1 + \log{(n - i + 1)} + \tau + o(1)}.
 $$
 
 and
@@ -387,9 +396,6 @@ Naturally this sort of thing could go on forever, but we'll leave it there!
 
 While we have assumed the daily quoted prices $X\_{i}$ have been uniformly distributed over $[0, 1]$ it is clear that the results derived above extend easily to the case of a uniform distribution over an arbitary interval $[a, b]$, by linear scaling -- specifically, by letting $Y\_{i} = a + (b-a)X\_{i}$.
 
-## Carpe rāpum!: optimality and sticking to your guns
-
-<!-- Sketch proof that the optimal strategy is forgetful -->
 
 ## Arbitrary (non-negative) turnips
 
@@ -544,6 +550,28 @@ $$
 ### Arbitrary (non-negative) turnips: a recurrence
 
 <!-- Give the cleaner version of the recurrence -->
+
+## Carpe rāpa!: optimality and sticking to your guns
+
+It is high time we address on small technical question, must the optimal strategy actually be of the stated form? Recall that we have thus for only considered strategies of the form:
+
+<p align="center">
+Sell at time $i$ if $X_{i}\geq s_{i}$
+</p>
+
+That is, the price we sell at on each given day depends only upon the day itself -- we do not dwell on the past and factor in the prices we've seen so far. Since we ought to assume that the buyer only has knowledge of past and not future prices, the most general form a strategy could take would be:
+
+<p align="center">
+Sell at time $i$ if $X_{i}\geq s_{i}(X_1, \ldots, X_{i-1})$
+</p>
+
+where each $s_i$ is a function of the previous $i-1$ prices offered. We note that, regardless of the specific distribution of the $X\_i$ we will always have, for any $i$, that
+
+$$
+E(S) = E(S|\tau < i)P(\tau < i) + E(S|\tau \geq i)P(\tau \geq i).
+$$
+
+by the law of total expectation. As remarked earlier, $E(S\|\tau < i)$, $P(\tau < i)$ and $P(\tau \geq i)$ depend only upon $s\_1,\ldots, s\_{i-1}$, whereas $E(S\|\tau \geq i)$ depends upon $s\_i, \ldots, s\_n$. Fortunately, as the conditional expectation of $S$ given that $\tau\geq i$ for any such fixed specification of $X\_1,\ldots, X\_{i-1}$ does not depend upon the specific choice of these prices, we can happily restrict our attention to those strategies with a constant threshold for each day.
 
 ## Outstanding questions
 
