@@ -399,16 +399,11 @@ While we have assumed the daily quoted prices $X\_{i}$ have been uniformly distr
 
 ## Arbitrary (non-negative) turnips
 
-<!-- Intro to the arbitrary non-neg distribution case -->
+Having gave a much more accurate solution to the uniform case we now turn our attention to the question of what we can do in general. So as to not jump straight in the deep end we first give another approach for the uniform case, being careful to keep things as general as possible for as long as possible.
 
 ### An instructive example revisited: Uniformly distributed quotes
 
-The easiest distribution to consider is the uniform distribution -- specifically, assume that on each selling day, Timmy and Tommy offer a price that is uniformly distributed over some interval.
-
-Let $X\_{1}, ..., X\_{n}\sim U[0, 1]$ be 
-[iid](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables) random variables, representing the price offered at time $i$, and suppose that the turnips spoil before another price is offered.
-
-Consider the following strategy:
+Consider as before our strategy:
 
 <p align="center">
 Sell at time $i$ if $X_{i}\geq s_{i}$
@@ -416,7 +411,7 @@ Sell at time $i$ if $X_{i}\geq s_{i}$
 
 and write $S$ for the price the turnips are consequently sold at.
 
-Put simply, on each day there is a threshold $s\_{i}$ which represents the minimum price at which we would be prepared to sell on that day. For example, as we need to sell the turnips before they spoil, we should accept any price at time $t=n$; in other words, the optimal such strategy should have $s\_{n}=0$. 
+<!-- Put simply, on each day there is a threshold $s\_{i}$ which represents the minimum price at which we would be prepared to sell on that day. For example, as we need to sell the turnips before they spoil, we should accept any price at time $t=n$; in other words, the optimal such strategy should have $s\_{n}=0$.  -->
 
 Let $\tau$ be the time at which we sell, that is $\tau = \min\\{ i:X\_{i}\geq s\_{i}\\}$. Then, by the law of total expectation, we see that for any $i$, we have
 
@@ -444,7 +439,7 @@ $$
 Writing $\tilde{s}\_i$ for the optimal choice of $s_i$, we then have
 
 $$
-\tilde{s}_i = E(S|X_i < s_i)
+\tilde{s}_i = E(S|\tau > i)
 $$
 
 where, as noted earlier, the right hand expression depends only upon $s\_{i + 1}, \ldots, s\_n$. 
@@ -456,7 +451,7 @@ $$
 $$
 
 
-This tells us that at time $n$ we should accept any price; at time $n - 1$ we should accept exactly the expected value of $X\_n$; at time $n - 2$ we should settle for exactly the expected return of our strategy were we to pass on $X\_{n - 2}$ and play on for the final two days; and so on and so forth.
+This tells us that at time $n$ we should accept any price; at time $n - 1$ we should accept exactly the expected value of $X\_n$; at time $n - 2$ we should settle for exactly the expected return of our strategy were we to pass on $X\_{n - 2}$ and play on for the final two days; and so on and so forth. Put simply, we should accept exactly that price that we would achieve in expectation were we to pass on today's price and play on.
 
 Indeed, it is possible to do one better and express the right hand side (that is, $\tilde{e}\_{n-i}$) solely in terms of $\tilde{s}\_{i+1}$, finding a recursive relationship between $\tilde{s}\_{i}$ and $\tilde{s}\_{i+1}$ alone.
 
@@ -466,15 +461,53 @@ Again, using the total law of expectation we see that
 $$
 \begin{align}
 \tilde{e}_{n - i} &= E(S|\tau = i + 1)P(\tau = i + 1 | \tau > i) + E(S| \tau > i + 1)P( \tau > i + 1 | \tau > i)\\
-	&= E(X_{i + 1}|X_{i + 1}\geq \tilde{s}_{i + 1})P(X_{i + 1}\geq \tilde{s}_{i + 1}) + E(S|X_{i + 1} < \tilde{s}_{i + 1})P(X_{i + 1} < \tilde{s}_{i + 1})\\
+	&= E(X_{i + 1}|X_{i + 1}\geq \tilde{s}_{i + 1})P(X_{i + 1}\geq \tilde{s}_{i + 1}) + \tilde{e}_{n-(i+1)}P(X_{i + 1} < \tilde{s}_{i + 1})\\
 	&= \frac{1}{2}(1 - \tilde{s}_{i + 1}^2) + \tilde{s}_{i + 1}^2\\
 	&= \frac{1}{2}(1 + \tilde{s}_{i + 1}^2)
 \end{align}
 $$
 
-where in the third equality we make critial use of the fact that $E(X\_{i+1}\|X\_{i+1}\geq\tilde{s}\_{i+1})=\frac{1}{2}(1+\tilde{s}\_{i + 1})$ and $E(S\|X\_{i + 1} < \tilde{s}\_{i + 1}) = \tilde{s}\_{i + 1}$.
+where in the third equality we make critial use of the fact that $\tilde{e}_{n-(i+1)} = \tilde{s}\_{i + 1}$.
 
 ### Non-negative Turnips
+
+Clearly there is not a great deal to tweak to prove a similar result for a general distribution.
+
+Suppose now that $X\_1, \ldots, X\_n$ are iid and we follow a strategy of the same form. Then the argument above still tells us that the optimal choice of $s\_i$ depends only upon $s\_{i + 1}, \ldots, s\_n$. In particular we must choose $s\_{i}$ so as to maximise $E(S\|\tau \geq i)$. As before we could write
+
+$$
+E(S|\tau \geq i) = E(X_i|X_i\geq s_i)P(X_i\geq s_i) + E(S|\tau>i)P(X_i < s_i),
+$$
+
+however it probably makes more sense to write it as follows:
+
+$$
+E(S|\tau \geq i) = \int_{s_i}^{\infty}xf_X(x)dx + \int_{-\infty}^{s_i} \tilde{e}_{n-i}f_X(x)dx
+$$
+
+where each integral corresponds exactly to one of the products in the previous expression for $E(S\|\tau \geq i)$. Or, more succintly, as:
+
+$$
+E(S|\tau \geq i) = \int_{-\infty}^{\infty}g(x;s_i)f_X(x)dx
+$$
+
+where $g(x;s\_i)=\tilde{e}\_{n-i}$ for $x\leq s\_i$ and $g(x;s\_i) = x$ otherwise. 
+
+Now it is easy to see that $\tilde{e}\_{n-i}$ is the *unique* choice of $s\_i$ which maximises $g(x;s\_i)$ for every $x$. That is to say, we have $g(x;\tilde{e}\_{n-i})\geq g(x;s\_i)$ for all $x$, and if $s\_i\neq\tilde{e}\_{n-i}$ then there exists $x$ such that $g(x;\tilde{e}\_{n-i}) > g(x;s\_i)$.
+
+In fact, this is exactly the algebraic way of framing the argument given in [Turnip Mania](post1hyperlink). Indeed, we should certainly never settle for a price less than $\tilde{e}\_{n-i}$ as we would simply be better off (in expectation) by playing on. Algebraically this is reflected by the fact that if $s\_i<\tilde{e}\_{n-i}$, then we have $g(x;s\_i)=x<\tilde{e}\_{n-i}=g(x;\tilde{e}\_{n-i})$ for $s\_i<x< \tilde{e}\_{n-i}$. Whereas, if we are too picky and hold out for a price higher than $\tilde{e}\_{n-i}$, then we are simply wasting a perfectly good price in the event that we are offered something between $\tilde{e}\_{n-i}$ and $s\_i$. Algebraically, this is reflected by the fact that if $s\_i>\tilde{e}\_{n-i}$, then we have $g(x;s\_i)=\tilde{e}\_{n-i}<x=g(x;\tilde{e}\_{n-i})$ for $\tilde{e}\_{n-i}< x< s\_i$.
+
+All this is to say that we recover the key fact that 
+
+$$
+\tilde{s\_i}=\tilde{e}\_{n-i}.
+$$
+
+All that remains is to give a first order recurrence for these optimal thresholds.
+
+#### A first order recurrence
+
+<!-- BOOKMARK -->
 
 <!-- Below is the old version of the arbitrary distribution -->
 
