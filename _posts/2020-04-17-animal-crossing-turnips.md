@@ -500,14 +500,93 @@ In fact, this is exactly the algebraic way of framing the argument given in [Tur
 All this is to say that we recover the key fact that 
 
 $$
-\tilde{s\_i}=\tilde{e}\_{n-i}.
+\tilde{s_i}=\tilde{e}_{n-i}.
 $$
 
 All that remains is to give a first order recurrence for these optimal thresholds.
 
-#### A first order recurrence
+#### Arbitrary (non-negative continuous) turnips: a recurrence
 
-<!-- BOOKMARK -->
+For algebraic simplicity we consider the case that the random variables are non-negative and continuous.
+
+Much as with the uniform case we begin from
+
+$$
+\begin{align}
+\tilde{e}_{n - i} &= E(S|\tau = i + 1)P(\tau = i + 1 | \tau > i) + E(S| \tau > i + 1)P( \tau > i + 1 | \tau > i)\\
+	&=E(X_{i+1}|X_{i+1}\geq \tilde{s}_{i+1})P(X_{i+1}\geq \tilde{s}_{i+1}) + \tilde{s}_{i+1}F(\tilde{s}_{i+1})
+	\end{align}
+$$
+
+Since $\tilde{e}\_{n - i} = \tilde{s}\_{i+1}$ this at least gives a first order recurrence, however, we would prefer something cleaner. Writing $\tilde{s}\_{i+1}F(\tilde{s}\_{i+1}) = \tilde{s}\_{i+1} - \tilde{s}\_{i+1}\bar{F}(\tilde{s}\_{i+1})$ and defining
+
+$$
+\phi(t) =  (E(X|X\geq t) - t)\bar{F}(t)
+$$
+
+gives
+
+$$
+\tilde{s}_{i} = \tilde{s}_{i+1} + \phi(\tilde{s}_{i+1}).
+$$
+
+Thus it remains to better understand $\phi(\tilde{s}_{i+1})$.
+
+#### The continuous case
+
+In the case that the $X\_i$ are continuous we have
+
+$$
+\phi(t) =  \int_{t}^\infty xf(x)dx - t\bar{F}(t).
+$$
+
+Now, it follows from integration by parts that $\phi(t) = \int\_t^\infty \bar{F}(x)dx$. We note that this does not require that the random variables are non-negative. Altogether this gives
+
+$$
+\tilde{s}_{i} = \tilde{s}_{i+1} + \phi(\tilde{s}_{i+1}).
+$$
+
+where $\phi(t) = \int\_t^\infty \bar{F}(x)dx$.
+
+<!-- In the case that the $X\_i$ are continuous random variables this may be written as: -->
+
+<!-- $$ -->
+<!-- \tilde{e}_{n - i} = \int_{\tilde{s}_{i+1}}^\infty xf(x)dx + \tilde{s}_{i+1}F(\tilde{s}_{i+1}). -->
+<!-- $$ -->
+
+<!-- This at least gives a first order recurrence for the $\tilde{s}_{i}$: -->
+
+<!-- $$ -->
+<!-- \tilde{s}_{i} = \int_{\tilde{s}_{i+1}}^\infty xf(x)dx + \tilde{s}_{i+1}F(\tilde{s}_{i+1}) -->
+<!-- $$ -->
+
+<!-- however we would prefer something cleaner. First we write $\tilde{s}\_{i+1}F(\tilde{s}\_{i+1}) = \tilde{s}\_{i+1} - \tilde{s}\_{i+1}\bar{F}(\tilde{s}\_{i+1})$ to give -->
+
+<!-- $$ -->
+<!-- \tilde{s}_{i} = \tilde{s}_{i+1} + \int_{\tilde{s}_{i+1}}^\infty xf(x)dx - \tilde{s}_{i+1}\bar{F}(\tilde{s}_{i+1}). -->
+<!-- $$ -->
+
+<!-- We then define $\Phi(t) =  \int_{t}^\infty xf(x)dx - t\bar{F}(t). -->
+
+
+Either by integration by parts, or by noting that differentiating the RHS with respect to $\tilde{s}\_{i+1}$ gives $F(\tilde{s}_{i+1})$, we see that
+
+$$
+\tilde{e}_{n - i} = \mu + \int_{0}^{\tilde{s}_{i+1}}F(x)dx.
+$$
+
+Now since $\mu = \int\_0^\infty \bar{F}(x)dx$, and of course $F(x) = 1 - \bar{F}(x)$, the RHS is equal to $\tilde{s}\_{i+1} + \int\_{\tilde{s}\_{i+1}}^\infty \bar{F}(x) dx$. That is to say, we obtain a rather nice first order reccurence:
+
+$$
+\tilde{s}_{i} = \tilde{s}_{i+1} + \int_{\tilde{s}_{i+1}}^\infty \bar{F}(x) dx.
+$$
+
+Writing $\phi(t)=\int_{t}^\infty \bar{F}(x) dx$, this can then be expressed as
+
+$$
+\tilde{s}_{i} = \tilde{s}_{i+1} + \phi(\tilde{s}_{i+1}).
+$$
+
 
 <!-- Below is the old version of the arbitrary distribution -->
 
@@ -580,9 +659,18 @@ $$
 $$
 -->
  
-### Arbitrary (non-negative) turnips: a recurrence
+### A note on our assumptions: existence of expectations
 
-<!-- Give the cleaner version of the recurrence -->
+We have implicitly assumed throughout that all expectations exist. This is not an issue since the original question makes little sense unless the $X\_i$ have a well defined expectation, and this is enough to ensure that all later expectations exist. 
+
+#### Discrete random variables
+
+We have also assumed throughout that the random variables are continuous. From here on we will consider only the case that the $X\_i$ are continuous. All we will say on this subject is that a similar result will still hold relating the optimal thresholds to the 'play on' expectations. Indeed, such a result can be obtained simply by replacing integrals with sums in the proof given earlier. The key difference of course is that these expectations may not be in the support of the pmf, but this is not a problem since there is a natural ambiguity in the choice of thresholds when working with such random variables.
+
+We note that when we later come back to trying to make some headway with this recurrence in general we largely treat the function $\phi(t)$ as an abstract function, but we do assume that it can be expressed as in the continuous case, we have not given any real thought to the discrete case.
+
+<!-- Say something about the non-negativity and continuity assumptions -->
+
 
 ## Carpe rāpa!: optimality and sticking to your guns
 
@@ -608,6 +696,20 @@ by the law of total expectation. As remarked earlier, $E(S\|\tau < i)$, $P(\tau 
 
 ## Outstanding questions
 
+Now that we've shown that the optimal thresholds are indeed the 'play on' expectations, and found a rather simply looking (albeit non-linear) first order recurrence governing these, a few questions come to mind.
+
+### Other test cases
+
+It's natural to wonder if there are any other reasonably natural distributions for which we can solve, exactly or approximately, the first order recurrence governing the optimal threshold.
+
+### Arbitrary turnips
+
+On top of this, it would be great to be able to say something about the solution in general.
+
+## Next time: Asymptotic Swede
+
+In the next post we hope to address both of these questions.
+
 <!-- Add outstanding questions -->
 
 <a name="post2footnote1">1</a> This author doesn't know to what degree people know their models to be correct. It's my understanding that the way the prices are generated hasn't changed a great deal for earlier games in the series but I'm unsure if at any point people were certain of the model.
@@ -616,17 +718,63 @@ by the law of total expectation. As remarked earlier, $E(S\|\tau < i)$, $P(\tau 
 
 (or is it Turnips?<sup>[1](#myfootnote1)</sup>)
 
+We again return to the question of optimal turnip selling in Animal Crossing. We give a short summary here, but refer the reader to the first two posts, [Turnip Mania](post1hyperlink) and [Non-uniform Turnips](post2hyperlink).
+
+## Turnips 101
+
+Consider the following game -- a simple model for turnip selling in Animal Crossing. Let $X\_1, \ldots, X\_n$ be iid random variables. At each time $t=1, 2, \ldots, n$ the player is offered the opportunity to sell all the turnips they have for a price of $X\_i$. If the player accepts this offer then the game ends and the player ends with a revenue of $X\_i$, if the player refuses then they move to the next timestamp. If the turnips are not sold on or before time $n$ then the turnips spoil and the player walks away with nothing.
+
+We consider strategies of the form:
+
+<p align="center">
+Sell at time $i$ if $X_{i}\geq s_{i}$.
+</p>
+
+We write $\tilde{s}\_i$ for the expectation maximising choices of these thresholds and $\tilde{e}_n$ for the expected winnings when choosing these optimal thresholds. 
+
+
+
 ## Last time: Non-uniform Turnips
 
-<!-- Brief recap -->
+Last time we considered the special case that the $X\_i$ are iid uniform on $[0,1]$. Having shown in [Turnip Mania](post1hyperlink) that the optimal thresholds satisfy the first order recurrence:
+
+<p align="center">
+$\tilde{s}_i = \frac{1}{2}(1 +\tilde{s}_{i + 1}^2)$ for $1\leq i<n$, with $\tilde{s}_n = 0$,
+</p>
+
+we found an approximate solution to this non linear recurrence. Very broadly [we showed](post2hyperlink/animal-crossing-turnips/#an-approximate-solution-uniformly-distributed-quotes) that $\tilde{s\_i}\approx 1-\frac{2}{n-i+1}$. 
+
+We then showed that if the $X\_i$ are continuous, then the optimal thresholds still satisfy a first order recurrence, namely:
+
+$$
+\tilde{s}_{i} = \tilde{s}_{i+1} + \phi(\tilde{s}_{i+1}).
+$$
+
+where $\phi(t) = \int\_t^\infty \bar{F}(x)dx$.
+
+Today we turn our attention to the questions from the end of the last post. That is, we hope to cut our teeth on another distribution in the hope that this might give us some ideas for the general (continuous) case, before having a go at the general case itself.
 
 ## An approximate solution: Exponentially distributed quotes
 
-Suppose that $X\_{1}, \ldots, X\_{n}\sim\text{Exp}(\lambda)$ are iid. Then the optimal threshold values are given by
+As another test case we consider next the case that $X\_{1}, \ldots, X\_{n}$ are iid $\text{Exp}(\lambda)$. Then, using the recurrence from last time, we see that the optimal threshold values are given by
 
 $$
 \tilde{s}_{i} = \tilde{s}_{i + 1} + \lambda^{ - 1}e^{-\lambda \tilde{s}_{i + 1}}, \quad \tilde{s}_{n} = 0.
 $$
+
+### Putnam Exam, 2012: B4
+
+As it happens, if we perform the substitution $a\_i = \lambda^{-1}\tilde{s}_{n-i}$, then this becomes
+
+$$
+a_{i+1} = a_i + e^{-a_i},
+$$
+
+with $a\_0 = 1$.
+
+As it happens, though this is somewhat spoilers, the question of whether the limit of $a\_n - \log n$ exists as $n$ goes to infinity was in fact posed as problem B4 of the 2012 William Lowell Putnam Mathematics Competition. See [here](https://www.youtube.com/watch?v=bFczPxcaYOM) for a video solution by [Michael Penn](https://www.youtube.com/watch?v=bFczPxcaYOM).
+
+### Back to the problem at hand!
 
 Performing the substitution $t\_{i}=e^{\lambda\tilde{s}\_{n-i}}$, we obtain
 
@@ -634,7 +782,7 @@ $$
 t_{i+1} = t_{i}e^{1/t_{i}}, \quad t_{0} = 1.
 $$
 
-Now note that $1 + x\leq e^x \leq 1 + x + x^2$ for $x\leq 1$ (indeed, $(e^x - 1 - x)/x^2$ is increasing for $x\leq 1$). Thus since we clearly have $t\_i\geq 1$ for all $i$, we have
+Observe that $1 + x\leq e^x \leq 1 + x + x^2$ for $0\leq x\leq 1$. This follows, for example, from the fact that $(e^x - 1 - x)/x^2$ is increasing for $x\geq 0$. Thus since we clearly have $t\_i\geq 1$ for all $i$, we have
 
 $$
 t_{i+1} \geq t_{i} + 1
@@ -649,20 +797,63 @@ $$
 Then, much as before, the first gives $t\_i\geq i + 1$ and the latter $t\_i\leq i + 1 + H\_i$. Putting this all together we see that
 
 $$
-t_i = i + O(\log{i})
+t_i = i + O(\log(i+1))
 $$
 
 and unfolding gives
 
 $$
-\tilde{s}_{i} = \log{n - i} + O(\frac{\log{n - i}}{n - i}).
+\tilde{s}_{i} = \lambda^{-1}\log(n - i + 1) + O\left(\frac{\log(n - i + 1)}{n - i + 1}\right).
 $$
 
 In particular we see that
 
 $$
-\tilde{s}_0 = (1 + O(1/n))\log{n}.
+\tilde{s}_0 = \lambda^{-1}\left(1 + O\left(\frac{1}{n}\right)\right)\log{n}.
 $$
+
+### Putnam Exam, 2012: B4
+
+It's worth nothing that this shows that $a\_n = (1 + O(\frac{1}{n}))\log{n}$ and so $a\_n - \log n\to 0$ as $n$ goes to infinity.
+
+### Amplification
+
+Much as with the uniform case, we can of course do much better. We in fact have $1+x+\frac{1}{2}x^2\leq e^x\leq 1+x+\frac{1}{2}x^2+x^3$ -- as before, simply because $(e^x - 1 - x-\frac{1}{2}x^2)/x^3$ is increasing for $x\geq 0$. This then translates into telling us that 
+
+$$
+t_{i+1} \geq t_{i} + 1 + 1/2t_{i}.
+$$
+
+and
+
+$$
+t_{i+1} \leq t_{i} + 1 + 1/2t_{i} + 1/t_i^2.
+$$
+
+Then, exactly as with it is possible to show
+
+$$
+t_i = i + 1 + \frac{1}{2}\log(i+1) + \tau' + o(1),
+$$
+
+where $\tau'$ is some absolute constant. Converting this into a somewhat additive statement concerning $\tilde{s}\_i$ we have
+
+$$
+\tilde{s}_{i} = \lambda^{-1}\left(\log(n - i + 1) + \frac{\log(n - i + 1)}{2(n - i + 1)} + \frac{\tau'}{n - i + 1} + o\left(\frac{1}{n - i + 1}\right)\right)
+$$
+
+as $n-i\to\infty$, and, in particular:
+
+$$
+\begin{align}
+\tilde{s}_{0} &= \lambda^{-1}\left(\log(n + 1) + \frac{\log(n + 1)}{2(n + 1)} + \frac{\tau'}{n + 1} + o\left(\frac{1}{n + 1}\right)\right)\\
+	&= \lambda^{-1}\left(\log n + \frac{\log n}{2n} + \frac{\tau'}{n} + o\left(\frac{1}{n}\right)\right).
+\end{align}
+$$
+
+### Putnam Exam, 2012: B4
+
+That is, $a\_n -\log n = \frac{\log n}{2n} + \frac{\tau'}{n} + o(\frac{1}{n})$ as $n$ goes to infinity.
 
 ## An approximate solution for an arbitrary non-negative distribution
 
