@@ -24,13 +24,17 @@ So how does it work? The way in which turnips can be used to make a profit (or l
 -  Every Sunday, a character called Daisy Mae can be found wandering around the island. She will offer to sell the 
 player turnips at a randomly chosen (integer between 90 and 110) base price. 
 
-![Daisy Mae](/assets/images/daisymae.jpeg){: .align-center}
+| ![Daisy Mae](/assets/images/daisymae.jpeg) |
+|:--:|
+| *Daisy Mae peddling her wares* |
 
 - On every other day of the week, Timmy and Tommy in Nook's Cranny will offer to buy turnips from you. They will 
 offer two prices a day (one in the morning, one in the afternoon), which may be higher or lower than the base price 
 that the turnips were bought for from Daisy Mae.
 
-![Timmy and Tommy](/assets/images/timmytommy.jpeg){: .align-center}
+| ![Timmy and Tommy](/assets/images/timmytommy.jpeg) |
+|:--:|
+| *A thoroughly underwhelming offer from Timmy* |
 
 One of the first questions we can ask is the following: if we know the distribution of prices that Timmy and Tommy 
 offer on any particular day, what is the best way to maximise the amount you get for your turnips? As is common we 
@@ -175,9 +179,7 @@ $$
 Therefore, the recurrence relation is first order, meaning the value of each $\tilde{s}\_{i}$ can 
 be computed directly from a single successive value $\tilde{s}\_{i+1}$. 
 
-=======
 <!--"Hands on" proof in uniform case goes here
->>>>>>> jackbartley
 -->
 
 At first glance, this recurrence relation is not particular familiar; however, by performing 
@@ -197,14 +199,9 @@ and gets arbitrarily close to $0$ for sufficiently large $i$. If there are a lar
 days over which prices can be tracked, then over the first few days the price needs to be very 
 high in order to tempt the seller.
 
-<p>
-<a title="Jordan Pierce / CC0" href="https://commons.wikimedia.org/wiki/File:Logistic_Bifurcation_map_High_Resolution.png">
-<img width="100%" alt="Logistic Bifurcation map High Resolution" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Logistic_Bifurcation_map_High_Resolution.png/512px-Logistic_Bifurcation_map_High_Resolution.png"></a>
-<em>
-One of the many exciting plots you get to see when studying the logistic function, showing the convergence 
-value as $i\rightarrow\infty$ for various values of $r$, the reproductive parameter.
-</em>
-</p>
+| [![Jordan Pierce / CC0](/assets/images/logisticmap.png)](https://commons.wikimedia.org/wiki/File:Logistic_Bifurcation_map_High_Resolution.png) |
+|:--:|
+| *One of the many exciting plots you get to see when studying the logistic function, showing the convergence value as $i\rightarrow\infty$ for various values of $r$, the reproductive parameter.* |
 
 ### Uniformly distributed quotes: a numerical solution
 
@@ -1246,13 +1243,9 @@ chosen price distribution. For example, consider the
 [beta distribution](https://en.wikipedia.org/wiki/Beta_distribution) on the interval
 $[0, 1]$, with parameters $\alpha=\beta=2$. 
 
-<p>
-<img width="100%" alt="Beta Distribution pdf" src="/assets/images/beta_dist.png">
-<em>
-The pdf of the Beta distribution with $\alpha=\beta=2$, with support on the finite
-interval $[0, 1]$.
-</em>
-</p>
+| ![Beta distribution pdf](/assets/images/beta_dist.png) |
+|:--:|
+| *The probability density function of the Beta distribution with $\alpha=\beta=2$, with support on the finite interval $[0, 1]$.* |
 
 ```python
 a = 2
