@@ -42,7 +42,6 @@ are interested in trying to maximise the expected profit.
 
 ## An instructive example: Uniformly distributed quotes
 
-<<<<<<< HEAD
 The easiest distribution to consider is the uniform distribution - specifically, assume that on each selling day, Timmy and Tommy offer a price that is uniformly distributed over some interval.
 
 Let $X_{1}, ..., X_{n}\sim U[0, 1]$ be 
