@@ -16,18 +16,25 @@ This post is written in collaboration with [Jack Bartley](http://jackbartley.com
 
 ## Turnip Mania
 
-In the game, one of the fastest ways of earning bells (the in game currency) and pay off your mortgage to Tom Nook is through the __Stalk Market__; essentially, this involves speculating on the price of turnips (chosen because the Japanese word for turnip, èª (kabu) is pronounced in the same way as æ ª (kabu), the word for stock).
+In the game, one of the fastest ways of earning bells (the in game currency) and pay off your mortgage to 
+Tom Nook is through the __Stalk Market__; essentially, this involves speculating on the price of turnips (chosen 
+because the Japanese word for turnip,  蕪 (kabu) is pronounced in the same way as 株 (kabu), the word for stock).
 
 So how does it work? The way in which turnips can be used to make a profit (or loss!) is as follows:
--  Every Sunday, a character called Daisy Mae can be found wandering around the island. She will offer to sell the player turnips at a randomly chosen (integer between 90 and 110) base price. 
+-  Every Sunday, a character called Daisy Mae can be found wandering around the island. She will offer to sell the 
+player turnips at a randomly chosen (integer between 90 and 110) base price. 
 
 ![Daisy Mae](/assets/images/daisymae.jpeg){: .align-center}
 
-- On every other day of the week, Timmy and Tommy in Nook's Cranny will offer to buy turnips from you. They will offer two prices a day (one in the morning, one in the afternoon), which may be higher or lower than the base price that the turnips were bought for from Daisy Mae.
+- On every other day of the week, Timmy and Tommy in Nook's Cranny will offer to buy turnips from you. They will 
+offer two prices a day (one in the morning, one in the afternoon), which may be higher or lower than the base price 
+that the turnips were bought for from Daisy Mae.
 
 ![Timmy and Tommy](/assets/images/timmytommy.jpeg){: .align-center}
 
-One of the first questions we can ask is the following: if we know the distribution of prices that Timmy and Tommy offer on any particular day, what is the best way to maximise the amount you get for your turnips? As is common we are interested in trying to maximise the expected profit.
+One of the first questions we can ask is the following: if we know the distribution of prices that Timmy and Tommy 
+offer on any particular day, what is the best way to maximise the amount you get for your turnips? As is common we 
+are interested in trying to maximise the expected profit.
 
 ## An instructive example: Uniformly distributed quotes
 
@@ -41,11 +48,11 @@ $$
 t_{i+1} = t_{i}(1-t_{i}), \quad t_{0} = \frac{1}{2}
 $$
 
-Hopefully, this rings some bells! It should be familiar to any first year undergraduates as 
+Hopefully, this rings some bells! It should be familiar to any first year mathematics undergraduates as 
 a special case of the __logistic map__, with reproductive parameter $r=1$, and initial 
 value $t\_{0}=\frac{1}{2}$. This recurrence relation is often first encountered when 
 considering the dynamics of a population of animals living in an environment with limited 
-resources, and is often used as an introduction to chaos theory. In this context, it suffices 
+resources, and is usually used as an introduction to chaos theory. In this context, it suffices 
 to say that for this choice of reproductive parameter, $t\_{i}$ is decreasing as $i$ increases, 
 and gets arbitrarily close to $0$ for sufficiently large $i$. If there are a large number of 
 days over which prices can be tracked, then over the first few days the price needs to be very 
@@ -127,7 +134,7 @@ print(f'giving an expected sold price of {expectation}')
     
 
 It can also be seen that as the number of days increases, the expected price that the 
-seller can get increases, due to the ability they have to hold out for a randomly occuring 
+seller can get increases, due to the ability they have to hold out for a randomly occurring 
 larger price:
 
 
