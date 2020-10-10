@@ -855,6 +855,10 @@ $$
 
 That is, $a\_n -\log n = \frac{\log n}{2n} + \frac{\tau'}{n} + o(\frac{1}{n})$ as $n$ goes to infinity.
 
+<!-- BOOKMARK -->
+
+<!-- Add some remark about how this proof is remarkably similar! -->
+
 ## An approximate solution for an arbitrary non-negative distribution
 
 Recall that the optimal thresholds are the solutions to the backwards first order recurrence
