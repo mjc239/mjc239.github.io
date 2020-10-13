@@ -216,7 +216,7 @@ and gets arbitrarily close to $0$ for sufficiently large $i$. If there are a lar
 days over which prices can be tracked, then over the first few days the price needs to be very 
 high in order to tempt the seller.
 
-| [![Jordan Pierce / CC0](/assets/images/logisticmap.png)](https://commons.wikimedia.org/wiki/File:Logistic_Bifurcation_map_High_Resolution.png) |
+| <a href="https://commons.wikimedia.org/wiki/File:Logistic_Bifurcation_map_High_Resolution.png"><img src="/assets/images/logisticmap.png" alt="Jordan Pierce / CC0" width="60%"/></a> |
 |:--:|
 | *One of the many exciting plots you get to see when studying the logistic function, showing the convergence value as $i\rightarrow\infty$ for various values of $r$, the reproductive parameter.* |
 
