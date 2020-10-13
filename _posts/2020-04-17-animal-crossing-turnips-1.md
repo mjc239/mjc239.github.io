@@ -20,7 +20,7 @@ In the game, one of the fastest ways of earning bells (the in game currency) and
 Tom Nook is through the __Stalk Market__; essentially, this involves speculating on the price of turnips (chosen 
 because the Japanese word for turnip,  蕪 (kabu) is pronounced in the same way as 株 (kabu), the word for stock).
 
-So how does it work? The way in which turnips can be used to make a profit (or loss!) is as follows:
+So how does it work? The way in which turnips can be used to make a profit (or loss) is as follows:
 -  Every Sunday, a character called Daisy Mae can be found wandering around the island. She will offer to sell the 
 player turnips at a randomly chosen (integer between 90 and 110) base price. 
 
@@ -37,25 +37,25 @@ that the turnips were bought for from Daisy Mae.
 | *A thoroughly underwhelming offer from Timmy* |
 
 One of the first questions we can ask is the following: if we know the distribution of prices that Timmy and Tommy 
-offer on any particular day, what is the best way to maximise the amount you get for your turnips? As is common we 
+offer on any particular day, what is the best way to maximise the amount received for the turnips? As is common we 
 are interested in trying to maximise the expected profit.
 
 ## An instructive example: Uniformly distributed quotes
 
 The easiest distribution to consider is the uniform distribution - specifically, assume that on each selling day, Timmy and Tommy offer a price that is uniformly distributed over some interval.
 
-Let $X_{1}, ..., X_{n}\sim U[0, 1]$ be 
+Let $P_{1}, ..., P_{n}\sim U[0, 1]$ be 
 [iid](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables) random variables, representing the price offered at time $i$, and suppose that the turnips spoil before another price is offered. Let $S$ be the price the turnips are sold at.
 
 Consider the following strategy:
 
 <p align="center">
-Sell at time $i$ if $X_{i}\geq s_{i}$.
+Sell at time $i$ if $P_{i}\geq s_{i}$.
 </p>
 
 Put simply, on each day there is a threshold value $s_{i}$ which represents the minimum price at which we will be prepared to sell for on that day. For example, as we need to sell the turnips before they spoil, we should expect to accept any price at time $t=n$; in other words, an optimal strategy should have $s_{n}=0$. 
 
-Let $\tau$ be the time at which we sell, that is $\tau = \min i:X_{i}\geq s_{i}$. Then, by the law of total expectation, we see that for any $i$, we have
+Let $\tau$ be the time at which we sell, that is $\tau = \min i:P_{i}\geq s_{i}$. Then, by the law of total expectation, we see that for any $i$, we have
 
 $$
 E(S) = E(S|\tau < i)P(\tau < i) + E(S|\tau \geq i)P(\tau \geq i).
@@ -66,34 +66,34 @@ Note that $E(S\|\tau < i)$, $P(\tau < i)$ and $P(\tau \geq i)$ depend only upon 
 Next,
 
 $$
-E(S|\tau \geq i) = E(X_i|X_i\geq s_i)P(X_i\geq s_i) + E(S|X_i < s_i)P(X_i < s_i).
+E(S|\tau \geq i) = E(P_i|P_i\geq s_i)P(P_i\geq s_i) + E(S|P_i < s_i)P(P_i < s_i).
 $$
 
-Now since $E(X_{i}\|X_{i}\geq s_{i}) = \frac{1}{2}(1+s_{i})$ and $P(X_i\geq s_i) = 1 - s_{i}$ we have 
+Now since $E(P_{i}\|P_{i}\geq s_{i}) = \frac{1}{2}(1+s_{i})$ and $P(P_i\geq s_i) = 1 - s_{i}$ we have 
 
 $$
-E(S|\tau \geq i) = \frac{1}{2}(1 - s_i^2) + s_i E(S|X_i < s_i).
+E(S|\tau \geq i) = \frac{1}{2}(1 - s_i^2) + s_i E(S|P_i < s_i).
 $$
 
-Clearly this is maximised when $s_i = E(S\|X_i < s_i)$. Write $\tilde{s}_i$ for this optimal threshold value. Then we see that
+Clearly this is maximised when $s_i = E(S\|P_i < s_i)$. Write $\tilde{s}_i$ for this optimal threshold value. Then we see that
 
 $$
-\tilde{s}_i = E(S|X_i < s_i)
+\tilde{s}_i = E(S|P_i < s_i)
 $$
 
 where, as noted earlier, the right hand expression depends only upon $s_{i + 1}, \ldots, s_n$. Define $e_{n-j}$ to be the expected return of the strategy
 
 <p align="center">
-Sell at time $i > j$ if $X_{i}\geq s_{i}$.
+Sell at time $i > j$ if $P_{i}\geq s_{i}$.
 </p>
 
-That is, the expected return, were we to see all but the first $j$ prices. Moreover, writing $\tilde{e}\_{n - j}$ for the expected return of this strategy with the optimal thresholds, we see that $E(S\|X_{i} < s_{i}) = e_{n - i}$ and this gives the recurrence:
+That is, the expected return, were we to see all but the first $j$ prices. Moreover, writing $\tilde{e}\_{n - j}$ for the expected return of this strategy with the optimal thresholds, we see that $E(S\|P_{i} < s_{i}) = e_{n - i}$ and this gives the recurrence:
 
 $$
 \tilde{s}_i = \tilde{e}_{n - i}.
 $$
 
-This tells us that at time $n$ we should accept any price; at time $n - 1$ we should accept exactly the expected value of $X_n$; at time $n - 2$ we should settle for the exactly the expected value were we to pass on $X_{n - 2}$; and so on and so forth.
+This tells us that at time $n$ we should accept any price; at time $n - 1$ we should accept exactly the expected value of $P_n$; at time $n - 2$ we should settle for the exactly the expected value were we to pass on $P_{n - 2}$; and so on and so forth.
 
 Indeed, it is possible to do one better and express the right hand side solely in terms of $\tilde{s}\_{i+1}$, and ultimately to find a recursive relationship between $\tilde{s}\_{i}$ and $\tilde{s}\_{i+1}$.
 
@@ -101,7 +101,7 @@ Again, using the total law of expectation we see that
 
 $$
 \begin{align}
-\tilde{e}_{n - i} &= E(X_{i + 1}|X_{i + 1}\geq \tilde{s}_{i + 1})P(X_{i + 1}\geq \tilde{s}_{i + 1}) + E(S|X_{i + 1} < \tilde{s}_{i + 1})P(X_{i + 1} < \tilde{s}_{i + 1})\\
+\tilde{e}_{n - i} &= E(P_{i + 1}|P_{i + 1}\geq \tilde{s}_{i + 1})P(P_{i + 1}\geq \tilde{s}_{i + 1}) + E(S|P_{i + 1} < \tilde{s}_{i + 1})P(P_{i + 1} < \tilde{s}_{i + 1})\\
 &= \frac{1}{2}(1 - \tilde{s}_{i + 1}^2) + \tilde{s}_{i + 1}^2\\
 &= \frac{1}{2}(1 + \tilde{s}_{i + 1}^2)
 \end{align}
@@ -110,7 +110,7 @@ $$
 where in the second inequality we make critial use of the fact that $E(X\_{i+1}\|X\_{i+1}\geq\tilde{s}\_{i+1})=\frac{1}{2}(1+\tilde{s}\_{i + 1})$ and $E(S\|X\_{i + 1} < \tilde{s}\_{i + 1}) = \tilde{s}\_{i + 1}$.
 
 <!--
-For the uniform distribution we have $P\left(S_i\right)=1-s_{i}$, and all the quotes $X_{i}$ are iid, so we have
+For the uniform distribution we have $P\left(S_i\right)=1-s_{i}$, and all the quotes $P_{i}$ are iid, so we have
 
 $$
 \begin{equation}
@@ -118,11 +118,11 @@ P\left(S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right) = (1-s_{i})\prod_{j<i}s_{j}
 \end{equation}
 $$
 
-Also, the expected value of $X_{i}$ is independent of any other quote, so the conditional expectation simplifies:
+Also, the expected value of $P_{i}$ is independent of any other quote, so the conditional expectation simplifies:
 
 $$
 \begin{align}
-E\left(X_{i}\;\middle|\; S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right) &= E\left(X_{i}\;\middle|\;S_{i}\right) \\
+E\left(P_{i}\;\middle|\; S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right) &= E\left(P_{i}\;\middle|\;S_{i}\right) \\
 &= \frac{1}{2}\left(1+s_{i}\right)
 \end{align}
 $$
@@ -314,13 +314,13 @@ After a bit of playing around with the uniform case we've managed to find first 
 In the above we only considered strategies of the form:
 
 <p align="center">
-Sell at time $i$ if $X_{i}\geq s_{i}$
+Sell at time $i$ if $P_{i}\geq s_{i}$
 </p>
 
 That is to say, the price we would settle for on each day depended only upon the day itself and not upon the prices we had seen so far. Indeed, as we tacitly assume that the buyer only has knowledge of past and not future prices, a generic strategy would be of the form:
 
 <p align="center">
-Sell at time $i$ if $X_{i}\geq s_{i}(X_1, \ldots, X_{i-1})$
+Sell at time $i$ if $P_{i}\geq s_{i}(P_1, \ldots, P_{i-1})$
 </p>
 
 where here $s_i$ is now a function of $i-1$ variables. Can we convince ourselves that optimal strategies must be of the former type?
