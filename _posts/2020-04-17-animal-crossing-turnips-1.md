@@ -4,6 +4,7 @@ header:
     image: assets/images/turniproom.jpeg
 toc: true
 toc_label: "Contents:"
+classes: wide
 tags:
  - probability
 ---
@@ -42,7 +43,7 @@ are interested in trying to maximise the expected profit.
 
 ## An instructive example: Uniformly distributed quotes
 
-The easiest distribution to consider is the uniform distribution - specifically, assume that on each selling day, Timmy and Tommy offer a price that is uniformly distributed over some interval.
+The easiest distribution to consider is the uniform distribution - specifically, let's assume that on each selling day, Timmy and Tommy offer a price that is uniformly distributed over some interval.
 
 Let $P_{1}, ..., P_{n}\sim U[0, 1]$ be 
 [iid](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables) random variables, representing the price offered at time $i$, and suppose that the turnips spoil before another price is offered. Let $S$ be the price the turnips are sold at.
