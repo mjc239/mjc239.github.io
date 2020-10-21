@@ -11,7 +11,8 @@ tags:
 
 {% include mathjax.html %}
 
-This post is written in collaboration with [Jack Bartley](http://jackbartley.com/), while playing [Animal Crossing New Horizons](https://www.youtube.com/watch?v=5LAKjL3p6Gw). 
+This post is written in collaboration with [Jack Bartley](http://jackbartley.com/), while playing 
+[Animal Crossing New Horizons](https://www.youtube.com/watch?v=5LAKjL3p6Gw). 
 
 # Post 1: Turnip Mania
 
@@ -48,8 +49,9 @@ Timmy and Tommy offer a price that is uniformly distributed over some interval.
 
 Let $P_{1}, ..., P_{n}\sim U[0, 1]$ be 
 [iid](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables) random variables, 
-representing the price offered at time $i$, and suppose that the turnips spoil before another price is offered. Let 
-$S$ be the price the turnips are sold at.
+representing the price offered at time $i$, and suppose that the turnips spoil at time $n+1$, becoming worthless 
+(in the game, this is the time that Daisy Mae offers to sell you more turnips at a new price). Let $S$ be the price the 
+turnips are sold at.
 
 Consider the following strategy:
 
@@ -84,8 +86,8 @@ $$
 E(S|\tau \geq i) = \frac{1}{2}(1 - s_i^2) + s_i E(S|P_i < s_i).
 $$
 
-Clearly this is maximised when $s_i = E(S\|P_i < s_i)$. Write $\tilde{s}_i$ for this optimal threshold value. Then we 
-see that
+Clearly this is maximised when $s_i = E(S\|P_i < s_i)$. Write $\tilde{s}_i$ for this optimal threshold value. 
+Then we see that
 
 $$
 \tilde{s}_i = E(S|P_i < s_i)
@@ -107,8 +109,9 @@ $$
 $$
 
 This tells us that at time $n$ we should accept any price; at time $n - 1$ we should accept exactly the expected value 
-of $P_n$; at time $n - 2$ we should settle for the exactly the expected value were we to pass on $P_{n - 2}$; and so on 
-and so forth.
+of $P_n$; at time $n - 2$ we should settle for the exactly the expected value were we to pass on $P_{n - 2}$; and so 
+on and so forth.
+
 
 Indeed, it is possible to do one better and express the right hand side solely in terms of $\tilde{s}\_{i+1}$, and 
 ultimately to find a recursive relationship between $\tilde{s}\_{i}$ and $\tilde{s}\_{i+1}$.
@@ -214,7 +217,7 @@ and gets arbitrarily close to $0$ for sufficiently large $i$. If there are a lar
 days over which prices can be tracked, then over the first few days the price needs to be very 
 high in order to tempt the seller.
 
-| [![Jordan Pierce / CC0](/assets/images/logisticmap.png)](https://commons.wikimedia.org/wiki/File:Logistic_Bifurcation_map_High_Resolution.png) |
+| <a href="https://commons.wikimedia.org/wiki/File:Logistic_Bifurcation_map_High_Resolution.png"><img src="/assets/images/logisticmap.png" alt="Jordan Pierce / CC0" width="60%"/></a> |
 |:--:|
 | *One of the many exciting plots you get to see when studying the logistic function, showing the convergence value as $i\rightarrow\infty$ for various values of $r$, the reproductive parameter.* |
 
@@ -323,7 +326,8 @@ than this can be expected to be beaten (in the probabilistic sense) in the futur
 
 ## Outstanding questions
 
-After a bit of playing around with the uniform case we've managed to find first order recurrence describing the optimal threshold values for a strategy of this sort. This begs a few natural questions.
+After a bit of playing around with the uniform case we've managed to find first order recurrence describing the optimal 
+threshold values for a strategy of this sort. This begs a few natural questions.
 
 ### Seize the day!
 
@@ -333,21 +337,28 @@ In the above we only considered strategies of the form:
 Sell at time $i$ if $P_{i}\geq s_{i}$
 </p>
 
-That is to say, the price we would settle for on each day depended only upon the day itself and not upon the prices we had seen so far. Indeed, as we tacitly assume that the buyer only has knowledge of past and not future prices, a generic strategy would be of the form:
+That is to say, the price we would settle for on each day depended only upon the day itself and not upon the prices we 
+had seen so far. Indeed, as we tacitly assume that the buyer only has knowledge of past and not future prices, a generic 
+strategy would be of the form:
 
 <p align="center">
 Sell at time $i$ if $P_{i}\geq s_{i}(P_1, \ldots, P_{i-1})$
 </p>
 
-where here $s_i$ is now a function of $i-1$ variables. Can we convince ourselves that optimal strategies must be of the former type?
+where here $s_i$ is now a function of $i-1$ variables. Can we convince ourselves that optimal strategies must be of the 
+former type?
 
 ### Solving the recurrence
 
-Having found the recurrence governing the optimal thresholds, while it may not be possible to find an exact formula for them it would be nice to be able to say something more about the solutions. Perhaps we could say something about their asymptotics?
+Having found the recurrence governing the optimal thresholds, while it may not be possible to find an exact formula for 
+them it would be nice to be able to say something more about the solutions. Perhaps we could say something about their 
+asymptotics?
 
 ### Flying the nest
 
-Now that we've cut our teeth on this simple case, we would like to say something about other distributions. In particular, can we find a simple recurrence governing the thresholds of an optimal strategy? Can we show that it is always the case the these optimal thresholds are the expected returns if we choose to play on, as discussed earlier?
+Now that we've cut our teeth on this simple case, we would like to say something about other distributions. In 
+particular, can we find a simple recurrence governing the thresholds of an optimal strategy? Can we show that it is 
+always the case the these optimal thresholds are the expected returns if we choose to play on, as discussed earlier?
 
 ## Next time: Non-uniform Turnips
 
