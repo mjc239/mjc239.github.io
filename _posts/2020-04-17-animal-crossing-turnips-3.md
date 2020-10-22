@@ -1,5 +1,6 @@
 ---
 title: "Animal Crossing Turnip Market -- When to sell?"
+excerpt: "Post 3 - Exponentially distributed prices and further asymptotics"
 header:
     image: assets/images/turniproom.jpeg
 toc: true

@@ -1,42 +1,63 @@
 ---
 title: "Animal Crossing Turnip Market -- When to sell?"
+excerpt: "Post 2 - Asymptotics and arbitrary distributions"
 header:
     image: assets/images/turniproom.jpeg
 toc: true
 toc_label: "Contents:"
+classes: wide
 tags:
  - probability
 ---
 
 {% include mathjax.html %}
 
-This post is written in collaboration with [Jack Bartley](http://jackbartley.com/), while playing [Animal Crossing New Horizons](https://www.youtube.com/watch?v=5LAKjL3p6Gw). 
+This post is written in collaboration with [Jack Bartley](http://jackbartley.com/), while playing 
+[Animal Crossing New Horizons](https://www.youtube.com/watch?v=5LAKjL3p6Gw). 
 
 # Post 2: Non-uniform Turnips
 
 ## Last time: Turnip mania
 
-Following on from [last time](post1hyperlink), in this post we're looking again at optimal strategies for turnip selling in Animal Crossing. Readers are advise to consult the [first post](post1hyperlink) for details on what has been covered so far, but we give a very brief summary here for the uninitiated.
+Following on from [last time]({% post_url 2020-04-17-animal-crossing-turnips-1 %}), in this post we're looking again at 
+optimal strategies for turnip selling in Animal Crossing. Readers are advise to consult the 
+[first post]({% post_url 2020-04-17-animal-crossing-turnips-1 %}) for details on what has been covered so far, but we 
+give a very brief summary here for the uninitiated.
 
-We consider the following game -- a simple model for turnip selling in Animal Crossing. Let $X\_1, \ldots, X\_n$ be iid random variables. At each time $t=1, 2, \ldots, n$ the player is offered the opportunity to sell all the turnips they have for a price of $X\_i$. If the player accepts this offer then the game ends and the player ends with a revenue of $X\_i$, if the player refuses then they move to the next timestamp. If the turnips are not sold on or before time $n$ then the turnips spoil and the player walks away with nothing.
 
-Last time we considered the special case that the $X\_i$ are iid uniform on $[0,1]$, and considered the following strategy:
+We consider the following game -- a simple model for turnip selling in Animal Crossing. Let $X\_1, \ldots, X\_n$ be iid 
+random variables. At each time $t=1, 2, \ldots, n$ the player is offered the opportunity to sell all the turnips they 
+have for a price of $X\_i$. If the player accepts this offer then the game ends and the player ends with a revenue of 
+$X\_i$, if the player refuses then they move to the next timestamp. If the turnips are not sold on or before time $n$ 
+then the turnips spoil and the player walks away with nothing.
+
+Last time we considered the special case that the $X\_i$ are iid uniform on $[0,1]$, and considered the following 
+strategy:
 
 <p align="center">
 Sell at time $i$ if $X_{i}\geq s_{i}$.
 </p>
 
-We write $\tilde{s}\_i$ for the expectation maximising choices of these thresholds and $\tilde{e}_n$ for the expected winnings when choosing these optimal thresholds. Last time we found that these optimal thresholds satisfy the following first order recurrence:
+We write $\tilde{s}\_i$ for the expectation maximising choices of these thresholds and $\tilde{e}_n$ for the expected 
+winnings when choosing these optimal thresholds. Last time we found that these optimal thresholds satisfy the following 
+first order recurrence:
 
 <p align="center">
 $\tilde{s}_i = \frac{1}{2}(1 +\tilde{s}_{i + 1}^2)$ for $1\leq i<n$, with $\tilde{s}_n = 0$.
 </p>
 
-In today's post we seek to address the questions posed at the end of the last. That is, we wish to give an asymptotic solution to this non-linear recurrence and generalise some of our results from last time to arbitrary distributions.
+In today's post we seek to address the questions posed at the end of the last. That is, we wish to give an asymptotic 
+solution to this non-linear recurrence and generalise some of our results from last time to arbitrary distributions.
 
 ### A disclaimer
 
-At this point it is worth saying that anybody expecting to use our analysis to improve their turnip game would be better off looking elsewhere. Perhaps unsurprisingly it is reasonably well understood<sup>[1](#post2footnote1)</sup> how the prices in Animal Crossing are *actually* generated. Some people have even been so helpful as to make [tools](turnipprophet.io) to help people with their turnip selling, though to say much more than this might constitute **SPOILERS** (one could argue that the existence of these tools is in itself [**SPOILERS**](https://www.youtube.com/watch?v=KSRWJMM98pM)). Indeed, to identify what part of our model renders it ineffective would certain be 
+At this point it is worth saying that anybody expecting to use our analysis to improve their turnip game would be 
+better off looking elsewhere. Perhaps unsurprisingly it is reasonably well understood<sup>[1](#post2footnote1)</sup> 
+how the prices in Animal Crossing are *actually* generated. Some people have even been so helpful as to make 
+[tools](turnipprophet.io) to help people with their turnip selling, though to say much more than this might constitute 
+**SPOILERS** (one could argue that the existence of these tools is in itself 
+[**SPOILERS**](https://www.youtube.com/watch?v=KSRWJMM98pM)). Indeed, to identify what part of our model renders it 
+ineffective would certain be 
 <details> 
 <summary> SPOILERS </summary> 
 Of course, it is the assumption that the prices are independent. 
@@ -50,7 +71,8 @@ To kick things off, starting from
 $\tilde{s}_i = \frac{1}{2}(1 +\tilde{s}_{i + 1}^2)$ for $1\leq i< n$ and $\tilde{s}_n = 0$,
 </p>
 
-we perform the substitution $t_i = \frac{1}{2}(1 - \tilde{s}_{n-i})$ to arrive at the logistic map with initial value $1/2$ (as noted last time). That is
+we perform the substitution $t_i = \frac{1}{2}(1 - \tilde{s}_{n-i})$ to arrive at the logistic map with initial value 
+$1/2$ (as noted last time). That is
 
 <p align="center">
 $t_{i+1} = t_{i}(1-t_{i})$ for $0\leq i <n - 1$, with initial value $t_{0} = \frac{1}{2}$.
@@ -74,13 +96,15 @@ $$
 $$
 </details>
 
-Thus, since we certainly have $r\_{i}> 1$ for all $i$ by induction, we have $\frac{1}{r_i-1}>0$ for all $i$ and so $r\_{i+1}\geq r\_{i} + 1$ for $0\leq i < n - 1$ and we get the lower bound
+Thus, since we certainly have $r\_{i}> 1$ for all $i$ by induction, we have $\frac{1}{r_i-1}>0$ for all $i$ and so 
+$r\_{i+1}\geq r\_{i} + 1$ for $0\leq i < n - 1$ and we get the lower bound
 
 $$
 r_{i}\geq i + 2
 $$
 
-for all $i$ (that is, for $0\leq i < n$). In the other direction, since we now have $r\_{i} - 1\geq i + 1$ for all $i$, it follows that $r\_{i+1}\leq r\_{i} + 1 + \frac{1}{i + 1}$ for $0\leq i < n - 1$, and we obtain the upper bound 
+for all $i$ (that is, for $0\leq i < n$). In the other direction, since we now have $r\_{i} - 1\geq i + 1$ for all $i$, 
+it follows that $r\_{i+1}\leq r\_{i} + 1 + \frac{1}{i + 1}$ for $0\leq i < n - 1$, and we obtain the upper bound 
 
 $$
 r_{i}\leq i + 2  + H_i
@@ -110,17 +134,21 @@ $$
 \tilde{s}_{i} = 1 - \frac{2}{n - i + O(\log{(n - i + 1)})}.
 $$
 
-That is to say, we have ascertained the value of the optimal thresholds up to a rather small error. We note that this last observation can be stated in terms of an additive error as follows: 
+That is to say, we have ascertained the value of the optimal thresholds up to a rather small error. We note that this 
+last observation can be stated in terms of an additive error as follows: 
 
 $$
 \tilde{s}_{i} = 1 - \frac{2}{n - i + 2} + O\left(\frac{\log{(n - i + 1)}}{(n - i + 1)^2}\right).
 $$
 
-Those of an anxious disposition might be left wondering if we can't do a little better. Indeed, we used a very crude argument to lower bound the $r_i$, which we then used to get an upper bound. Perhaps we can flip this around and use our upper bound to improve the lower bound?
+Those of an anxious disposition might be left wondering if we can't do a little better. Indeed, we used a very crude 
+argument to lower bound the $r_i$, which we then used to get an upper bound. Perhaps we can flip this around and use our 
+upper bound to improve the lower bound?
 
 ### Overdoing it: amplification
 
-Taking this one step further and substituting the upper bound $r_{i}\leq i + 2  + H_i$ into the recurrence $r_{i+1} = r_{i} + 1 + \frac{1}{r_{i}-1}$, we see that
+Taking this one step further and substituting the upper bound $r_{i}\leq i + 2  + H_i$ into the recurrence 
+$r_{i+1} = r_{i} + 1 + \frac{1}{r_{i}-1}$, we see that
 
 $$
 r_{i+1}\geq r_{i} + 1 + \frac{1}{i + 1 + H_i}
@@ -130,7 +158,8 @@ for all $i$. This then gives
 
 $$r_{i}\geq i + 2 + \sum_{j=1}^i\frac{1}{j + H_{j-1}}$$
 
-for $0\leq i < n$. Now since $1/(1+x)\geq 1-x$ for all $x$ (a handy consequence of the [difference of two squares](https://en.wikipedia.org/wiki/Difference_of_two_squares)), we have 
+for $0\leq i < n$. Now since $1/(1+x)\geq 1-x$ for all $x$ (a handy consequence of the 
+[difference of two squares](https://en.wikipedia.org/wiki/Difference_of_two_squares)), we have 
 
 $$
 \begin{align}
@@ -165,7 +194,11 @@ $$
 
 #### The Euler-Mascharoni constant
 
-Of course, we actually have $H\_i = \log(i + 1) + \gamma + o(1)$, where $\gamma$ is the [Euler-Mascharoni constant](https://en.wikipedia.org/wiki/Euler%E2%80%93Mascheroni_constant), but since the additive error in our estimate for $r_i$ is otherwise $O(1)$ this named constant would be eaten up by our error. As it happens, we can push our argument a bit further and, in a sense, obtain an analogous result for the $r_i$ themselves. Here there will be a fixed constant cropping up, but it will not be the Euler-Mascharoni constant.
+Of course, we actually have $H\_i = \log(i + 1) + \gamma + o(1)$, where $\gamma$ is the 
+[Euler-Mascharoni constant](https://en.wikipedia.org/wiki/Euler%E2%80%93Mascheroni_constant), but since the additive 
+error in our estimate for $r_i$ is otherwise $O(1)$ this named constant would be eaten up by our error. As it happens, 
+we can push our argument a bit further and, in a sense, obtain an analogous result for the $r_i$ themselves. Here there 
+will be a fixed constant cropping up, but it will not be the Euler-Mascharoni constant.
 
 ### Overdoing just one last time: The "Bartley-Cole" constant
 
@@ -185,7 +218,9 @@ $$
 \end{align}
 $$
 
-Now, since we've already established that $i+2 < r_i\leq i+2+O(\log(i+1))$, we have $0<\frac{1}{j+1} - \frac{1}{r\_j - 1}\leq O\left(\frac{\log(j+1)}{(j+1)^2}\right)$ as before. Thus this series converges to some limit and combining this with the fact that $H\_i = \log(i+1) + \gamma + o(1)$ we see that
+Now, since we've already established that $i+2 < r_i\leq i+2+O(\log(i+1))$, we have 
+$0<\frac{1}{j+1} - \frac{1}{r\_j - 1}\leq O\left(\frac{\log(j+1)}{(j+1)^2}\right)$ as before. Thus this series converges 
+to some limit and combining this with the fact that $H\_i = \log(i+1) + \gamma + o(1)$ we see that
 
 $$
 r_i= i + 2 + \log(i+1) + \tau + o(1),
@@ -211,12 +246,16 @@ Naturally this sort of thing could go on forever, but we'll leave it there!
 
 ### Uniform on an arbitrary interval
 
-While we have assumed the daily quoted prices $X\_{i}$ have been uniformly distributed over $[0, 1]$ it is clear that the results derived above extend easily to the case of a uniform distribution over an arbitary interval $[a, b]$, by linear scaling -- specifically, by letting $Y\_{i} = a + (b-a)X\_{i}$.
+While we have assumed the daily quoted prices $X\_{i}$ have been uniformly distributed over $[0, 1]$ it is clear that 
+the results derived above extend easily to the case of a uniform distribution over an arbitary interval $[a, b]$, by 
+linear scaling -- specifically, by letting $Y\_{i} = a + (b-a)X\_{i}$.
 
 
 ## Arbitrary (non-negative) turnips
 
-Having gave a much more accurate solution to the uniform case we now turn our attention to the question of what we can do in general. So as to not jump straight in the deep end we first give another approach for the uniform case, being careful to keep things as general as possible for as long as possible.
+Having gave a much more accurate solution to the uniform case we now turn our attention to the question of what we can 
+do in general. So as to not jump straight in the deep end we first give another approach for the uniform case, being 
+careful to keep things as general as possible for as long as possible.
 
 ### An instructive example revisited: Uniformly distributed quotes
 
@@ -228,15 +267,20 @@ Sell at time $i$ if $X_{i}\geq s_{i}$
 
 and write $S$ for the price the turnips are consequently sold at.
 
-<!-- Put simply, on each day there is a threshold $s\_{i}$ which represents the minimum price at which we would be prepared to sell on that day. For example, as we need to sell the turnips before they spoil, we should accept any price at time $t=n$; in other words, the optimal such strategy should have $s\_{n}=0$.  -->
+<!-- Put simply, on each day there is a threshold $s\_{i}$ which represents the minimum price at which we would be 
+prepared to sell on that day. For example, as we need to sell the turnips before they spoil, we should accept any price 
+at time $t=n$; in other words, the optimal such strategy should have $s\_{n}=0$.  -->
 
-Let $\tau$ be the time at which we sell, that is $\tau = \min\\{ i:X\_{i}\geq s\_{i}\\}$. Then, by the law of total expectation, we see that for any $i$, we have
+Let $\tau$ be the time at which we sell, that is $\tau = \min\\{ i:X\_{i}\geq s\_{i}\\}$. Then, by the law of total 
+expectation, we see that for any $i$, we have
 
 $$
 E(S) = E(S|\tau < i)P(\tau < i) + E(S|\tau \geq i)P(\tau \geq i).
 $$
 
-Note that $E(S\|\tau < i)$, $P(\tau < i)$ and $P(\tau \geq i)$ depend only upon $s\_{1}, \ldots, s\_{i - 1}$, whereas $E(S\|\tau \geq i)$ depends only upon $s\_{i}, \ldots, s\_{n}$. Therefore, the optimal choice of $s\_{i}$ depends only upon $s\_{i + 1}, \ldots, s\_{n}$. Indeed, it suffices to choose $s\_{i}$ so as to maximise $E(S\|\tau \geq i)$.
+Note that $E(S\|\tau < i)$, $P(\tau < i)$ and $P(\tau \geq i)$ depend only upon $s\_{1}, \ldots, s\_{i - 1}$, whereas 
+$E(S\|\tau \geq i)$ depends only upon $s\_{i}, \ldots, s\_{n}$. Therefore, the optimal choice of $s\_{i}$ depends only 
+upon $s\_{i + 1}, \ldots, s\_{n}$. Indeed, it suffices to choose $s\_{i}$ so as to maximise $E(S\|\tau \geq i)$.
 
 Next,
 
@@ -261,16 +305,22 @@ $$
 
 where, as noted earlier, the right hand expression depends only upon $s\_{i + 1}, \ldots, s\_n$. 
 
-Now define $\tilde{e}\_n$ to be the expectation of the optimal strategy of this form when this game is played over $n$ days. Then noting that $E(S\|\tau > i)$ is simply the expectation of this game played over $n-j$ days with thresholds $s\_{i+1}, \ldots, s\_n$ we obtain the recurrence:
+Now define $\tilde{e}\_n$ to be the expectation of the optimal strategy of this form when this game is played over $n$ 
+days. Then noting that $E(S\|\tau > i)$ is simply the expectation of this game played over $n-j$ days with thresholds 
+$s\_{i+1}, \ldots, s\_n$ we obtain the recurrence:
 
 $$
 \tilde{s}_i = \tilde{e}_{n - i}.
 $$
 
 
-This tells us that at time $n$ we should accept any price; at time $n - 1$ we should accept exactly the expected value of $X\_n$; at time $n - 2$ we should settle for exactly the expected return of our strategy were we to pass on $X\_{n - 2}$ and play on for the final two days; and so on and so forth. Put simply, we should accept exactly that price that we would achieve in expectation were we to pass on today's price and play on.
+This tells us that at time $n$ we should accept any price; at time $n - 1$ we should accept exactly the expected value 
+of $X\_n$; at time $n - 2$ we should settle for exactly the expected return of our strategy were we to pass on 
+$X\_{n - 2}$ and play on for the final two days; and so on and so forth. Put simply, we should accept exactly that 
+price that we would achieve in expectation were we to pass on today's price and play on.
 
-Indeed, it is possible to do one better and express the right hand side (that is, $\tilde{e}\_{n-i}$) solely in terms of $\tilde{s}\_{i+1}$, finding a recursive relationship between $\tilde{s}\_{i}$ and $\tilde{s}\_{i+1}$ alone.
+Indeed, it is possible to do one better and express the right hand side (that is, $\tilde{e}\_{n-i}$) solely in terms 
+of $\tilde{s}\_{i+1}$, finding a recursive relationship between $\tilde{s}\_{i}$ and $\tilde{s}\_{i+1}$ alone.
 
 
 Again, using the total law of expectation we see that
@@ -290,7 +340,9 @@ where in the third equality we make critial use of the fact that $\tilde{e}_{n-(
 
 Clearly there is not a great deal to tweak to prove a similar result for a general distribution.
 
-Suppose now that $X\_1, \ldots, X\_n$ are iid and we follow a strategy of the same form. Then the argument above still tells us that the optimal choice of $s\_i$ depends only upon $s\_{i + 1}, \ldots, s\_n$. In particular we must choose $s\_{i}$ so as to maximise $E(S\|\tau \geq i)$. As before we could write
+Suppose now that $X\_1, \ldots, X\_n$ are iid and we follow a strategy of the same form. Then the argument above still 
+tells us that the optimal choice of $s\_i$ depends only upon $s\_{i + 1}, \ldots, s\_n$. In particular we must choose 
+$s\_{i}$ so as to maximise $E(S\|\tau \geq i)$. As before we could write
 
 $$
 E(S|\tau \geq i) = E(X_i|X_i\geq s_i)P(X_i\geq s_i) + E(S|\tau>i)P(X_i < s_i),
@@ -302,7 +354,8 @@ $$
 E(S|\tau \geq i) = \int_{s_i}^{\infty}xf_X(x)dx + \int_{-\infty}^{s_i} \tilde{e}_{n-i}f_X(x)dx
 $$
 
-where each integral corresponds exactly to one of the products in the previous expression for $E(S\|\tau \geq i)$. Or, more succintly, as:
+where each integral corresponds exactly to one of the products in the previous expression for $E(S\|\tau \geq i)$. Or, 
+more succintly, as:
 
 $$
 E(S|\tau \geq i) = \int_{-\infty}^{\infty}g(x;s_i)f_X(x)dx
@@ -310,9 +363,18 @@ $$
 
 where $g(x;s\_i)=\tilde{e}\_{n-i}$ for $x\leq s\_i$ and $g(x;s\_i) = x$ otherwise. 
 
-Now it is easy to see that $\tilde{e}\_{n-i}$ is the *unique* choice of $s\_i$ which maximises $g(x;s\_i)$ for every $x$. That is to say, we have $g(x;\tilde{e}\_{n-i})\geq g(x;s\_i)$ for all $x$, and if $s\_i\neq\tilde{e}\_{n-i}$ then there exists $x$ such that $g(x;\tilde{e}\_{n-i}) > g(x;s\_i)$.
+Now it is easy to see that $\tilde{e}\_{n-i}$ is the *unique* choice of $s\_i$ which maximises $g(x;s\_i)$ for every 
+$x$. That is to say, we have $g(x;\tilde{e}\_{n-i})\geq g(x;s\_i)$ for all $x$, and if $s\_i\neq\tilde{e}\_{n-i}$ then 
+there exists $x$ such that $g(x;\tilde{e}\_{n-i}) > g(x;s\_i)$.
 
-In fact, this is exactly the algebraic way of framing the argument given in [Turnip Mania](post1hyperlink). Indeed, we should certainly never settle for a price less than $\tilde{e}\_{n-i}$ as we would simply be better off (in expectation) by playing on. Algebraically this is reflected by the fact that if $s\_i<\tilde{e}\_{n-i}$, then we have $g(x;s\_i)=x<\tilde{e}\_{n-i}=g(x;\tilde{e}\_{n-i})$ for $s\_i<x< \tilde{e}\_{n-i}$. Whereas, if we are too picky and hold out for a price higher than $\tilde{e}\_{n-i}$, then we are simply wasting a perfectly good price in the event that we are offered something between $\tilde{e}\_{n-i}$ and $s\_i$. Algebraically, this is reflected by the fact that if $s\_i>\tilde{e}\_{n-i}$, then we have $g(x;s\_i)=\tilde{e}\_{n-i}<x=g(x;\tilde{e}\_{n-i})$ for $\tilde{e}\_{n-i}< x< s\_i$.
+In fact, this is exactly the algebraic way of framing the argument given in [Turnip Mania](post1hyperlink). Indeed, we 
+should certainly never settle for a price less than $\tilde{e}\_{n-i}$ as we would simply be better off (in expectation) 
+by playing on. Algebraically this is reflected by the fact that if $s\_i<\tilde{e}\_{n-i}$, then we have 
+$g(x;s\_i)=x<\tilde{e}\_{n-i}=g(x;\tilde{e}\_{n-i})$ for $s\_i<x< \tilde{e}\_{n-i}$. Whereas, if we are too picky and 
+hold out for a price higher than $\tilde{e}\_{n-i}$, then we are simply wasting a perfectly good price in the event 
+that we are offered something between $\tilde{e}\_{n-i}$ and $s\_i$. Algebraically, this is reflected by the fact that 
+if $s\_i>\tilde{e}\_{n-i}$, then we have $g(x;s\_i)=\tilde{e}\_{n-i}<x=g(x;\tilde{e}\_{n-i})$ for 
+$\tilde{e}\_{n-i}< x< s\_i$.
 
 All this is to say that we recover the key fact that 
 
@@ -335,7 +397,9 @@ $$
 	\end{align}
 $$
 
-Since $\tilde{e}\_{n - i} = \tilde{s}\_{i+1}$ this at least gives a first order recurrence, however, we would prefer something cleaner. Writing $\tilde{s}\_{i+1}F(\tilde{s}\_{i+1}) = \tilde{s}\_{i+1} - \tilde{s}\_{i+1}\bar{F}(\tilde{s}\_{i+1})$ and defining
+Since $\tilde{e}\_{n - i} = \tilde{s}\_{i+1}$ this at least gives a first order recurrence, however, we would prefer 
+something cleaner. Writing $\tilde{s}\_{i+1}F(\tilde{s}\_{i+1}) = \tilde{s}\_{i+1} - \tilde{s}\_{i+1}\bar{F}(\tilde{s}\_{i+1})$ 
+and defining
 
 $$
 \phi(t) =  (E(X|X\geq t) - t)\bar{F}(t)
@@ -357,7 +421,8 @@ $$
 \phi(t) =  \int_{t}^\infty xf(x)dx - t\bar{F}(t).
 $$
 
-Now, it follows from integration by parts that $\phi(t) = \int\_t^\infty \bar{F}(x)dx$. We note that this does not require that the random variables are non-negative. Altogether this gives
+Now, it follows from integration by parts that $\phi(t) = \int\_t^\infty \bar{F}(x)dx$. We note that this does not 
+require that the random variables are non-negative. Altogether this gives
 
 $$
 \tilde{s}_{i} = \tilde{s}_{i+1} + \phi(\tilde{s}_{i+1}).
@@ -386,13 +451,16 @@ where $\phi(t) = \int\_t^\infty \bar{F}(x)dx$.
 <!-- We then define $\Phi(t) =  \int_{t}^\infty xf(x)dx - t\bar{F}(t). -->
 
 
-Either by integration by parts, or by noting that differentiating the RHS with respect to $\tilde{s}\_{i+1}$ gives $F(\tilde{s}_{i+1})$, we see that
+Either by integration by parts, or by noting that differentiating the RHS with respect to $\tilde{s}\_{i+1}$ gives 
+$F(\tilde{s}_{i+1})$, we see that
 
 $$
 \tilde{e}_{n - i} = \mu + \int_{0}^{\tilde{s}_{i+1}}F(x)dx.
 $$
 
-Now since $\mu = \int\_0^\infty \bar{F}(x)dx$, and of course $F(x) = 1 - \bar{F}(x)$, the RHS is equal to $\tilde{s}\_{i+1} + \int\_{\tilde{s}\_{i+1}}^\infty \bar{F}(x) dx$. That is to say, we obtain a rather nice first order reccurence:
+Now since $\mu = \int\_0^\infty \bar{F}(x)dx$, and of course $F(x) = 1 - \bar{F}(x)$, the RHS is equal to 
+$\tilde{s}\_{i+1} + \int\_{\tilde{s}\_{i+1}}^\infty \bar{F}(x) dx$. That is to say, we obtain a rather nice first order 
+recurrence:
 
 $$
 \tilde{s}_{i} = \tilde{s}_{i+1} + \int_{\tilde{s}_{i+1}}^\infty \bar{F}(x) dx.
@@ -459,7 +527,8 @@ $$
 In this formula, $X\_{0}$ has pdf $f(x)$, and this step is only done to avoid the computation of repeated infinite
 integrals. 
 
-By integration by parts (or simply differentiating the right hand side with respect to $\tilde{s}\_{k + 1}$) we obtain the following equivalent recurrence:
+By integration by parts (or simply differentiating the right hand side with respect to $\tilde{s}\_{k + 1}$) we obtain 
+the following equivalent recurrence:
 
 $$
 \begin{align}
@@ -478,46 +547,65 @@ $$
  
 ### A note on our assumptions: existence of expectations
 
-We have implicitly assumed throughout that all expectations exist. This is not an issue since the original question makes little sense unless the $X\_i$ have a well defined expectation, and this is enough to ensure that all later expectations exist. 
+We have implicitly assumed throughout that all expectations exist. This is not an issue since the original question 
+makes little sense unless the $X\_i$ have a well defined expectation, and this is enough to ensure that all later 
+expectations exist. 
 
 #### Discrete random variables
 
-We have also assumed throughout that the random variables are continuous. From here on we will consider only the case that the $X\_i$ are continuous. All we will say on this subject is that a similar result will still hold relating the optimal thresholds to the 'play on' expectations. Indeed, such a result can be obtained simply by replacing integrals with sums in the proof given earlier. The key difference of course is that these expectations may not be in the support of the pmf, but this is not a problem since there is a natural ambiguity in the choice of thresholds when working with such random variables.
+We have also assumed throughout that the random variables are continuous. From here on we will consider only the case 
+that the $X\_i$ are continuous. All we will say on this subject is that a similar result will still hold relating the 
+optimal thresholds to the 'play on' expectations. Indeed, such a result can be obtained simply by replacing integrals 
+with sums in the proof given earlier. The key difference of course is that these expectations may not be in the support 
+of the pmf, but this is not a problem since there is a natural ambiguity in the choice of thresholds when working with 
+such random variables.
 
-We note that when we later come back to trying to make some headway with this recurrence in general we largely treat the function $\phi(t)$ as an abstract function, but we do assume that it can be expressed as in the continuous case, we have not given any real thought to the discrete case.
+We note that when we later come back to trying to make some headway with this recurrence in general we largely treat the 
+function $\phi(t)$ as an abstract function, but we do assume that it can be expressed as in the continuous case, we have 
+not given any real thought to the discrete case.
 
 <!-- Say something about the non-negativity and continuity assumptions -->
 
 
 ## Carpe rāpa!: optimality and sticking to your guns
 
-It is high time we address on small technical question, must the optimal strategy actually be of the stated form? Recall that we have thus for only considered strategies of the form:
+It is high time we address on small technical question, must the optimal strategy actually be of the stated form? 
+Recall that we have thus for only considered strategies of the form:
 
 <p align="center">
 Sell at time $i$ if $X_{i}\geq s_{i}$
 </p>
 
-That is, the price we sell at on each given day depends only upon the day itself -- we do not dwell on the past and factor in the prices we've seen so far. Since we ought to assume that the buyer only has knowledge of past and not future prices, the most general form a strategy could take would be:
+That is, the price we sell at on each given day depends only upon the day itself -- we do not dwell on the past and 
+factor in the prices we've seen so far. Since we ought to assume that the buyer only has knowledge of past and not 
+future prices, the most general form a strategy could take would be:
 
 <p align="center">
 Sell at time $i$ if $X_{i}\geq s_{i}(X_1, \ldots, X_{i-1})$
 </p>
 
-where each $s_i$ is a function of the previous $i-1$ prices offered. We note that, regardless of the specific distribution of the $X\_i$ we will always have, for any $i$, that
+where each $s_i$ is a function of the previous $i-1$ prices offered. We note that, regardless of the specific 
+distribution of the $X\_i$ we will always have, for any $i$, that
 
 $$
 E(S) = E(S|\tau < i)P(\tau < i) + E(S|\tau \geq i)P(\tau \geq i).
 $$
 
-by the law of total expectation. As remarked earlier, $E(S\|\tau < i)$, $P(\tau < i)$ and $P(\tau \geq i)$ depend only upon $s\_1,\ldots, s\_{i-1}$, whereas $E(S\|\tau \geq i)$ depends upon $s\_i, \ldots, s\_n$. Fortunately, as the conditional expectation of $S$ given that $\tau\geq i$ for any such fixed specification of $X\_1,\ldots, X\_{i-1}$ does not depend upon the specific choice of these prices, we can happily restrict our attention to those strategies with a constant threshold for each day.
+by the law of total expectation. As remarked earlier, $E(S\|\tau < i)$, $P(\tau < i)$ and $P(\tau \geq i)$ depend only 
+upon $s\_1,\ldots, s\_{i-1}$, whereas $E(S\|\tau \geq i)$ depends upon $s\_i, \ldots, s\_n$. Fortunately, as the 
+conditional expectation of $S$ given that $\tau\geq i$ for any such fixed specification of $X\_1,\ldots, X\_{i-1}$ does 
+not depend upon the specific choice of these prices, we can happily restrict our attention to those strategies with a 
+constant threshold for each day.
 
 ## Outstanding questions
 
-Now that we've shown that the optimal thresholds are indeed the 'play on' expectations, and found a rather simply looking (albeit non-linear) first order recurrence governing these, a few questions come to mind.
+Now that we've shown that the optimal thresholds are indeed the 'play on' expectations, and found a rather simply 
+looking (albeit non-linear) first order recurrence governing these, a few questions come to mind.
 
 ### Other test cases
 
-It's natural to wonder if there are any other reasonably natural distributions for which we can solve, exactly or approximately, the first order recurrence governing the optimal threshold.
+It's natural to wonder if there are any other reasonably natural distributions for which we can solve, exactly or 
+approximately, the first order recurrence governing the optimal threshold.
 
 ### Arbitrary turnips
 
@@ -529,278 +617,6 @@ In the next post we hope to address both of these questions.
 
 <!-- Add outstanding questions -->
 
-<a name="post2footnote1">1</a> This author doesn't know to what degree people know their models to be correct. It's my understanding that the way the prices are generated hasn't changed a great deal for earlier games in the series but I'm unsure if at any point people were certain of the model.
-
-# Post 3: Asymptotic Swede
-
-(or is it Turnips?<sup>[1](#myfootnote1)</sup>)
-
-We again return to the question of optimal turnip selling in Animal Crossing. We give a short summary here, but refer the reader to the first two posts, [Turnip Mania](post1hyperlink) and [Non-uniform Turnips](post2hyperlink).
-
-## Turnips 101
-
-Consider the following game -- a simple model for turnip selling in Animal Crossing. Let $X\_1, \ldots, X\_n$ be iid random variables. At each time $t=1, 2, \ldots, n$ the player is offered the opportunity to sell all the turnips they have for a price of $X\_i$. If the player accepts this offer then the game ends and the player ends with a revenue of $X\_i$, if the player refuses then they move to the next timestamp. If the turnips are not sold on or before time $n$ then the turnips spoil and the player walks away with nothing.
-
-We consider strategies of the form:
-
-<p align="center">
-Sell at time $i$ if $X_{i}\geq s_{i}$.
-</p>
-
-We write $\tilde{s}\_i$ for the expectation maximising choices of these thresholds and $\tilde{e}_n$ for the expected winnings when choosing these optimal thresholds. 
-
-
-
-## Last time: Non-uniform Turnips
-
-Last time we considered the special case that the $X\_i$ are iid uniform on $[0,1]$. Having shown in [Turnip Mania](post1hyperlink) that the optimal thresholds satisfy the first order recurrence:
-
-<p align="center">
-$\tilde{s}_i = \frac{1}{2}(1 +\tilde{s}_{i + 1}^2)$ for $1\leq i<n$, with $\tilde{s}_n = 0$,
-</p>
-
-we found an approximate solution to this non linear recurrence. Very broadly [we showed](post2hyperlink/animal-crossing-turnips/#an-approximate-solution-uniformly-distributed-quotes) that $\tilde{s\_i}\approx 1-\frac{2}{n-i+1}$. 
-
-We then showed that if the $X\_i$ are continuous, then the optimal thresholds still satisfy a first order recurrence, namely:
-
-$$
-\tilde{s}_{i} = \tilde{s}_{i+1} + \phi(\tilde{s}_{i+1}).
-$$
-
-where $\phi(t) = \int\_t^\infty \bar{F}(x)dx$.
-
-Today we turn our attention to the questions from the end of the last post. That is, we hope to cut our teeth on another distribution in the hope that this might give us some ideas for the general (continuous) case, before having a go at the general case itself.
-
-## An approximate solution: Exponentially distributed quotes
-
-As another test case we consider next the case that $X\_{1}, \ldots, X\_{n}$ are iid $\text{Exp}(\lambda)$. Then, using the recurrence from last time, we see that the optimal threshold values are given by
-
-$$
-\tilde{s}_{i} = \tilde{s}_{i + 1} + \lambda^{ - 1}e^{-\lambda \tilde{s}_{i + 1}}, \quad \tilde{s}_{n} = 0.
-$$
-
-### Putnam Exam, 2012: B4
-
-As it happens, if we perform the substitution $a\_i = \lambda^{-1}\tilde{s}_{n-i}$, then this becomes
-
-$$
-a_{i+1} = a_i + e^{-a_i},
-$$
-
-with $a\_0 = 1$.
-
-As it happens, though this is somewhat spoilers, the question of whether the limit of $a\_n - \log n$ exists as $n$ goes to infinity was in fact posed as problem B4 of the 2012 William Lowell Putnam Mathematics Competition. See [here](https://www.youtube.com/watch?v=bFczPxcaYOM) for a video solution by [Michael Penn](https://www.youtube.com/watch?v=bFczPxcaYOM).
-
-### Back to the problem at hand!
-
-Performing the substitution $t\_{i}=e^{\lambda\tilde{s}\_{n-i}}$, we obtain
-
-$$
-t_{i+1} = t_{i}e^{1/t_{i}}, \quad t_{0} = 1.
-$$
-
-Observe that $1 + x\leq e^x \leq 1 + x + x^2$ for $0\leq x\leq 1$. This follows, for example, from the fact that $(e^x - 1 - x)/x^2$ is increasing for $x\geq 0$. Thus since we clearly have $t\_i\geq 1$ for all $i$, we have
-
-$$
-t_{i+1} \geq t_{i} + 1
-$$
-
-and
-
-$$
-t_{i+1} \leq t_{i} + 1 + 1/t_{i}.
-$$
-
-Then, much as before, the first gives $t\_i\geq i + 1$ and the latter $t\_i\leq i + 1 + H\_i$. Putting this all together we see that
-
-$$
-t_i = i + O(\log(i+1))
-$$
-
-and unfolding gives
-
-$$
-\tilde{s}_{i} = \lambda^{-1}\log(n - i + 1) + O\left(\frac{\log(n - i + 1)}{n - i + 1}\right).
-$$
-
-In particular we see that
-
-$$
-\tilde{s}_0 = \lambda^{-1}\left(1 + O\left(\frac{1}{n}\right)\right)\log{n}.
-$$
-
-### Putnam Exam, 2012: B4
-
-It's worth nothing that this shows that $a\_n = (1 + O(\frac{1}{n}))\log{n}$ and so $a\_n - \log n\to 0$ as $n$ goes to infinity.
-
-### Amplification
-
-Much as with the uniform case, we can of course do much better. We in fact have $1+x+\frac{1}{2}x^2\leq e^x\leq 1+x+\frac{1}{2}x^2+x^3$ -- as before, simply because $(e^x - 1 - x-\frac{1}{2}x^2)/x^3$ is increasing for $x\geq 0$. This then translates into telling us that 
-
-$$
-t_{i+1} \geq t_{i} + 1 + 1/2t_{i}.
-$$
-
-and
-
-$$
-t_{i+1} \leq t_{i} + 1 + 1/2t_{i} + 1/t_i^2.
-$$
-
-Then, exactly as with it is possible to show
-
-$$
-t_i = i + 1 + \frac{1}{2}\log(i+1) + \tau' + o(1),
-$$
-
-where $\tau'$ is some absolute constant. Converting this into a somewhat additive statement concerning $\tilde{s}\_i$ we have
-
-$$
-\tilde{s}_{i} = \lambda^{-1}\left(\log(n - i + 1) + \frac{\log(n - i + 1)}{2(n - i + 1)} + \frac{\tau'}{n - i + 1} + o\left(\frac{1}{n - i + 1}\right)\right)
-$$
-
-as $n-i\to\infty$, and, in particular:
-
-$$
-\begin{align}
-\tilde{s}_{0} &= \lambda^{-1}\left(\log(n + 1) + \frac{\log(n + 1)}{2(n + 1)} + \frac{\tau'}{n + 1} + o\left(\frac{1}{n + 1}\right)\right)\\
-	&= \lambda^{-1}\left(\log n + \frac{\log n}{2n} + \frac{\tau'}{n} + o\left(\frac{1}{n}\right)\right).
-\end{align}
-$$
-
-### Putnam Exam, 2012: B4
-
-That is, $a\_n -\log n = \frac{\log n}{2n} + \frac{\tau'}{n} + o(\frac{1}{n})$ as $n$ goes to infinity.
-
-<!-- BOOKMARK -->
-
-<!-- Add some remark about how this proof is remarkably similar! -->
-
-## An approximate solution for an arbitrary non-negative distribution
-
-Recall that the optimal thresholds are the solutions to the backwards first order recurrence
-
-$$
-\tilde{s}_{n} = 0
-$$
-
-and
-
-$$
-\tilde{s}_{k} = \tilde{s}_{k+1} + \int_{\tilde{s}_{k+1}}^{\infty}\bar{F}(x)dx
-$$
-
-for $0\leq k < n$.
-
-Or equivalently, writing $\varphi(s) = \int_{s}^{\infty}\bar{F}(x)dx$
-
-$$
-\tilde{e}_{0} = 0
-$$
-
-and
-
-$$
-\tilde{e}_{i+1} = \tilde{e}_{i} + \varphi(\tilde{e}_{i})
-$$
-
-for $0\leq i < n$.
-
-### A "continuized" system
-
-Presented with such a non-linear recurrence, it's interesting to consider if there is anything to be learned from the "continuized" system:
-
-$$
-e'(t) = \varphi(e(t))
-$$
-
-for $t\geq 0$ and $e(0) = 0$. Our system is simply the approximant to this continuous system given by the Euler method (with a step size of one). With this in mind we define
-
-$$
-\Phi(t) = \int_0^t \frac{1}{\varphi(\zeta)}d\zeta
-$$
-
-noting that $e(t) = \Phi^{-1}(t)$ is the solution to the continuized system.
-
-### A lower bound
-
-We will estimate $e\_i$ by considering the quantity
-
-$$
-\Phi(e_{i+1}) - \Phi(e_i).
-$$
-
-First, we will show that $\Phi(t + \varphi(t)) - \Phi(t)\geq 1$ for any $t\geq 0$. Note that since $e\_{i+1} = e\_i + \varphi(e\_i)$, this implies that
-
-$$
-\begin{align}
-\Phi(e_i) &= \sum_{j=0}^{i-1}\Phi(e_{j+1}) - \Phi(e_j)\\
-&\geq i
-\end{align}
-$$
-
-and so $e\_i\geq \Phi^{-1}(i)$.
-
-In fact this follows immediately since
-
-$$
-\begin{align}
-\Phi(t + \varphi(t)) - \Phi(t) &= \int_t^{t+\varphi(t)}1/\varphi(\zeta)d\zeta\\
-&\geq \varphi(t)\min_{t\leq\zeta\leq t+\varphi(t)}1/\varphi(\zeta)\\
-&\geq 1
-\end{align}
-$$
-
-as $\varphi(\zeta)$ being decreasing ensures $1/\varphi(\zeta)$ is increasing.
-
-### An upper bound
-
-In the other direction
-
-$$
-\begin{align}
-\Phi(t + \varphi(t)) - \Phi(t) &= \int_t^{t+\varphi(t)}1/\varphi(\zeta)d\zeta\\
-&\leq \varphi(t)\max_{t\leq\zeta\leq t+\varphi(t)}1/\varphi(\zeta)\\
-&\leq \varphi(t)/\varphi(t+\varphi(t))
-\end{align}
-$$
-
-Now, since $\frac{d}{dt}\varphi(t) = -\bar{F}(x)$ and the cdf is increasing, by IVT we have $\varphi(t+\varphi{t})-\varphi(t)\geq -\varphi(t)\bar{F}(t)$ and so $\varphi(t+\varphi(t))\geq\varphi(t)F(t)$ and in particular
-
-$$
-\Phi(e_{i+1}) - \Phi(e_i) \leq 1/F(e_i).
-$$
-
-From this it's just a small jump to a decent upper bound in terms of $i$. Writing $\alpha = E(\Phi(X))$ we have
-
-$$
-\begin{align}
-\bar{F}(e_i) &= P(X\geq e_i)\\
-&= P(\Phi(X)\geq \Phi(e_i))\\
-&\leq P(\Phi(X)\geq i)\\
-&\leq \frac{\alpha}{i}
-\end{align}
-$$
-
-where the first inequality follows since $\Phi(e\_i)\geq i$, and the second by Markov's inequality. This in turn gives 
-
-$$
-\begin{align}
-\frac{1}{F(e_i)} &\leq \frac{1}{1-\frac{\alpha}{i}}\\
-&\leq 1 + O(\frac{1}{i})
-\end{align}
-$$
-
-for an implicit constant depending only upon $\alpha$. Therefore we have 
-
-$$
-\begin{align}
-\Phi(e_i) &= \sum_{i=0}^{n-1}\Phi(e_{i+1}) - \Phi(e_i)\\
-&\leq \sum_{j=1}^i 1 + O(1/j)\\
-&\leq i + O(\log{i}).
-\end{align}
-$$
-
-Putting this all together we see that $\Phi(e\_n) = n + O(\log{n})$ and so $e\_n = \Phi^{-1}(n + O(\log{n}))$. All this is to say that the solutions to the discrete and continuized systems are indeed quite closely related.
-
-<a name="myfootnote1">1</a>: Oddly enough there is a bit of a discrepancy in [what is meant by turnips in the UK](https://en.wikipedia.org/wiki/Turnip).
+<a name="post2footnote1">1</a> This author doesn't know to what degree people know their models to be correct. It's my 
+understanding that the way the prices are generated hasn't changed a great deal for earlier games in the series but I'm 
+unsure if at any point people were certain of the model.

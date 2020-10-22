@@ -1,5 +1,6 @@
 ---
 title: "Animal Crossing Turnip Market -- When to sell?"
+excerpt: "Post 4 - The Oracle and perfect play"
 header:
     image: assets/images/turniproom.jpeg
 toc: true

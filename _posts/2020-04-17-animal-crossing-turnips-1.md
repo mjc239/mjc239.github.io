@@ -1,5 +1,6 @@
 ---
 title: "Animal Crossing Turnip Market -- When to sell?"
+excerpt: "Post 1 - Uniformly distributed prices"
 header:
     image: assets/images/turniproom.jpeg
 toc: true
