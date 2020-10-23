@@ -4,6 +4,7 @@ header:
     image: assets/images/casino.jpg
 toc: true
 toc_label: "Contents:"
+classes: wide
 tags:
   - reinforcement-learning
 ---
