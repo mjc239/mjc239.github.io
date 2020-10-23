@@ -5,6 +5,7 @@ header:
     image: assets/images/turniproom.jpeg
 toc: true
 toc_label: "Contents:"
+classes: wide
 tags:
  - probability
 ---
