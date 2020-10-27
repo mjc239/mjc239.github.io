@@ -6,6 +6,57 @@ header:
 toc: true
 toc_label: "Contents:"
 classes: wide
+author_profile: false
+sidebar:
+  - text: |
+        <div class="author__avatar">
+        <img src="/assets/images/my_face.jpg" alt="Michael Cole" itemprop="image">
+        </div>
+        <h3 class="author__name" itemprop="name">Michael Cole</h3>
+        <div class="author__urls-wrapper">
+        <button class="btn btn--inverse">Follow</button>
+        <ul class="author__urls social-icons">
+        <li itemprop="homeLocation" itemscope="" itemtype="https://schema.org/Place">
+        <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">London, UK</span>
+        </li>
+        <li><a href="https://github.com/mjc239" rel="nofollow noopener noreferrer">
+        <i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span>
+        </a>
+        </li>
+        <li>
+        <a href="https://twitter.com/mikeyjcole" rel="nofollow noopener noreferrer">
+        <i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i><span class="label">Twitter</span>
+        </a>
+        </li>
+        <li><a href="https://www.linkedin.com/in/michaeljcole1/" rel="nofollow noopener noreferrer">
+        <i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span class="label">LinkedIn</span>
+        </a>
+        </li>
+        </ul>
+        </div>
+  - text: |
+        <div class="author__avatar">
+        <img src="/assets/images/bartley.jpg" alt="Jack Bartley" itemprop="image">
+        </div>
+        <h3 class="author__name" itemprop="name">Jack Bartley</h3>
+        <div class="author__urls-wrapper">
+        <button class="btn btn--inverse">Follow</button>
+        <ul class="author__urls social-icons">
+        <li itemprop="homeLocation" itemscope="" itemtype="https://schema.org/Place">
+        <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">London, UK</span>
+        </li>
+        <li>
+        <a href="http://jackbartley.com/" rel="nofollow noopener noreferrer">
+        <i class="fas fa-fw fa-chalkboard-teacher" aria-hidden="true" style="color: #d34737"></i><span class="label">Teaching</span>
+        </a>
+        </li>
+        <li>
+        <a href="https://twitter.com/dr_bartley" rel="nofollow noopener noreferrer">
+        <i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i><span class="label">Twitter</span>
+        </a>
+        </li>
+        </ul>
+        </div>
 tags:
  - probability
 ---

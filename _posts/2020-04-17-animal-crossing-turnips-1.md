@@ -1,11 +1,62 @@
 ---
-title: "Animal Crossing Turnip Market -- When to sell?"
+title: "Animal Crossing Turnip Market -- Turnip Mania"
 excerpt: "Post 1 - Uniformly distributed prices"
 header:
     image: assets/images/turniproom.jpeg
 toc: true
 toc_label: "Contents:"
 classes: wide
+author_profile: false
+sidebar:
+  - text: |
+        <div class="author__avatar">
+        <img src="/assets/images/my_face.jpg" alt="Michael Cole" itemprop="image">
+        </div>
+        <h3 class="author__name" itemprop="name">Michael Cole</h3>
+        <div class="author__urls-wrapper">
+        <button class="btn btn--inverse">Follow</button>
+        <ul class="author__urls social-icons">
+        <li itemprop="homeLocation" itemscope="" itemtype="https://schema.org/Place">
+        <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">London, UK</span>
+        </li>
+        <li><a href="https://github.com/mjc239" rel="nofollow noopener noreferrer">
+        <i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span>
+        </a>
+        </li>
+        <li>
+        <a href="https://twitter.com/mikeyjcole" rel="nofollow noopener noreferrer">
+        <i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i><span class="label">Twitter</span>
+        </a>
+        </li>
+        <li><a href="https://www.linkedin.com/in/michaeljcole1/" rel="nofollow noopener noreferrer">
+        <i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span class="label">LinkedIn</span>
+        </a>
+        </li>
+        </ul>
+        </div>
+  - text: |
+        <div class="author__avatar">
+        <img src="/assets/images/bartley.jpg" alt="Jack Bartley" itemprop="image">
+        </div>
+        <h3 class="author__name" itemprop="name">Jack Bartley</h3>
+        <div class="author__urls-wrapper">
+        <button class="btn btn--inverse">Follow</button>
+        <ul class="author__urls social-icons">
+        <li itemprop="homeLocation" itemscope="" itemtype="https://schema.org/Place">
+        <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">London, UK</span>
+        </li>
+        <li>
+        <a href="http://jackbartley.com/" rel="nofollow noopener noreferrer">
+        <i class="fas fa-fw fa-chalkboard-teacher" aria-hidden="true" style="color: #d34737"></i><span class="label">Teaching</span>
+        </a>
+        </li>
+        <li>
+        <a href="https://twitter.com/dr_bartley" rel="nofollow noopener noreferrer">
+        <i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i><span class="label">Twitter</span>
+        </a>
+        </li>
+        </ul>
+        </div>
 tags:
  - probability
 ---
@@ -15,9 +66,7 @@ tags:
 This post is written in collaboration with [Jack Bartley](http://jackbartley.com/), while playing 
 [Animal Crossing New Horizons](https://www.youtube.com/watch?v=5LAKjL3p6Gw). 
 
-# Post 1: Turnip Mania
-
-## Turnip Mania
+## The Stalk Market
 
 In the game, one of the fastest ways of earning bells (the in game currency) and pay off your mortgage to 
 Tom Nook is through the __Stalk Market__; essentially, this involves speculating on the price of turnips (chosen 
@@ -42,6 +91,10 @@ that the turnips were bought for from Daisy Mae.
 One of the first questions we can ask is the following: if we know the distribution of prices that Timmy and Tommy 
 offer on any particular day, what is the best way to maximise the amount received for the turnips? As is common we 
 are interested in trying to maximise the expected profit.
+
+| ![Daisy Mae](/assets/images/DaisyMaeGIF.gif) |
+|:--:|
+| *Daisy Mae explains* |
 
 ## An instructive example: Uniformly distributed quotes
 
@@ -81,7 +134,7 @@ $P_{i}$ is uniformly distributed, it is easy to see that
 
 $$
 \begin{equation}
-\mathsf{P}\left(T_{i}\right) = (1-s_{i})\prod_{j<i}s_{j}
+\mathbb{P}\left(T_{i}\right) = (1-s_{i})\prod_{j<i}s_{j}
 \end{equation}
 $$
 
@@ -92,11 +145,12 @@ the law of total expectation:
 
 $$
 \begin{align}
-\mathsf{E}(S) &= \sum_{i=1}^{n}\mathsf{E}(S|T_{i})\mathsf{P}(T_{i}) \\
-&= \sum_{i=1}^{n}\mathsf{E}(P_{i}|T_{i})\mathsf{P}(T_{i}) \\
-&= \sum_{i=1}^{n}\mathsf{E}(P_{i}|S_{i})P(T_{i}) \\
+\mathbb{E}(S) &= \sum_{i=1}^{n}\mathbb{E}(S|T_{i})\mathbb{P}(T_{i}) \\
+&= \sum_{i=1}^{n}\mathbb{E}(P_{i}|T_{i})\mathbb{P}(T_{i}) \\
+&= \sum_{i=1}^{n}\mathbb{E}(P_{i}|S_{i})\mathbb{P}(T_{i}) \\
 &= \sum_{i=1}^{n}\frac{1}{2}(1+s_{i})(1-s_{i})\prod_{j<i}s_{j} \\
-&= \sum_{i=1}^{n}\frac{1}{2}(1-s_{i}^{2})\prod_{j<i}s_{j}
+&= \sum_{i=1}^{n}\frac{1}{2}(1-s_{i}^{2})\prod_{j<i}s_{j} \\
+&= 
 \end{align}
 $$
 
@@ -111,7 +165,7 @@ values $s_{i}$, in order to find the optimal strategy of this form. This can be 
 
 $$
 \begin{align}
-\frac{\partial}{\partial s_{k}}\mathsf{E}(X) &= \frac{\partial}{\partial s_{k}}\left[\frac{1}{2}(1-s_{k}^{2})\prod_{j<k}s_{j} + \sum_{i>k}\frac{1}{2}(1-s_{i}^{2})\prod_{j<i}s_{j}\right] \\
+\frac{\partial}{\partial s_{k}}\mathbb{E}(X) &= \frac{\partial}{\partial s_{k}}\left[\frac{1}{2}(1-s_{k}^{2})\prod_{j<k}s_{j} + \sum_{i>k}\frac{1}{2}(1-s_{i}^{2})\prod_{j<i}s_{j}\right] \\
 &= \prod_{j<k}s_{j}\left[-s_{k} + \frac{1}{2}\sum_{i>k}(1-s_{i}^{2})\prod_{k<j<i}s_{j}\right]
 \end{align}
 $$
@@ -153,7 +207,7 @@ Therefore, the recurrence relation is first order, meaning the value of each $\t
 be computed directly from a single successive value $\tilde{s}\_{i+1}$. Starting from $\tilde{s}_{n}=0$, this allows
 all of the optimal thresholds to be computed in a backwards recursion.
 
-### An alternative way of maximising $\mathsf{E}(S)$
+### An alternative way of maximising $\mathbb{E}(S)$
 Although our derivation above allows the thresholds to be computed exactly in a recursive fashion, the formulae do not
 admit an easy interpretation. Is there another way to look at the problem, that allows the values of the optimal
 thresholds to be understood in an intuitive way?
@@ -162,32 +216,32 @@ To this end, let $\tau$ be the time at which we sell, that is $\tau = \min\\{i\,
 we see that for any $i$, we have the following expression for the expected sold price:
 
 $$
-\mathsf{E}(S) = \mathsf{E}(S\,|\,\tau < i)\,\mathsf{P}(\tau < i) + \mathsf{E}(S\,|\,\tau \geq i)\,\mathsf{P}(\tau \geq i).
+\mathbb{E}(S) = \mathbb{E}(S\,|\,\tau < i)\,\mathbb{P}(\tau < i) + \mathbb{E}(S\,|\,\tau \geq i)\,\mathbb{P}(\tau \geq i).
 $$
 
-Note that $\mathsf{E}(S\\,|\,\tau < i)$, $\mathsf{P}(\tau < i)$ and $\mathsf{P}(\tau \geq i)$ depend only upon $s_{1}, \ldots, s_{i - 1}$, whereas 
-$\mathsf{E}(S\,|\,\tau \geq i)$ depends only upon $s_{i}, \ldots, s_{n}$. Therefore, the optimal choice of $s_{i}$ depends only 
-upon $s_{i + 1}, \ldots, s_{n}$. Indeed, it suffices to choose $s_{i}$ so as to maximise $\mathsf{E}(S\|\tau \geq i)$.
+Note that $\mathbb{E}(S\\,|\,\tau < i)$, $\mathbb{P}(\tau < i)$ and $\mathbb{P}(\tau \geq i)$ depend only upon $s_{1}, \ldots, s_{i - 1}$, whereas 
+$\mathbb{E}(S\,|\,\tau \geq i)$ depends only upon $s_{i}, \ldots, s_{n}$. Therefore, the optimal choice of $s_{i}$ depends only 
+upon $s_{i + 1}, \ldots, s_{n}$. Indeed, it suffices to choose $s_{i}$ so as to maximise $\mathbb{E}(S\|\tau \geq i)$.
 
 Using the law of total expectation again (and assuming a implicit dependence on $\tau\geq 0$ in terms on the RHS),
 
 $$
-\mathsf{E}(S\,|\,\tau \geq i) = \mathsf{E}(P_i\,|\,P_i\geq s_i)\,\mathsf{P}(P_i\geq s_i) + \mathsf{E}(S\,|\,P_i < s_i)\,\mathsf{P}(P_i < s_i).
+\mathbb{E}(S\,|\,\tau \geq i) = \mathbb{E}(P_i\,|\,P_i\geq s_i)\,\mathbb{P}(P_i\geq s_i) + \mathbb{E}(S\,|\,P_i < s_i)\,\mathbb{P}(P_i < s_i).
 $$
 
 Now, as we have assumed that the price $P_{i}$ is uniformly distributed on $\[0, 1\]$, we have that 
-$\mathsf{E}(P_{i}\|P_{i}\geq s_{i}) = \frac{1}{2}(1+s_{i})$ and $\mathsf{P}(P_i\geq s_i) = 1 - s_{i}$ (this follows
+$\mathbb{E}(P_{i}\|P_{i}\geq s_{i}) = \frac{1}{2}(1+s_{i})$ and $\mathbb{P}(P_i\geq s_i) = 1 - s_{i}$ (this follows
 straight from the definition of the uniform distribution). Substituting this in gives
 
 $$
-\mathsf{E}(S\,|\,\tau \geq i) = \frac{1}{2}(1 - s_i^2) + s_{i}\,\mathsf{E}(S\,|\,P_i < s_i).
+\mathbb{E}(S\,|\,\tau \geq i) = \frac{1}{2}(1 - s_i^2) + s_{i}\,\mathbb{E}(S\,|\,P_i < s_i).
 $$
 
-This is a quadratic in $s_{i}$, which is maximised when $s_i = \mathsf{E}(S\,|\,P_i < s_i)$. Write $\tilde{s}_i$ for 
+This is a quadratic in $s_{i}$, which is maximised when $s_i = \mathbb{E}(S\,|\,P_i < s_i)$. Write $\tilde{s}_i$ for 
 this optimal threshold value:
 
 $$
-\tilde{s}_i = \mathsf{E}(S\,|\,P_i < \tilde{s}_i)
+\tilde{s}_i = \mathbb{E}(S\,|\,P_i < \tilde{s}_i)
 $$
 
 where, as noted earlier, the right hand expression depends only upon $$\tilde{s}_{i + 1},\ldots,\tilde{s}_{n}$$, due to the implicit 
@@ -205,9 +259,9 @@ Furthermore, it is possible to recover the recursion relation found earlier betw
 
 $$
 \begin{align}
-\tilde{s}_{i} &= \mathsf{E}(S\,|\,P_{i}<\tilde{s}_{i}, P_{i+1}\geq\tilde{s}_{i+1})\mathsf{P}(P_{i+1}\geq\tilde{s}_{i+1}) \\[5pt]
-&\quad + \mathsf{E}(S\,|\,P_{i}<\tilde{s}_{i}, P_{i+1}<\tilde{s}_{i+1})\mathsf{P}(P_{i+1}<\tilde{s}_{i+1}) \\[5pt]
-&= \mathsf{E}(P_{i + 1}|P_{i + 1}\geq \tilde{s}_{i + 1})\mathsf{P}(P_{i + 1}\geq \tilde{s}_{i + 1}) + \tilde{s}_{i+1}\mathsf{P}(P_{i + 1} < \tilde{s}_{i + 1})\\
+\tilde{s}_{i} &= \mathbb{E}(S\,|\,P_{i}<\tilde{s}_{i}, P_{i+1}\geq\tilde{s}_{i+1})\mathbb{P}(P_{i+1}\geq\tilde{s}_{i+1}) \\[5pt]
+&\quad + \mathbb{E}(S\,|\,P_{i}<\tilde{s}_{i}, P_{i+1}<\tilde{s}_{i+1})\mathbb{P}(P_{i+1}<\tilde{s}_{i+1}) \\[5pt]
+&= \mathbb{E}(P_{i + 1}|P_{i + 1}\geq \tilde{s}_{i + 1})\mathbb{P}(P_{i + 1}\geq \tilde{s}_{i + 1}) + \tilde{s}_{i+1}\mathbb{P}(P_{i + 1} < \tilde{s}_{i + 1})\\
 &= \frac{1}{2}(1 - \tilde{s}_{i + 1}^2) + \tilde{s}_{i + 1}^2\\
 &= \frac{1}{2}(1 + \tilde{s}_{i + 1}^2)
 \end{align}
@@ -225,7 +279,7 @@ Sell at time $i > j$ if $P_{i}\geq s_{i}$.
 </p>
 
 That is, the expected return, were we to see all but the first $j$ prices. Moreover, writing $\tilde{e}\_{n - j}$ for 
-the expected return of this strategy with the optimal thresholds, we see that $\mathsf{E}(S\|P_{i} < s_{i}) = e_{n - i}$ and 
+the expected return of this strategy with the optimal thresholds, we see that $\mathbb{E}(S\|P_{i} < s_{i}) = e_{n - i}$ and 
 this gives the recurrence:
 
 $$
@@ -396,6 +450,8 @@ than this can be expected to be beaten (in the probabilistic sense) in the futur
 
 ## Outstanding questions
 
+![Isabelle thinking](/assets/images/isabellethinking.jpg)
+
 After a bit of playing around with the uniform case we've managed to find first order recurrence describing the optimal 
 threshold values for a strategy of this sort. This begs a few natural questions.
 
@@ -433,3 +489,5 @@ always the case the these optimal thresholds are the expected returns if we choo
 ## Next time: Non-uniform Turnips
 
 In the [next post](post2hyperlink) we give give an answer to each of the questions posed above.
+
+![Isabelle thinking](/assets/images/isabellebye.jpg)
