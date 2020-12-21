@@ -103,7 +103,7 @@ Timmy and Tommy offer a price that is uniformly distributed over some interval.
 
 Let $P_{1}, ..., P_{n}\sim U[0, 1]$ be 
 [iid](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables) random variables, 
-representing the price offered at time $i\in\\{1,...,n\\}$, and suppose that the turnips spoil at time $n+1$, becoming worthless 
+representing the price offered at time $i\in\\{1,...,n\\}$, and suppose that the turnips spoil before another is offered, becoming worthless 
 (in the game, this is the time that Daisy Mae offers to sell you more turnips at a new price). Let $S$ be the price the 
 turnips are sold to Timmy and Tommy.
 
@@ -117,95 +117,99 @@ Sell at time $i$ if $P_{i}\geq s_{i}$.
 Put simply, at each time $i$ there is a threshold value $s_{i}$ which represents the minimum price at which we will be 
 prepared to sell for at that time. For example, as we need to sell the turnips before they spoil, we should expect to 
 accept any price at time $t=n$; in other words, an optimal strategy should have $s_{n}=0$. Under this strategy, we wish 
-to compute the expected value of the selling price $S$; by carefully choosing the threshold values, we can maximise
+to compute the expected value of the selling price $S$; then by carefully choosing the threshold values, we can maximise
 the expected price we get for our turnips.
 
-First, let $S_{i}$ be the event $\{P_{i}\geq s_{i}\}$, i.e. that the price at time $i$
-exceeds the threshold $s_{i}$. Then, the event $T_{i}$ that the prices up to time $i$ are all less than their thresholds
- and the price at time $i$ exceeds it (in other words, we cash in our turnips at time $i$ under our strategy) can be written
- in terms of the events $S_{i}$ as
+In the spirit of making as much of the post as accessible as possible We will first calculate this expecatation in a fairly elementary way. We will split the expectation up depending upon the day that the turnips are sold (this is an application of the [law of total expectation](https://en.wikipedia.org/wiki/Law_of_total_expectation)).
 
-$$
-T_{i} = S_{i}\cap\bigcap_{j<i}S_{j}^{c}.
-$$
+The probability that the Turnips are sold on the first day is simply the probability that $P_i$ exceeds $s_i$, that is $1-s_i$. Then, supposing the price exceeds $s_i$, it is uniformly distributed from $s_i$ to 1, and as such its expectation is simply their average: $\frac{1}{2}(1+s_i)$.
 
-What is the probability of $T_{i}$, that we sell the turnips at time $i$? As each event $S_{i}$ is independent and 
-$P_{i}$ is uniformly distributed, it is easy to see that
+<!-- First, let $S_{i}$ be the event $\{P_{i}\geq s_{i}\}$, i.e. that the price at time $i$ -->
+<!-- exceeds the threshold $s_{i}$. Then, the event $T_{i}$ that the prices up to time $i$ are all less than their thresholds -->
+<!--  and the price at time $i$ exceeds it (in other words, we cash in our turnips at time $i$ under our strategy) can be written -->
+<!--  in terms of the events $S_{i}$ as -->
 
-$$
-\begin{equation}
-\mathbb{P}\left(T_{i}\right) = (1-s_{i})\prod_{j<i}s_{j}
-\end{equation}
-$$
+<!-- $$ -->
+<!-- T_{i} = S_{i}\cap\bigcap_{j<i}S_{j}^{c}. -->
+<!-- $$ -->
 
-Also note that, provided the threshold at the final time $s_{n}$ is chosen to be zero (all acceptable strategies will
-sell the turnips at the last time at any price), the collection $\{T_{i}\}$ comprises of a partition of the full 
-probability space - at least and no more than one of the members of $\{T_{i}\}$ must occur. This allows us to apply
-the law of total expectation:
+<!-- What is the probability of $T_{i}$, that we sell the turnips at time $i$? As each event $S_{i}$ is independent and  -->
+<!-- $P_{i}$ is uniformly distributed, it is easy to see that -->
 
-$$
-\begin{align}
-\mathbb{E}(S) &= \sum_{i=1}^{n}\mathbb{E}(S|T_{i})\mathbb{P}(T_{i}) \\
-&= \sum_{i=1}^{n}\mathbb{E}(P_{i}|T_{i})\mathbb{P}(T_{i}) \\
-&= \sum_{i=1}^{n}\mathbb{E}(P_{i}|S_{i})\mathbb{P}(T_{i}) \\
-&= \sum_{i=1}^{n}\frac{1}{2}(1+s_{i})(1-s_{i})\prod_{j<i}s_{j} \\
-&= \sum_{i=1}^{n}\frac{1}{2}(1-s_{i}^{2})\prod_{j<i}s_{j} \\
-&= 
-\end{align}
-$$
+<!-- $$ -->
+<!-- \begin{equation} -->
+<!-- \mathbb{P}\left(T_{i}\right) = (1-s_{i})\prod_{j<i}s_{j} -->
+<!-- \end{equation} -->
+<!-- $$ -->
 
-The second line follows from the first as if $T_{i}$ is true, we have chosen to sell our turnips at time $i$, and so 
-the expected selling price will be the expected value of the quoted price at that time. The third line follows by noting
-that as all the $P_{i}$ are independent, the expected value of $P_{i}$ does not depend on $S_{j}$ for $j<i$. The fourth
-line follows from the fact that $P_{i}$ is uniformly distributed on $[0, 1]$.
+<!-- Also note that, provided the threshold at the final time $s_{n}$ is chosen to be zero (all acceptable strategies will -->
+<!-- sell the turnips at the last time at any price), the collection $\{T_{i}\}$ comprises of a partition of the full  -->
+<!-- probability space - at least and no more than one of the members of $\{T_{i}\}$ must occur. This allows us to apply -->
+<!-- the law of total expectation: -->
 
-Now, note that the expected selling price $S$ is a function of the strategy we have chosen to follow, which is determined
-by the daily threshold values $s_{i}$. We seek to maximise this expectation with respect to these chosen strategy
-values $s_{i}$, in order to find the optimal strategy of this form. This can be done by differentiating:
+<!-- $$ -->
+<!-- \begin{align} -->
+<!-- \mathbb{E}(S) &= \sum_{i=1}^{n}\mathbb{E}(S|T_{i})\mathbb{P}(T_{i}) \\ -->
+<!-- &= \sum_{i=1}^{n}\mathbb{E}(P_{i}|T_{i})\mathbb{P}(T_{i}) \\ -->
+<!-- &= \sum_{i=1}^{n}\mathbb{E}(P_{i}|S_{i})\mathbb{P}(T_{i}) \\ -->
+<!-- &= \sum_{i=1}^{n}\frac{1}{2}(1+s_{i})(1-s_{i})\prod_{j<i}s_{j} \\ -->
+<!-- &= \sum_{i=1}^{n}\frac{1}{2}(1-s_{i}^{2})\prod_{j<i}s_{j} \\ -->
+<!-- &=  -->
+<!-- \end{align} -->
+<!-- $$ -->
 
-$$
-\begin{align}
-\frac{\partial}{\partial s_{k}}\mathbb{E}(X) &= \frac{\partial}{\partial s_{k}}\left[\frac{1}{2}(1-s_{k}^{2})\prod_{j<k}s_{j} + \sum_{i>k}\frac{1}{2}(1-s_{i}^{2})\prod_{j<i}s_{j}\right] \\
-&= \prod_{j<k}s_{j}\left[-s_{k} + \frac{1}{2}\sum_{i>k}(1-s_{i}^{2})\prod_{k<j<i}s_{j}\right]
-\end{align}
-$$
+<!-- The second line follows from the first as if $T_{i}$ is true, we have chosen to sell our turnips at time $i$, and so  -->
+<!-- the expected selling price will be the expected value of the quoted price at that time. The third line follows by noting -->
+<!-- that as all the $P_{i}$ are independent, the expected value of $P_{i}$ does not depend on $S_{j}$ for $j<i$. The fourth -->
+<!-- line follows from the fact that $P_{i}$ is uniformly distributed on $[0, 1]$. -->
 
-where in the first line the sum is split into terms with $i<k$ (which vanish when hit by the derivative), 
-the term with $i=k$ (the first inside the square brackets), and those with $i>k$; in the second line, 
-the terms are differentiated and $s_{j}$ factors are taken out. 
+<!-- Now, note that the expected selling price $S$ is a function of the strategy we have chosen to follow, which is determined -->
+<!-- by the daily threshold values $s_{i}$. We seek to maximise this expectation with respect to these chosen strategy -->
+<!-- values $s_{i}$, in order to find the optimal strategy of this form. This can be done by differentiating: -->
 
-When the expectation is maximised, this partial 
-derivative will be zero for each $1\leq k\leq n$. We can assume that $s_{j}\neq 0$ for all $j\neq n$ - in other 
-words, for any non-final date, the strategy always assigns a non-zero probability to waiting until a future date.
+<!-- $$ -->
+<!-- \begin{align} -->
+<!-- \frac{\partial}{\partial s_{k}}\mathbb{E}(X) &= \frac{\partial}{\partial s_{k}}\left[\frac{1}{2}(1-s_{k}^{2})\prod_{j<k}s_{j} + \sum_{i>k}\frac{1}{2}(1-s_{i}^{2})\prod_{j<i}s_{j}\right] \\ -->
+<!-- &= \prod_{j<k}s_{j}\left[-s_{k} + \frac{1}{2}\sum_{i>k}(1-s_{i}^{2})\prod_{k<j<i}s_{j}\right] -->
+<!-- \end{align} -->
+<!-- $$ -->
 
-Letting $\tilde{s}_{i}$ be expectation-maximising values of the thresholds, 
-we obtain a recurrence relation:
+<!-- where in the first line the sum is split into terms with $i<k$ (which vanish when hit by the derivative),  -->
+<!-- the term with $i=k$ (the first inside the square brackets), and those with $i>k$; in the second line,  -->
+<!-- the terms are differentiated and $s_{j}$ factors are taken out.  -->
 
-$$
-\begin{equation}
-\tilde{s}_{k} = \frac{1}{2}\sum_{i>k}(1-\tilde{s}_{i}^{2})\prod_{k<j<i}\tilde{s}_{j}
-\end{equation}
-$$
+<!-- When the expectation is maximised, this partial  -->
+<!-- derivative will be zero for each $1\leq k\leq n$. We can assume that $s_{j}\neq 0$ for all $j\neq n$ - in other  -->
+<!-- words, for any non-final date, the strategy always assigns a non-zero probability to waiting until a future date. -->
 
-This is a recurrence relation allowing the calculation of $\tilde{s}\_{k}$, given the values of 
-$\\{\tilde{s}\_{k+1},...,\tilde{s}\_{n}\\}$. This, along with the observation that $\tilde{s}\_{n}=0$
-(as at the final time, the turnips __must__ be sold whatever the quoted price, otherwise they 
-will spoil and become worthless) allows the computation of all of the optimal threshold values. 
+<!-- Letting $\tilde{s}_{i}$ be expectation-maximising values of the thresholds,  -->
+<!-- we obtain a recurrence relation: -->
 
-In fact, this recurrence relation can be simplified by observing that a factor of 
-$\tilde{s}_{k+1}$ can be identified in the sum:
+<!-- $$ -->
+<!-- \begin{equation} -->
+<!-- \tilde{s}_{k} = \frac{1}{2}\sum_{i>k}(1-\tilde{s}_{i}^{2})\prod_{k<j<i}\tilde{s}_{j} -->
+<!-- \end{equation} -->
+<!-- $$ -->
 
-$$
-\begin{align}
-\tilde{s}_{k} &= \left(\frac{1}{2}\sum_{i>k+1}(1-\tilde{s}_{i}^{2})\prod_{k+1<j<i}\tilde{s}_{j}\right)\tilde{s}_{k+1} + \frac{1}{2}(1-\tilde{s}_{k+1}^{2}) \\
-&= \left(\tilde{s}_{k+1}\right)\tilde{s}_{k+1} + \frac{1}{2}(1-\tilde{s}_{k+1}^{2}) \\
-&= \frac{1}{2}\left(1+\tilde{s}_{k+1}^{2}\right).
-\end{align}
-$$
+<!-- This is a recurrence relation allowing the calculation of $\tilde{s}\_{k}$, given the values of  -->
+<!-- $\\{\tilde{s}\_{k+1},...,\tilde{s}\_{n}\\}$. This, along with the observation that $\tilde{s}\_{n}=0$ -->
+<!-- (as at the final time, the turnips __must__ be sold whatever the quoted price, otherwise they  -->
+<!-- will spoil and become worthless) allows the computation of all of the optimal threshold values.  -->
 
-Therefore, the recurrence relation is first order, meaning the value of each $\tilde{s}\_{i}$ can 
-be computed directly from a single successive value $\tilde{s}\_{i+1}$. Starting from $\tilde{s}_{n}=0$, this allows
-all of the optimal thresholds to be computed in a backwards recursion.
+<!-- In fact, this recurrence relation can be simplified by observing that a factor of  -->
+<!-- $\tilde{s}_{k+1}$ can be identified in the sum: -->
+
+<!-- $$ -->
+<!-- \begin{align} -->
+<!-- \tilde{s}_{k} &= \left(\frac{1}{2}\sum_{i>k+1}(1-\tilde{s}_{i}^{2})\prod_{k+1<j<i}\tilde{s}_{j}\right)\tilde{s}_{k+1} + \frac{1}{2}(1-\tilde{s}_{k+1}^{2}) \\ -->
+<!-- &= \left(\tilde{s}_{k+1}\right)\tilde{s}_{k+1} + \frac{1}{2}(1-\tilde{s}_{k+1}^{2}) \\ -->
+<!-- &= \frac{1}{2}\left(1+\tilde{s}_{k+1}^{2}\right). -->
+<!-- \end{align} -->
+<!-- $$ -->
+
+<!-- Therefore, the recurrence relation is first order, meaning the value of each $\tilde{s}\_{i}$ can  -->
+<!-- be computed directly from a single successive value $\tilde{s}\_{i+1}$. Starting from $\tilde{s}_{n}=0$, this allows -->
+<!-- all of the optimal thresholds to be computed in a backwards recursion. -->
 
 ### An alternative way of maximising $\mathbb{E}(S)$
 Although our derivation above allows the thresholds to be computed exactly in a recursive fashion, the formulae do not
