@@ -98,12 +98,12 @@ are interested in trying to maximise the expected profit.
 
 ## An instructive example: Uniformly distributed quotes
 
-The easiest distribution to consider is the uniform distribution - specifically, let's assume that on each selling day, 
+The easiest distribution to consider is the uniform distribution -- specifically, let's assume that on each selling day, 
 Timmy and Tommy offer a price that is uniformly distributed over some interval.
 
 Let $P_{1}, ..., P_{n}\sim U[0, 1]$ be 
 [iid](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables) random variables, 
-representing the price offered at time $i\in\\{1,...,n\\}$, and suppose that the turnips spoil at time $n+1$, becoming worthless 
+representing the price offered at time $i=1,...,n$, and suppose that the turnips spoil before another is offered, becoming worthless 
 (in the game, this is the time that Daisy Mae offers to sell you more turnips at a new price). Let $S$ be the price the 
 turnips are sold to Timmy and Tommy.
 
@@ -115,97 +115,250 @@ Sell at time $i$ if $P_{i}\geq s_{i}$.
 </p>
 
 Put simply, at each time $i$ there is a threshold value $s_{i}$ which represents the minimum price at which we will be 
-prepared to sell for at that time. For example, as we need to sell the turnips before they spoil, we should expect to 
-accept any price at time $t=n$; in other words, an optimal strategy should have $s_{n}=0$. Under this strategy, we wish 
-to compute the expected value of the selling price $S$; by carefully choosing the threshold values, we can maximise
+prepared to sell. For example, as we need to sell the turnips before they spoil, we should accept any price at time $t=n$; in other words, an optimal strategy should have $s_{n}=0$. Under this strategy, we wish 
+to compute the expected value of the selling price $S$; then by carefully choosing the threshold values, we can maximise
 the expected price we get for our turnips.
 
-First, let $S_{i}$ be the event $\{P_{i}\geq s_{i}\}$, i.e. that the price at time $i$
-exceeds the threshold $s_{i}$. Then, the event $T_{i}$ that the prices up to time $i$ are all less than their thresholds
- and the price at time $i$ exceeds it (in other words, we cash in our turnips at time $i$ under our strategy) can be written
- in terms of the events $S_{i}$ as
+#### Keeping it simple
 
-$$
-T_{i} = S_{i}\cap\bigcap_{j<i}S_{j}^{c}.
-$$
+In the spirit of keeping things as simple as we can for as long as we can will first calculate this expecatation in a fairly direct way. We will split the expectation up depending upon the day that the turnips are sold (using the [law of total expectation](https://en.wikipedia.org/wiki/Law_of_total_expectation)).
 
-What is the probability of $T_{i}$, that we sell the turnips at time $i$? As each event $S_{i}$ is independent and 
-$P_{i}$ is uniformly distributed, it is easy to see that
+The probability that the turnips are sold on the first day is simply the probability that $P_1\geq s_1$, that is $1-s_1$. Then, if the price is at least $s_1$, it is consequently uniformly distributed from $s_1$ to 1, and as such its expectation is simply their average: $\frac{1}{2}(1+s_1)$. The contribution to the overall expectation is then simply the product of $1-s_1$ and $\frac{1}{2}(1+s_1)$, that is $\frac{1}{2}(1-s_1^2)$.
 
-$$
-\begin{equation}
-\mathbb{P}\left(T_{i}\right) = (1-s_{i})\prod_{j<i}s_{j}
-\end{equation}
-$$
+Similarly, the turnips are sold on the second day if both $P_1<s_1$ and $P_2\geq s_2$ which occurs with probability $s_1(1-s_2)$. Then, if the price on the second day is at least $s_2$ then it is uniformly distributed from $s_2$ to 1 and its expectation is $\frac{1}{2}(1+s_2)$. Here the contribution to the expected sale price is $\frac{1}{2}s_1(1-s_2^2)$.
 
-Also note that, provided the threshold at the final time $s_{n}$ is chosen to be zero (all acceptable strategies will
-sell the turnips at the last time at any price), the collection $\{T_{i}\}$ comprises of a partition of the full 
-probability space - at least and no more than one of the members of $\{T_{i}\}$ must occur. This allows us to apply
-the law of total expectation:
+Continuining in this spirit we see that the turnips are sold on the $i$th day if $P_1<s_1$, $P_2<s_2$, $\ldots$, $P_{i-1}<s_{i-1}$ and $P_i\geq s_i$. This has likelihood $s_1 s_2\cdots s_{i-1}(1-s_i)$. Then, as before, subject to having $P_i\geq s_i$ the expected price is $\frac{1}{2}(1+s_i)$ and as such the contribution to the expected sale price is $\frac{1}{2}s_1 s_2\cdots s_{i-1}(1-s_i^2)$.
+
+Putting this all together gives the expected sale price:
 
 $$
 \begin{align}
-\mathbb{E}(S) &= \sum_{i=1}^{n}\mathbb{E}(S|T_{i})\mathbb{P}(T_{i}) \\
-&= \sum_{i=1}^{n}\mathbb{E}(P_{i}|T_{i})\mathbb{P}(T_{i}) \\
-&= \sum_{i=1}^{n}\mathbb{E}(P_{i}|S_{i})\mathbb{P}(T_{i}) \\
-&= \sum_{i=1}^{n}\frac{1}{2}(1+s_{i})(1-s_{i})\prod_{j<i}s_{j} \\
-&= \sum_{i=1}^{n}\frac{1}{2}(1-s_{i}^{2})\prod_{j<i}s_{j} \\
-&= 
+\mathbb{E}(S)=&\frac{1}{2}(1-s_1^2)\\
++&\frac{1}{2}s_1(1-s_2^2)\\
++&\ldots\\
++&\frac{1}{2}s_1 s_2\cdots s_{n-2}(1-s_{n-1}^2)\\
++&\frac{1}{2}s_1 s_2\cdots s_{n-2}s_{n-1}(1-s_n^2).
 \end{align}
 $$
 
-The second line follows from the first as if $T_{i}$ is true, we have chosen to sell our turnips at time $i$, and so 
-the expected selling price will be the expected value of the quoted price at that time. The third line follows by noting
-that as all the $P_{i}$ are independent, the expected value of $P_{i}$ does not depend on $S_{j}$ for $j<i$. The fourth
-line follows from the fact that $P_{i}$ is uniformly distributed on $[0, 1]$.
-
-Now, note that the expected selling price $S$ is a function of the strategy we have chosen to follow, which is determined
-by the daily threshold values $s_{i}$. We seek to maximise this expectation with respect to these chosen strategy
-values $s_{i}$, in order to find the optimal strategy of this form. This can be done by differentiating:
+At first this looks as though it could be a little unwieldy. We notice however that $s_n$ only appears in the final term and that, fixing the other thresholds, the expectation is maximised when $s_n=0$. Let's write $\tilde{s}_n=0$ for this optimal threshold. Now let's revisit the expectation, leaving $\tilde{s}_n$ in place for reference:
 
 $$
 \begin{align}
-\frac{\partial}{\partial s_{k}}\mathbb{E}(X) &= \frac{\partial}{\partial s_{k}}\left[\frac{1}{2}(1-s_{k}^{2})\prod_{j<k}s_{j} + \sum_{i>k}\frac{1}{2}(1-s_{i}^{2})\prod_{j<i}s_{j}\right] \\
-&= \prod_{j<k}s_{j}\left[-s_{k} + \frac{1}{2}\sum_{i>k}(1-s_{i}^{2})\prod_{k<j<i}s_{j}\right]
+\mathbb{E}(S)=&\frac{1}{2}(1-s_1^2)\\
++&\frac{1}{2}s_1(1-s_2^2)\\
++&\ldots\\
++&\frac{1}{2}s_1 s_2\cdots s_{n-2}(1-s_{n-1}^2)\\
++&\frac{1}{2}s_1 s_2\cdots s_{n-2}s_{n-1}(1-\tilde{s}_n^2).
 \end{align}
 $$
 
-where in the first line the sum is split into terms with $i<k$ (which vanish when hit by the derivative), 
-the term with $i=k$ (the first inside the square brackets), and those with $i>k$; in the second line, 
-the terms are differentiated and $s_{j}$ factors are taken out. 
-
-When the expectation is maximised, this partial 
-derivative will be zero for each $1\leq k\leq n$. We can assume that $s_{j}\neq 0$ for all $j\neq n$ - in other 
-words, for any non-final date, the strategy always assigns a non-zero probability to waiting until a future date.
-
-Letting $\tilde{s}_{i}$ be expectation-maximising values of the thresholds, 
-we obtain a recurrence relation:
+This time we notice that the only terms featuring $s_{n-1}$ are the last two. In fact, more than this, the last two terms depend upon the earlier thresholds $s_1, s_2, \ldots, s_{n-2}$ in exactly the same way. That is, taking out a factor of $\frac{1}{2}s_1 s_2\cdots s_{n-2}$ from both the last two terms we are left with something that depends only upon $s_{n-1}$ and our optimal threshold $\tilde{s}_n$. Specifically this leaves
 
 $$
-\begin{equation}
-\tilde{s}_{k} = \frac{1}{2}\sum_{i>k}(1-\tilde{s}_{i}^{2})\prod_{k<j<i}\tilde{s}_{j}
-\end{equation}
+1-s_{n-1}^2+s_{n-1}(1-\tilde{s}_n^2).
 $$
 
-This is a recurrence relation allowing the calculation of $\tilde{s}\_{k}$, given the values of 
-$\\{\tilde{s}\_{k+1},...,\tilde{s}\_{n}\\}$. This, along with the observation that $\tilde{s}\_{n}=0$
-(as at the final time, the turnips __must__ be sold whatever the quoted price, otherwise they 
-will spoil and become worthless) allows the computation of all of the optimal threshold values. 
+Note that this is of the form $1-x^2+ax$ for $x=s\_{n-1}$ and $a=1-\tilde{s}\_n^2=1$ which is maximised when $x=\frac{1}{2}a=\frac{1}{2}$ and as such we see that $\tilde{s}\_{n-1}=\frac{1}{2}$.
 
-In fact, this recurrence relation can be simplified by observing that a factor of 
-$\tilde{s}_{k+1}$ can be identified in the sum:
+So far so good! Perhaps we can continue in this way and find the optimal thresholds by working backwards. Let's next look at $s_{n-2}$. Considering again the expected sale price we have
 
 $$
 \begin{align}
-\tilde{s}_{k} &= \left(\frac{1}{2}\sum_{i>k+1}(1-\tilde{s}_{i}^{2})\prod_{k+1<j<i}\tilde{s}_{j}\right)\tilde{s}_{k+1} + \frac{1}{2}(1-\tilde{s}_{k+1}^{2}) \\
-&= \left(\tilde{s}_{k+1}\right)\tilde{s}_{k+1} + \frac{1}{2}(1-\tilde{s}_{k+1}^{2}) \\
-&= \frac{1}{2}\left(1+\tilde{s}_{k+1}^{2}\right).
+\mathbb{E}(S)=&\frac{1}{2}(1-s_1^2)\\
++&\frac{1}{2}s_1(1-s_2^2)\\
++&\ldots\\
++&\frac{1}{2}s_1 s_2\cdots s_{n-3}(1-s_{n-2}^2)\\
++&\frac{1}{2}s_1 s_2\cdots s_{n-3}s_{n-2}(1-\tilde{s}_{n-1}^2)\\
++&\frac{1}{2}s_1 s_2\cdots s_{n-3}s_{n-2}\tilde{s}_{n-1}(1-\tilde{s}_n^2).
 \end{align}
 $$
 
-Therefore, the recurrence relation is first order, meaning the value of each $\tilde{s}\_{i}$ can 
-be computed directly from a single successive value $\tilde{s}\_{i+1}$. Starting from $\tilde{s}_{n}=0$, this allows
-all of the optimal thresholds to be computed in a backwards recursion.
+Much as before only the last three terms feature $s_{n-2}$, and as before they depend on the earlier thresholds via the same common factor of $\frac{1}{2}s_1 s_2\cdots s_{n-3}$. Taking this factor out leaves:
+
+$$
+\begin{align}
+&(1-s_{n-2}^2)\\
++&s_{n-2}(1-\tilde{s}_{n-1}^2)\\
++&s_{n-2}\tilde{s}_{n-1}(1-\tilde{s}_n^2).
+\end{align}
+$$
+
+This is again of the form $1-x^2+ax$, with $x=s_{n-2}$ and
+
+$$
+\begin{align}
+a&=1-\tilde{s}_{n-1}^2\\
+&+\tilde{s}_{n-1}(1-\tilde{s}_n^2).
+\end{align}
+$$
+
+But since $\tilde{s}\_{n-1}=\frac{1}{2}$ we have $a=\frac{5}{4}$ and $\tilde{s}\_{n-2}=\frac{5}{8}$.
+
+Let's now see if we can't generalise this argument. Suppose we have already found the optimal thresholds $\tilde{s}\_{i+1}, \tilde{s}\_{i+2}, \ldots, \tilde{s}\_n$, and wish to find the optimal threshold $\tilde{s}_i$. The expected sale price is
+
+$$
+\begin{align}
+\mathbb{E}(S)=&\frac{1}{2}(1-s_1^2)\\
++&\frac{1}{2}s_1(1-s_2^2)\\
++&\ldots\\
++&\frac{1}{2}s_1 s_2\cdots s_{i-2}(1-s_{i-1}^2)\\
++&\frac{1}{2}s_1 s_2\cdots s_{i-2}s_{i-1}(1-s_i^2)\\
++&\frac{1}{2}s_1 s_2\cdots s_{i-2}s_{i-1}s_i(1-\tilde{s}_{i+1}^2)\\
++&\frac{1}{2}s_1 s_2\cdots s_{i-2}s_{i-1}s_i \tilde{s}_{i+1}(1-\tilde{s}_{i+2}^2)\\
++&\ldots\\
++&\frac{1}{2}s_1 s_2\cdots s_{i-2}s_{i-1}s_i \tilde{s}_{i+1}\cdots \tilde{s}_{n-1}(1-\tilde{s}_n^2).
+\end{align}
+$$
+
+Now, as before, only the later terms feature $s_i$, so we can focus only on those terms. Taking the common factor of $\frac{1}{2}s_1 s_2\cdots s_{i-2}s_{i-1}$ out from those terms then leaves
+
+$$
+\begin{align}
+&1-s_i^2\\
++&s_i(1-\tilde{s}_{i+1}^2)\\
++&s_i \tilde{s}_{i+1}(1-\tilde{s}_{i+2}^2)\\
++&\ldots\\
++&s_i \tilde{s}_{i+1}\cdots \tilde{s}_{n-1}(1-\tilde{s}_n^2).
+\end{align}
+$$
+
+This is again of the form $1-x^2+ax$ where $x=s_i$ and
+
+$$
+\begin{align}
+a=&1-\tilde{s}_{i+1}^2\\
++&\tilde{s}_{i+1}(1-\tilde{s}_{i+2}^2)\\
++&\ldots\\
++&\tilde{s}_{i+1}\cdots \tilde{s}_{n-1}(1-\tilde{s}_n^2).
+\end{align}
+$$
+
+Therefore we obtain
+
+$$
+\begin{align}
+\tilde{s}_i=&\frac{1}{2}(1-\tilde{s}_{i+1}^2)\\
++&\frac{1}{2}\tilde{s}_{i+1}(1-\tilde{s}_{i+2}^2)\\
++&\ldots\\
++&\frac{1}{2}\tilde{s}_{i+1}\cdots \tilde{s}_{n-1}(1-\tilde{s}_n^2).
+\end{align}
+$$
+
+Now finally, since
+
+$$
+\begin{align}
+\tilde{s}_{i+1}=&\frac{1}{2}(1-\tilde{s}_{i+2}^2)\\
++&\ldots\\
++&\frac{1}{2}\tilde{s}_{i+2}\cdots \tilde{s}_{n-1}(1-\tilde{s}_n^2).
+\end{align}
+$$
+
+we see that
+
+$$
+\begin{align}
+\tilde{s}_i=&\frac{1}{2}(1-\tilde{s}_{i+1}^2)\\
++&\tilde{s}_{i+1}^2\\
+=&\frac{1}{2}(1+\tilde{s}_{i+1}^2).
+\end{align}
+$$
+
+So we see that the optimal thresholds satisfy a reasonably simple first order backwards recursion
+
+$$
+\tilde{s}_i=\frac{1}{2}(1+\tilde{s}_{i+1}^2).
+$$
+
+
+
+<!-- First, let $S_{i}$ be the event $\{P_{i}\geq s_{i}\}$, i.e. that the price at time $i$ -->
+<!-- exceeds the threshold $s_{i}$. Then, the event $T_{i}$ that the prices up to time $i$ are all less than their thresholds -->
+<!--  and the price at time $i$ exceeds it (in other words, we cash in our turnips at time $i$ under our strategy) can be written -->
+<!--  in terms of the events $S_{i}$ as -->
+
+<!-- $$ -->
+<!-- T_{i} = S_{i}\cap\bigcap_{j<i}S_{j}^{c}. -->
+<!-- $$ -->
+
+<!-- What is the probability of $T_{i}$, that we sell the turnips at time $i$? As each event $S_{i}$ is independent and  -->
+<!-- $P_{i}$ is uniformly distributed, it is easy to see that -->
+
+<!-- $$ -->
+<!-- \begin{equation} -->
+<!-- \mathbb{P}\left(T_{i}\right) = (1-s_{i})\prod_{j<i}s_{j} -->
+<!-- \end{equation} -->
+<!-- $$ -->
+
+<!-- Also note that, provided the threshold at the final time $s_{n}$ is chosen to be zero (all acceptable strategies will -->
+<!-- sell the turnips at the last time at any price), the collection $\{T_{i}\}$ comprises of a partition of the full  -->
+<!-- probability space - at least and no more than one of the members of $\{T_{i}\}$ must occur. This allows us to apply -->
+<!-- the law of total expectation: -->
+
+<!-- $$ -->
+<!-- \begin{align} -->
+<!-- \mathbb{E}(S) &= \sum_{i=1}^{n}\mathbb{E}(S|T_{i})\mathbb{P}(T_{i}) \\ -->
+<!-- &= \sum_{i=1}^{n}\mathbb{E}(P_{i}|T_{i})\mathbb{P}(T_{i}) \\ -->
+<!-- &= \sum_{i=1}^{n}\mathbb{E}(P_{i}|S_{i})\mathbb{P}(T_{i}) \\ -->
+<!-- &= \sum_{i=1}^{n}\frac{1}{2}(1+s_{i})(1-s_{i})\prod_{j<i}s_{j} \\ -->
+<!-- &= \sum_{i=1}^{n}\frac{1}{2}(1-s_{i}^{2})\prod_{j<i}s_{j} \\ -->
+<!-- &=  -->
+<!-- \end{align} -->
+<!-- $$ -->
+
+<!-- The second line follows from the first as if $T_{i}$ is true, we have chosen to sell our turnips at time $i$, and so  -->
+<!-- the expected selling price will be the expected value of the quoted price at that time. The third line follows by noting -->
+<!-- that as all the $P_{i}$ are independent, the expected value of $P_{i}$ does not depend on $S_{j}$ for $j<i$. The fourth -->
+<!-- line follows from the fact that $P_{i}$ is uniformly distributed on $[0, 1]$. -->
+
+<!-- Now, note that the expected selling price $S$ is a function of the strategy we have chosen to follow, which is determined -->
+<!-- by the daily threshold values $s_{i}$. We seek to maximise this expectation with respect to these chosen strategy -->
+<!-- values $s_{i}$, in order to find the optimal strategy of this form. This can be done by differentiating: -->
+
+<!-- $$ -->
+<!-- \begin{align} -->
+<!-- \frac{\partial}{\partial s_{k}}\mathbb{E}(X) &= \frac{\partial}{\partial s_{k}}\left[\frac{1}{2}(1-s_{k}^{2})\prod_{j<k}s_{j} + \sum_{i>k}\frac{1}{2}(1-s_{i}^{2})\prod_{j<i}s_{j}\right] \\ -->
+<!-- &= \prod_{j<k}s_{j}\left[-s_{k} + \frac{1}{2}\sum_{i>k}(1-s_{i}^{2})\prod_{k<j<i}s_{j}\right] -->
+<!-- \end{align} -->
+<!-- $$ -->
+
+<!-- where in the first line the sum is split into terms with $i<k$ (which vanish when hit by the derivative),  -->
+<!-- the term with $i=k$ (the first inside the square brackets), and those with $i>k$; in the second line,  -->
+<!-- the terms are differentiated and $s_{j}$ factors are taken out.  -->
+
+<!-- When the expectation is maximised, this partial  -->
+<!-- derivative will be zero for each $1\leq k\leq n$. We can assume that $s_{j}\neq 0$ for all $j\neq n$ - in other  -->
+<!-- words, for any non-final date, the strategy always assigns a non-zero probability to waiting until a future date. -->
+
+<!-- Letting $\tilde{s}_{i}$ be expectation-maximising values of the thresholds,  -->
+<!-- we obtain a recurrence relation: -->
+
+<!-- $$ -->
+<!-- \begin{equation} -->
+<!-- \tilde{s}_{k} = \frac{1}{2}\sum_{i>k}(1-\tilde{s}_{i}^{2})\prod_{k<j<i}\tilde{s}_{j} -->
+<!-- \end{equation} -->
+<!-- $$ -->
+
+<!-- This is a recurrence relation allowing the calculation of $\tilde{s}\_{k}$, given the values of  -->
+<!-- $\\{\tilde{s}\_{k+1},...,\tilde{s}\_{n}\\}$. This, along with the observation that $\tilde{s}\_{n}=0$ -->
+<!-- (as at the final time, the turnips __must__ be sold whatever the quoted price, otherwise they  -->
+<!-- will spoil and become worthless) allows the computation of all of the optimal threshold values.  -->
+
+<!-- In fact, this recurrence relation can be simplified by observing that a factor of  -->
+<!-- $\tilde{s}_{k+1}$ can be identified in the sum: -->
+
+<!-- $$ -->
+<!-- \begin{align} -->
+<!-- \tilde{s}_{k} &= \left(\frac{1}{2}\sum_{i>k+1}(1-\tilde{s}_{i}^{2})\prod_{k+1<j<i}\tilde{s}_{j}\right)\tilde{s}_{k+1} + \frac{1}{2}(1-\tilde{s}_{k+1}^{2}) \\ -->
+<!-- &= \left(\tilde{s}_{k+1}\right)\tilde{s}_{k+1} + \frac{1}{2}(1-\tilde{s}_{k+1}^{2}) \\ -->
+<!-- &= \frac{1}{2}\left(1+\tilde{s}_{k+1}^{2}\right). -->
+<!-- \end{align} -->
+<!-- $$ -->
+
+<!-- Therefore, the recurrence relation is first order, meaning the value of each $\tilde{s}\_{i}$ can  -->
+<!-- be computed directly from a single successive value $\tilde{s}\_{i+1}$. Starting from $\tilde{s}_{n}=0$, this allows -->
+<!-- all of the optimal thresholds to be computed in a backwards recursion. -->
 
 ### An alternative way of maximising $\mathbb{E}(S)$
 Although our derivation above allows the thresholds to be computed exactly in a recursive fashion, the formulae do not
