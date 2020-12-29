@@ -98,12 +98,12 @@ are interested in trying to maximise the expected profit.
 
 ## An instructive example: Uniformly distributed quotes
 
-The easiest distribution to consider is the uniform distribution - specifically, let's assume that on each selling day, 
+The easiest distribution to consider is the uniform distribution -- specifically, let's assume that on each selling day, 
 Timmy and Tommy offer a price that is uniformly distributed over some interval.
 
 Let $P_{1}, ..., P_{n}\sim U[0, 1]$ be 
 [iid](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables) random variables, 
-representing the price offered at time $i\in\\{1,...,n\\}$, and suppose that the turnips spoil before another is offered, becoming worthless 
+representing the price offered at time $i=1,...,n$, and suppose that the turnips spoil before another is offered, becoming worthless 
 (in the game, this is the time that Daisy Mae offers to sell you more turnips at a new price). Let $S$ be the price the 
 turnips are sold to Timmy and Tommy.
 
@@ -115,14 +115,163 @@ Sell at time $i$ if $P_{i}\geq s_{i}$.
 </p>
 
 Put simply, at each time $i$ there is a threshold value $s_{i}$ which represents the minimum price at which we will be 
-prepared to sell for at that time. For example, as we need to sell the turnips before they spoil, we should expect to 
-accept any price at time $t=n$; in other words, an optimal strategy should have $s_{n}=0$. Under this strategy, we wish 
+prepared to sell. For example, as we need to sell the turnips before they spoil, we should accept any price at time $t=n$; in other words, an optimal strategy should have $s_{n}=0$. Under this strategy, we wish 
 to compute the expected value of the selling price $S$; then by carefully choosing the threshold values, we can maximise
 the expected price we get for our turnips.
 
-In the spirit of making as much of the post as accessible as possible We will first calculate this expecatation in a fairly elementary way. We will split the expectation up depending upon the day that the turnips are sold (this is an application of the [law of total expectation](https://en.wikipedia.org/wiki/Law_of_total_expectation)).
+#### Keeping it simple
 
-The probability that the Turnips are sold on the first day is simply the probability that $P_i$ exceeds $s_i$, that is $1-s_i$. Then, supposing the price exceeds $s_i$, it is uniformly distributed from $s_i$ to 1, and as such its expectation is simply their average: $\frac{1}{2}(1+s_i)$.
+In the spirit of keeping things as simple as we can for as long as we can will first calculate this expecatation in a fairly direct way. We will split the expectation up depending upon the day that the turnips are sold (using the [law of total expectation](https://en.wikipedia.org/wiki/Law_of_total_expectation)).
+
+The probability that the turnips are sold on the first day is simply the probability that $P_1\geq s_1$, that is $1-s_1$. Then, if the price is at least $s_1$, it is consequently uniformly distributed from $s_1$ to 1, and as such its expectation is simply their average: $\frac{1}{2}(1+s_1)$. The contribution to the overall expectation is then simply the product of $1-s_1$ and $\frac{1}{2}(1+s_1)$, that is $\frac{1}{2}(1-s_1^2)$.
+
+Similarly, the turnips are sold on the second day if both $P_1<s_1$ and $P_2\geq s_2$ which occurs with probability $s_1(1-s_2)$. Then, if the price on the second day is at least $s_2$ then it is uniformly distributed from $s_2$ to 1 and its expectation is $\frac{1}{2}(1+s_2)$. Here the contribution to the expected sale price is $\frac{1}{2}s_1(1-s_2^2)$.
+
+Continuining in this spirit we see that the turnips are sold on the $i$th day if $P_1<s_1$, $P_2<s_2$, $\ldots$, $P_{i-1}<s_{i-1}$ and $P_i\geq s_i$. This has likelihood $s_1 s_2\cdots s_{i-1}(1-s_i)$. Then, as before, subject to having $P_i\geq s_i$ the expected price is $\frac{1}{2}(1+s_i)$ and as such the contribution to the expected sale price is $\frac{1}{2}s_1 s_2\cdots s_{i-1}(1-s_i^2)$.
+
+Putting this all together gives the expected sale price:
+
+$$
+\begin{align}
+\mathbb{E}(S)=&\frac{1}{2}(1-s_1^2)\\
++&\frac{1}{2}s_1(1-s_2^2)\\
++&\ldots\\
++&\frac{1}{2}s_1 s_2\cdots s_{n-2}(1-s_{n-1}^2)\\
++&\frac{1}{2}s_1 s_2\cdots s_{n-2}s_{n-1}(1-s_n^2).
+\end{align}
+$$
+
+At first this looks as though it could be a little unwieldy. We notice however that $s_n$ only appears in the final term and that, fixing the other thresholds, the expectation is maximised when $s_n=0$. Let's write $\tilde{s}_n=0$ for this optimal threshold. Now let's revisit the expectation, leaving $\tilde{s}_n$ in place for reference:
+
+$$
+\begin{align}
+\mathbb{E}(S)=&\frac{1}{2}(1-s_1^2)\\
++&\frac{1}{2}s_1(1-s_2^2)\\
++&\ldots\\
++&\frac{1}{2}s_1 s_2\cdots s_{n-2}(1-s_{n-1}^2)\\
++&\frac{1}{2}s_1 s_2\cdots s_{n-2}s_{n-1}(1-\tilde{s}_n^2).
+\end{align}
+$$
+
+This time we notice that the only terms featuring $s_{n-1}$ are the last two. In fact, more than this, the last two terms depend upon the earlier thresholds $s_1, s_2, \ldots, s_{n-2}$ in exactly the same way. That is, taking out a factor of $\frac{1}{2}s_1 s_2\cdots s_{n-2}$ from both the last two terms we are left with something that depends only upon $s_{n-1}$ and our optimal threshold $\tilde{s}_n$. Specifically this leaves
+
+$$
+1-s_{n-1}^2+s_{n-1}(1-\tilde{s}_n^2).
+$$
+
+Note that this is of the form $1-x^2+ax$ for $x=s\_{n-1}$ and $a=1-\tilde{s}\_n^2=1$ which is maximised when $x=\frac{1}{2}a=\frac{1}{2}$ and as such we see that $\tilde{s}\_{n-1}=\frac{1}{2}$.
+
+So far so good! Perhaps we can continue in this way and find the optimal thresholds by working backwards. Let's next look at $s_{n-2}$. Considering again the expected sale price we have
+
+$$
+\begin{align}
+\mathbb{E}(S)=&\frac{1}{2}(1-s_1^2)\\
++&\frac{1}{2}s_1(1-s_2^2)\\
++&\ldots\\
++&\frac{1}{2}s_1 s_2\cdots s_{n-3}(1-s_{n-2}^2)\\
++&\frac{1}{2}s_1 s_2\cdots s_{n-3}s_{n-2}(1-\tilde{s}_{n-1}^2)\\
++&\frac{1}{2}s_1 s_2\cdots s_{n-3}s_{n-2}\tilde{s}_{n-1}(1-\tilde{s}_n^2).
+\end{align}
+$$
+
+Much as before only the last three terms feature $s_{n-2}$, and as before they depend on the earlier thresholds via the same common factor of $\frac{1}{2}s_1 s_2\cdots s_{n-3}$. Taking this factor out leaves:
+
+$$
+\begin{align}
+&(1-s_{n-2}^2)\\
++&s_{n-2}(1-\tilde{s}_{n-1}^2)\\
++&s_{n-2}\tilde{s}_{n-1}(1-\tilde{s}_n^2).
+\end{align}
+$$
+
+This is again of the form $1-x^2+ax$, with $x=s_{n-2}$ and
+
+$$
+\begin{align}
+a&=1-\tilde{s}_{n-1}^2\\
+&+\tilde{s}_{n-1}(1-\tilde{s}_n^2).
+\end{align}
+$$
+
+But since $\tilde{s}\_{n-1}=\frac{1}{2}$ we have $a=\frac{5}{4}$ and $\tilde{s}\_{n-2}=\frac{5}{8}$.
+
+Let's now see if we can't generalise this argument. Suppose we have already found the optimal thresholds $\tilde{s}\_{i+1}, \tilde{s}\_{i+2}, \ldots, \tilde{s}\_n$, and wish to find the optimal threshold $\tilde{s}_i$. The expected sale price is
+
+$$
+\begin{align}
+\mathbb{E}(S)=&\frac{1}{2}(1-s_1^2)\\
++&\frac{1}{2}s_1(1-s_2^2)\\
++&\ldots\\
++&\frac{1}{2}s_1 s_2\cdots s_{i-2}(1-s_{i-1}^2)\\
++&\frac{1}{2}s_1 s_2\cdots s_{i-2}s_{i-1}(1-s_i^2)\\
++&\frac{1}{2}s_1 s_2\cdots s_{i-2}s_{i-1}s_i(1-\tilde{s}_{i+1}^2)\\
++&\frac{1}{2}s_1 s_2\cdots s_{i-2}s_{i-1}s_i \tilde{s}_{i+1}(1-\tilde{s}_{i+2}^2)\\
++&\ldots\\
++&\frac{1}{2}s_1 s_2\cdots s_{i-2}s_{i-1}s_i \tilde{s}_{i+1}\cdots \tilde{s}_{n-1}(1-\tilde{s}_n^2).
+\end{align}
+$$
+
+Now, as before, only the later terms feature $s_i$, so we can focus only on those terms. Taking the common factor of $\frac{1}{2}s_1 s_2\cdots s_{i-2}s_{i-1}$ out from those terms then leaves
+
+$$
+\begin{align}
+&1-s_i^2\\
++&s_i(1-\tilde{s}_{i+1}^2)\\
++&s_i \tilde{s}_{i+1}(1-\tilde{s}_{i+2}^2)\\
++&\ldots\\
++&s_i \tilde{s}_{i+1}\cdots \tilde{s}_{n-1}(1-\tilde{s}_n^2).
+\end{align}
+$$
+
+This is again of the form $1-x^2+ax$ where $x=s_i$ and
+
+$$
+\begin{align}
+a=&1-\tilde{s}_{i+1}^2\\
++&\tilde{s}_{i+1}(1-\tilde{s}_{i+2}^2)\\
++&\ldots\\
++&\tilde{s}_{i+1}\cdots \tilde{s}_{n-1}(1-\tilde{s}_n^2).
+\end{align}
+$$
+
+Therefore we obtain
+
+$$
+\begin{align}
+\tilde{s}_i=&\frac{1}{2}(1-\tilde{s}_{i+1}^2)\\
++&\frac{1}{2}\tilde{s}_{i+1}(1-\tilde{s}_{i+2}^2)\\
++&\ldots\\
++&\frac{1}{2}\tilde{s}_{i+1}\cdots \tilde{s}_{n-1}(1-\tilde{s}_n^2).
+\end{align}
+$$
+
+Now finally, since
+
+$$
+\begin{align}
+\tilde{s}_{i+1}=&\frac{1}{2}(1-\tilde{s}_{i+2}^2)\\
++&\ldots\\
++&\frac{1}{2}\tilde{s}_{i+2}\cdots \tilde{s}_{n-1}(1-\tilde{s}_n^2).
+\end{align}
+$$
+
+we see that
+
+$$
+\begin{align}
+\tilde{s}_i=&\frac{1}{2}(1-\tilde{s}_{i+1}^2)\\
++&\tilde{s}_{i+1}^2\\
+=&\frac{1}{2}(1+\tilde{s}_{i+1}^2).
+\end{align}
+$$
+
+So we see that the optimal thresholds satisfy a reasonably simple first order backwards recursion
+
+$$
+\tilde{s}_i=\frac{1}{2}(1+\tilde{s}_{i+1}^2).
+$$
+
+
 
 <!-- First, let $S_{i}$ be the event $\{P_{i}\geq s_{i}\}$, i.e. that the price at time $i$ -->
 <!-- exceeds the threshold $s_{i}$. Then, the event $T_{i}$ that the prices up to time $i$ are all less than their thresholds -->
