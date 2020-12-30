@@ -623,7 +623,7 @@ Sell at time $i$ if $P_{i}\geq s_{i}$
 </p>
 
 That is to say, the price we would settle for on each day depended only upon the day itself and not upon the prices we 
-had seen so far. Indeed, as we tacitly assume that the buyer only has knowledge of past and not future prices, a generic 
+had seen so far. As we tacitly assume that the buyer only has knowledge of past and not future prices, a generic 
 strategy would be of the form:
 
 <p align="center">
@@ -647,6 +647,8 @@ always the case the these optimal thresholds are the expected returns if we choo
 
 ## Next time: Non-uniform Turnips
 
-In the [next post](post2hyperlink) we give give an answer to each of the questions posed above.
+In the next post we will give an answer to each of the questions posed above.
+
+<!-- In the [next post](post2hyperlink) we give an answer to each of the questions posed above. -->
 
 ![Isabelle thinking](/assets/images/isabellebye.jpg)
