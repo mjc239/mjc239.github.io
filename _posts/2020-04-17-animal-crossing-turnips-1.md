@@ -587,19 +587,25 @@ for time in range(1, 21):
     19 times: 0.9163923239765532
     20 times: 0.919887445721574
    
-This numerical check confirms that the expected values of the $n$-period strategy are equal to the threshold values 
-$(n+1)$ times from the end, as expected.
+#### Thresholds and expectations
 
-<!--
-An interesting thing to note here is that the expected values of the strategy 
-over $n$ times are equal to the threshold values $(n+1)$ times from the end. 
-There is a straightforward way to see why this is: first, recall that, by definition, 
-this threshold value is the minimum selling price to accept with $n$ times remaining.
-When making the decision whether to accept, you are comparing the offered price to 
-the expected price you hope to receive by waiting. Therefore, the threshold value is
-exactly the expected value of the strategy over the remaining $n$ times - any price less
-than this can be expected to be beaten (in the probabilistic sense) in the future.
--->
+<!-- This numerical check confirms that the expected values of the $n$-period strategy are equal to the threshold values  -->
+<!-- $(n+1)$ times from the end, as expected. -->
+
+It's interesting to observe that there appears to be a relationship between the expected values and the thresholds themselves. Indeed, it appears that the optimal threshold at time $n-i$, that is $\tilde{s}_{n-i}$, is the same as the expected value (arising from the optimal strategy of this type) for the game in which only the first $i$ prices are offered, or equivalently, because of the backwards recursion relating the optimal thresholds, the expected sale price if the player rejects the price at time $n-i$ and instead plays on.
+
+For clarity we write $\tilde{e}_n$ for $\mathbb{E}(S)$, the expected sale price for the game played over $n$ days, when following the optimal strategy of the type discussed above. Then the relationship can be stated as
+
+$$
+\tilde{s}_{n-i}=\tilde{e}_i.
+$$
+
+With hindsight this is not exactly surprising. We definitely shouldn't at any point settle for a lower price than we would expect were we to play on. That is to say, we should have $\tilde{s}_{n-i}\geq\tilde{e}_i$.
+
+In the other direction, were we to hold out for a price strictly greater than what would would achieve in expectation were we to carry on (that is, if $\tilde{s}_{n-i}>\tilde{e}_i$), then we would, informally speaking, be throwing away perfectly good prices in favour of the lower prices that we would expect in playing on.
+
+We will revisit this a little more formally in a later post.
+
 
 ## Outstanding questions
 
