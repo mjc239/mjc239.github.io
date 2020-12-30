@@ -105,7 +105,7 @@ solution to this non-linear recurrence and generalise some of our results from l
 At this point it is worth saying that anybody expecting to use our analysis to improve their turnip game would be 
 better off looking elsewhere. Perhaps unsurprisingly it is reasonably well understood<sup>[1](#post2footnote1)</sup> 
 how the prices in Animal Crossing are *actually* generated. Some people have even been so helpful as to make 
-[tools](turnipprophet.io) to help people with their turnip selling, though to say much more than this might constitute 
+[tools](https://turnipprophet.io) to help people with their turnip selling, though to say much more than this might constitute 
 **SPOILERS** (one could argue that the existence of these tools is in itself 
 [**SPOILERS**](https://www.youtube.com/watch?v=KSRWJMM98pM)). Indeed, to identify what part of our model renders it 
 ineffective would certain be 
@@ -119,21 +119,23 @@ Of course, it is the assumption that the prices are independent.
 To kick things off, starting from
 
 <p align="center">
-$\tilde{s}_i = \frac{1}{2}(1 +\tilde{s}_{i + 1}^2)$ for $1\leq i< n$ and $\tilde{s}_n = 0$,
+$\tilde{s}_i = \frac{1}{2}(1 +\tilde{s}_{i + 1}^2)\quad$ for $1\leq i< n,$
 </p>
 
-we perform the substitution $t_i = \frac{1}{2}(1 - \tilde{s}_{n-i})$ to arrive at the logistic map with initial value 
-$1/2$ (as noted last time). That is
+with initial value $$\tilde{s}_n = 0$$, we perform the substitution $$t_i = \frac{1}{2}(1 - \tilde{s}_{n-i})$$ 
+to arrive at the logistic map with initial value $1/2$ (as noted last time). That is,
 
 <p align="center">
-$t_{i+1} = t_{i}(1-t_{i})$ for $0\leq i <n - 1$,
+$t_{i+1} = t_{i}(1-t_{i})\quad$ for $0\leq i <n - 1$,
 </p>
 
-with initial value $t_{0} = \frac{1}{2}$. Next we perform one more change of variables: defining $r\_{i} = 1/t\_{i}$ 
+with initial value $t_{0} = \frac{1}{2}$. 
+
+Next we perform one more change of variables: defining $r\_{i} = 1/t\_{i}$ 
 for all $i$ we obtain 
 
 <p align="center">
-$r_{i+1} = r_{i} + 1 + \frac{1}{r_{i}-1}$ for $0\leq i < n - 1$,
+$r_{i+1} = r_{i} + 1 + \frac{1}{r_{i}-1}\quad$ for $0\leq i < n - 1$,
 </p>
 
 with initial condition $r_{0} = 2$.
@@ -149,15 +151,30 @@ $$
 $$
 </details>
 
-From this recurrence relation, we certainly have $r\_{i}> 1$ for all $i$, e.g. by induction. Thus, we have 
-$\frac{1}{r_i-1}>0$ for all $i$ and so $r\_{i+1}\geq r\_{i} + 1$ and we get the lower bound
+From this recurrence relation, it is possible to construct upper and lower bounds for $r_{i}$ in terms of just the index
+$i$:
+
+##### Lower bound
+
+We certainly have $r\_{i}> 1$ for all $i$ (e.g. by induction). Therefore, we have that
+$\frac{1}{r_i-1}>0$ for all $i$, and substituting this back into the recurrence relation gives the inequality $r\_{i+1}\geq r\_{i} + 1$.
+This in turn (e.g. by induction again) gives the lower bound
 
 $$
 r_{i}\geq i + 2
 $$
 
-for all $i$ (that is, for $0\leq i < n$). In the other direction, since we now have $r\_{i} - 1\geq i + 1$ for all $i$, 
-it follows that $r\_{i+1}\leq r\_{i} + 1 + \frac{1}{i + 1}$ for $0\leq i < n - 1$, and we obtain the upper bound 
+for all $i$ (that is, for $0\leq i < n$). 
+
+##### Upper bound
+In the other direction, first note that we now have $r\_{i} - 1\geq i + 1$ for all $i$. This can be used to get an upper
+bound on the third term in the recurrence relation, resulting in the inequality:
+
+<p align="center">
+$r_{i+1}\leq r_{i} + 1 + \frac{1}{i + 1}\quad$ for $0\leq i < n - 1$. 
+</p>
+
+By again using induction, this can be used to show that
 
 $$
 r_{i}\leq i + 2  + H_i
@@ -169,7 +186,10 @@ $$
 H_i = \sum_{j = 1}^{i}\frac{1}{j}
 $$
 
-for the $i$-th [harmonic number](https://en.wikipedia.org/wiki/Harmonic_number). Putting this all together gives
+for the $i$-th [harmonic number](https://en.wikipedia.org/wiki/Harmonic_number). 
+
+##### Asymptotic behaviour
+Putting these bounds together gives the following asymptotic behaviour:
 
 $$
 r_{i} = i + O(\log{(i + 1)}),

@@ -121,9 +121,9 @@ the expected price we get for our turnips.
 
 #### Keeping it simple
 
-In the spirit of keeping things as simple as we can for as long as we can will first calculate this expecatation in a fairly direct way. We will split the expectation up depending upon the day that the turnips are sold (using the [law of total expectation](https://en.wikipedia.org/wiki/Law_of_total_expectation)).
+In the spirit of keeping things as simple as we can for as long as we can will first calculate this expectation in a fairly direct way. We will split the expectation up depending upon the day that the turnips are sold (using the [law of total expectation](https://en.wikipedia.org/wiki/Law_of_total_expectation)).
 
-The probability that the turnips are sold on the first day is simply the probability that $P_1\geq s_1$, that is $1-s_1$. Then, if the price is at least $s_1$, it is consequently uniformly distributed from $s_1$ to 1, and as such its expectation is simply their average: $\frac{1}{2}(1+s_1)$. The contribution to the overall expectation is then simply the product of $1-s_1$ and $\frac{1}{2}(1+s_1)$, that is $\frac{1}{2}(1-s_1^2)$.
+The probability that the turnips are sold on the first day is simply the probability that $P_1\geq s_1$, that is $1-s_1$. Then, if the price is at least $s_1$, it is consequently uniformly distributed from $s_1$ to $1$, and as such its expectation is simply their average: $\frac{1}{2}(1+s_1)$. The contribution to the overall expectation is then simply the product of $1-s_1$ and $\frac{1}{2}(1+s_1)$, that is $\frac{1}{2}(1-s_1^2)$.
 
 Similarly, the turnips are sold on the second day if both $P_1<s_1$ and $P_2\geq s_2$ which occurs with probability $s_1(1-s_2)$. Then, if the price on the second day is at least $s_2$ then it is uniformly distributed from $s_2$ to 1 and its expectation is $\frac{1}{2}(1+s_2)$. Here the contribution to the expected sale price is $\frac{1}{2}s_1(1-s_2^2)$.
 
@@ -265,7 +265,7 @@ $$
 \end{align}
 $$
 
-So we see that the optimal thresholds satisfy a reasonably simple first order backwards recursion
+So we see that the optimal thresholds satisfy a reasonably simple first order backwards recursion relation
 
 $$
 \tilde{s}_i=\frac{1}{2}(1+\tilde{s}_{i+1}^2).
@@ -420,7 +420,7 @@ $$
 \end{align}
 $$
 
-where the first term in the second inequality uses the fact that if $P_{i+1}$ exceeds $$\tilde{s}_{i+1}$$, then we are definitely selling
+where the first term in the second equality uses the fact that if $P_{i+1}$ exceeds $$\tilde{s}_{i+1}$$, then we are definitely selling
 and the expected price $S$ is equal to the (conditional) expectation of $P_{i+1}$; the second term uses a resubstitution of the
 optimal threshold value $$\tilde{s}_{i+1}$$ in terms of the conditional expectation of $S$, established above; and the third equality
 follows from the uniform distribution of $P_{i+1}$.
