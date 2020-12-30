@@ -4,6 +4,7 @@ excerpt: "Post 4 - The Oracle and perfect play"
 header:
     image: assets/images/turniproom.jpeg
 toc: true
+published: false
 toc_label: "Contents:"
 classes: wide
 author_profile: false

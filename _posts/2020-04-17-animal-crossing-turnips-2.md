@@ -4,6 +4,7 @@ excerpt: "Post 2 - Asymptotics and arbitrary distributions"
 header:
     image: assets/images/turniplab.jpg
 toc: true
+published: false
 toc_label: "Contents:"
 classes: wide
 author_profile: false
@@ -70,9 +71,9 @@ This post is written in collaboration with [Jack Bartley](http://jackbartley.com
 
 ## Last time: Turnip mania
 
-Following on from [last time]({% post_url 2020-04-17-animal-crossing-turnips-1 %}), in this post we're looking again at 
+Following on from [last time]({% post_url 2020-12-30-animal-crossing-turnips-1 %}), in this post we're looking again at 
 optimal strategies for turnip selling in Animal Crossing. Readers are advise to consult the 
-[first post]({% post_url 2020-04-17-animal-crossing-turnips-1 %}) for details on what has been covered so far, but we 
+[first post]({% post_url 2020-12-30-animal-crossing-turnips-1 %}) for details on what has been covered so far, but we 
 give a very brief summary here for the uninitiated.
 
 
@@ -325,7 +326,6 @@ While we have assumed the daily quoted prices $P\_{i}$ have been uniformly distr
 the results derived above extend easily to the case of a uniform distribution over an arbitary interval $[a, b]$, by 
 linear scaling -- specifically, by letting $Y\_{i} = a + (b-a)P\_{i}$.
 
-
 ## Arbitrary (non-negative) turnips
 
 Having gave a much more accurate solution to the uniform case we now turn our attention to the question of what we can 
@@ -409,7 +409,93 @@ $$
 \end{align}
 $$
 
-where in the third equality we make critial use of the fact that $\tilde{e}_{n-(i+1)} = \tilde{s}\_{i + 1}$.
+where in the third equality we make critical use of the fact that $\tilde{e}_{n-(i+1)} = \tilde{s}\_{i + 1}$.
+
+### An alternative way of maximising $\mathbb{E}(S)$
+
+Although our derivation above allows the thresholds to be computed exactly in a recursive fashion, the formulae do not
+admit an easy interpretation. Is there another way to look at the problem, that allows the values of the optimal
+thresholds to be understood in an intuitive way?
+
+To this end, let $\tau$ be the time at which we sell, that is $\tau = \min\\{i\,|\,P_{i}\geq s_{i}\\}$. Then, by the law of total expectation, 
+we see that for any $i$, we have the following expression for the expected sold price:
+
+$$
+\mathbb{E}(S) = \mathbb{E}(S\,|\,\tau < i)\,\mathbb{P}(\tau < i) + \mathbb{E}(S\,|\,\tau \geq i)\,\mathbb{P}(\tau \geq i).
+$$
+
+Note that $\mathbb{E}(S\\,|\,\tau < i)$, $\mathbb{P}(\tau < i)$ and $\mathbb{P}(\tau \geq i)$ depend only upon $s_{1}, \ldots, s_{i - 1}$, whereas 
+$\mathbb{E}(S\,|\,\tau \geq i)$ depends only upon $s_{i}, \ldots, s_{n}$. Therefore, the optimal choice of $s_{i}$ depends only 
+upon $s_{i + 1}, \ldots, s_{n}$. Indeed, it suffices to choose $s_{i}$ so as to maximise $\mathbb{E}(S\|\tau \geq i)$.
+
+Using the law of total expectation again (and assuming a implicit dependence on $\tau\geq 0$ in terms on the RHS),
+
+$$
+\mathbb{E}(S\,|\,\tau \geq i) = \mathbb{E}(P_i\,|\,P_i\geq s_i)\,\mathbb{P}(P_i\geq s_i) + \mathbb{E}(S\,|\,P_i < s_i)\,\mathbb{P}(P_i < s_i).
+$$
+
+Now, as we have assumed that the price $P_{i}$ is uniformly distributed on $\[0, 1\]$, we have that 
+$\mathbb{E}(P_{i}\|P_{i}\geq s_{i}) = \frac{1}{2}(1+s_{i})$ and $\mathbb{P}(P_i\geq s_i) = 1 - s_{i}$ (this follows
+straight from the definition of the uniform distribution). Substituting this in gives
+
+$$
+\mathbb{E}(S\,|\,\tau \geq i) = \frac{1}{2}(1 - s_i^2) + s_{i}\,\mathbb{E}(S\,|\,P_i < s_i).
+$$
+
+This is a quadratic in $s_{i}$, which is maximised when $s_i = \mathbb{E}(S\,|\,P_i < s_i)$. Write $\tilde{s}_i$ for 
+this optimal threshold value:
+
+$$
+\tilde{s}_i = \mathbb{E}(S\,|\,P_i < \tilde{s}_i)
+$$
+
+where, as noted earlier, the right hand expression depends only upon $$\tilde{s}_{i + 1},\ldots,\tilde{s}_{n}$$, due to the implicit 
+conditional dependence on $\tau\geq i$. 
+
+Let's pause here to think about the meaning of this statement; the implicit
+condition in the expectation is that $\tau\geq i$ (i.e. that we have not sold up to time $i$), and that the current price 
+$P_{i}$ is less than $\tilde{s}_{i}$, meaning that we are not selling now either (by the definition of our strategy).
+This is actually fairly intuitive: as all the prices are independent, the situation at time $i$ of an $n$ period run is 
+equivalent to starting a fresh run at time $i$ of length $n-i$, and we should only sell if the quoted price exceeds
+the expected value of continuing to play on.
+
+Furthermore, it is possible to recover the recursion relation found earlier between $$\tilde{s}_{i}$$ and
+ $$\tilde{s}_{i+1}$$, by using one further application of the law of total expectation:
+
+$$
+\begin{align}
+\tilde{s}_{i} &= \mathbb{E}(S\,|\,P_{i}<\tilde{s}_{i}, P_{i+1}\geq\tilde{s}_{i+1})\mathbb{P}(P_{i+1}\geq\tilde{s}_{i+1}) \\[5pt]
+&\quad + \mathbb{E}(S\,|\,P_{i}<\tilde{s}_{i}, P_{i+1}<\tilde{s}_{i+1})\mathbb{P}(P_{i+1}<\tilde{s}_{i+1}) \\[5pt]
+&= \mathbb{E}(P_{i + 1}|P_{i + 1}\geq \tilde{s}_{i + 1})\mathbb{P}(P_{i + 1}\geq \tilde{s}_{i + 1}) + \tilde{s}_{i+1}\mathbb{P}(P_{i + 1} < \tilde{s}_{i + 1})\\
+&= \frac{1}{2}(1 - \tilde{s}_{i + 1}^2) + \tilde{s}_{i + 1}^2\\
+&= \frac{1}{2}(1 + \tilde{s}_{i + 1}^2)
+\end{align}
+$$
+
+where the first term in the second equality uses the fact that if $P_{i+1}$ exceeds $$\tilde{s}_{i+1}$$, then we are definitely selling
+and the expected price $S$ is equal to the (conditional) expectation of $P_{i+1}$; the second term uses a resubstitution of the
+optimal threshold value $$\tilde{s}_{i+1}$$ in terms of the conditional expectation of $S$, established above; and the third equality
+follows from the uniform distribution of $P_{i+1}$.
+
+<!-- 
+Define $e_{n-j}$ to be the expected return of the strategy
+<p align="center">
+Sell at time $i > j$ if $P_{i}\geq s_{i}$.
+</p>
+
+That is, the expected return, were we to see all but the first $j$ prices. Moreover, writing $\tilde{e}\_{n - j}$ for 
+the expected return of this strategy with the optimal thresholds, we see that $\mathbb{E}(S\|P_{i} < s_{i}) = e_{n - i}$ and 
+this gives the recurrence:
+
+$$
+\tilde{s}_i = \tilde{e}_{n - i}.
+$$
+
+This tells us that at time $n$ we should accept any price; at time $n - 1$ we should accept exactly the expected value 
+of $P_n$; at time $n - 2$ we should settle for the exactly the expected value were we to pass on $P_{n - 2}$; and so 
+on and so forth.
+
+-->
 
 ### Non-negative Turnips
 
