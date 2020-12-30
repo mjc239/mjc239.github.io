@@ -34,6 +34,7 @@ sidebar:
         </li>
         </ul>
         </div>
+        <hr style="width:50%">
   - text: |
         <div class="author__avatar">
         <img src="/assets/images/bartley.jpg" alt="Jack Bartley" itemprop="image">
