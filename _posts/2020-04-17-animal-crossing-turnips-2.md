@@ -4,7 +4,7 @@ excerpt: "Post 2 - Asymptotics and arbitrary distributions"
 header:
     image: assets/images/turniplab.jpg
 toc: true
-published: false
+published: true
 toc_label: "Contents:"
 classes: wide
 author_profile: false
@@ -67,8 +67,6 @@ tags:
 This post is written in collaboration with [Jack Bartley](http://jackbartley.com/), while playing 
 [Animal Crossing New Horizons](https://www.youtube.com/watch?v=5LAKjL3p6Gw). 
 
-# Post 2: Non-uniform Turnips
-
 ## Last time: Turnip mania
 
 Following on from [last time]({% post_url 2020-12-30-animal-crossing-turnips-1 %}), in this post we're looking again at 
@@ -80,7 +78,7 @@ give a very brief summary here for the uninitiated.
 We consider the following game -- a simple model for turnip selling in Animal Crossing. Let $P\_1, \ldots, P\_n$ be iid 
 random variables. At each time $t=1, 2, \ldots, n$ the player is offered the opportunity to sell all the turnips they 
 have for a price of $P\_i$. If the player accepts this offer then the game ends and the player ends with a revenue of 
-$P\_i$, if the player refuses then they move to the next timestamp. If the turnips are not sold on or before time $n$ 
+$P\_i$, if the player refuses then they move to the next time period. If the turnips are not sold on or before time $n$ 
 then the turnips spoil and the player walks away with nothing.
 
 Last time we considered the special case that the $P\_i$ are iid uniform on $[0,1]$, and considered the following 
@@ -155,7 +153,9 @@ $$
 From this recurrence relation, it is possible to construct upper and lower bounds for $r_{i}$ in terms of just the index
 $i$:
 
-##### Lower bound
+### Constructing threshold bounds
+
+#### Lower bound
 
 We certainly have $r\_{i}> 1$ for all $i$ (e.g. by induction). Therefore, we have that
 $\frac{1}{r_i-1}>0$ for all $i$, and substituting this back into the recurrence relation gives the inequality $r\_{i+1}\geq r\_{i} + 1$.
@@ -167,7 +167,7 @@ $$
 
 for all $i$ (that is, for $0\leq i < n$). 
 
-##### Upper bound
+#### Upper bound
 In the other direction, first note that we now have $r\_{i} - 1\geq i + 1$ for all $i$. This can be used to get an upper
 bound on the third term in the recurrence relation, resulting in the inequality:
 
@@ -189,7 +189,7 @@ $$
 
 for the $i$-th [harmonic number](https://en.wikipedia.org/wiki/Harmonic_number). 
 
-##### Asymptotic behaviour
+#### Asymptotic behaviour
 Putting these bounds together gives the following asymptotic behaviour:
 
 $$
@@ -326,7 +326,8 @@ While we have assumed the daily quoted prices $P\_{i}$ have been uniformly distr
 the results derived above extend easily to the case of a uniform distribution over an arbitary interval $[a, b]$, by 
 linear scaling -- specifically, by letting $Y\_{i} = a + (b-a)P\_{i}$.
 
-## Arbitrary (non-negative) turnips
+
+## Arbitrary non-negative turnips
 
 Having gave a much more accurate solution to the uniform case we now turn our attention to the question of what we can 
 do in general. So as to not jump straight in the deep end we first give another approach for the uniform case, being 
