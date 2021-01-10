@@ -329,113 +329,46 @@ linear scaling -- specifically, by letting $Y\_{i} = a + (b-a)P\_{i}$.
 
 ## Arbitrary non-negative turnips
 
-Having gave a much more accurate solution to the uniform case we now turn our attention to the question of what we can 
-do in general. So as to not jump straight in the deep end we first give another approach for the uniform case, being 
+Now that we have a more precise solution to the uniform case, we turn our attention to the question of what we can 
+do in general. So as to not jump straight into the deep end we first give another approach for the uniform case, being 
 careful to keep things as general as possible for as long as possible.
 
 ### An instructive example revisited: Uniformly distributed quotes
 
-Consider as before our strategy:
+Recall again the recursion relation for the optimal threshold we derived in our 
+[previous post]({% post_url 2020-12-30-animal-crossing-turnips-1 %}):
 
 <p align="center">
-Sell at time $i$ if $P_{i}\geq s_{i}$
+$\tilde{s}_i = \frac{1}{2}(1 +\tilde{s}_{i + 1}^2)\quad$ for $1\leq i< n.$
 </p>
 
-and write $S$ for the price the turnips are consequently sold at.
-
-<!-- Put simply, on each day there is a threshold $s\_{i}$ which represents the minimum price at which we would be 
-prepared to sell on that day. For example, as we need to sell the turnips before they spoil, we should accept any price 
-at time $t=n$; in other words, the optimal such strategy should have $s\_{n}=0$.  -->
-
-Let $\tau$ be the time at which we sell, that is $\tau = \min\\{ i:P\_{i}\geq s\_{i}\\}$. Then, by the law of total 
-expectation, we see that for any $i$, we have
-
-$$
-E(S) = E(S|\tau < i)P(\tau < i) + E(S|\tau \geq i)P(\tau \geq i).
-$$
-
-Note that $E(S\|\tau < i)$, $P(\tau < i)$ and $P(\tau \geq i)$ depend only upon $s\_{1}, \ldots, s\_{i - 1}$, whereas 
-$E(S\|\tau \geq i)$ depends only upon $s\_{i}, \ldots, s\_{n}$. Therefore, the optimal choice of $s\_{i}$ depends only 
-upon $s\_{i + 1}, \ldots, s\_{n}$. Indeed, it suffices to choose $s\_{i}$ so as to maximise $E(S\|\tau \geq i)$.
-
-Next,
-
-$$
-\begin{align}
-E(S|\tau \geq i) &= E(S|\tau = i)P(\tau = i | \tau \geq i) + E(S|\tau > i)P(\tau>i|\tau\geq i)\\
-	&= E(P_i|P_i\geq s_i)P(P_i\geq s_i) + E(S|\tau>i)P(P_i < s_i).
-\end{align}
-$$
-
-Now since $E(P\_{i}\|P\_{i}\geq s\_{i}) = \frac{1}{2}(1+s\_{i})$ and $P(P\_i\geq s\_i) = 1 - s\_{i}$ we have 
-
-$$
-E(S|\tau \geq i) = \frac{1}{2}(1 - s_i^2) + s_i E(S|\tau > i).
-$$
-
-Writing $\tilde{s}\_i$ for the optimal choice of $s_i$, we then have
-
-$$
-\tilde{s}_i = E(S|\tau > i)
-$$
-
-where, as noted earlier, the right hand expression depends only upon $s\_{i + 1}, \ldots, s\_n$. 
-
-Now define $\tilde{e}\_n$ to be the expectation of the optimal strategy of this form when this game is played over $n$ 
-days. Then noting that $E(S\|\tau > i)$ is simply the expectation of this game played over $n-j$ days with thresholds 
-$s\_{i+1}, \ldots, s\_n$ we obtain the recurrence:
-
-$$
-\tilde{s}_i = \tilde{e}_{n - i}.
-$$
-
-
-This tells us that at time $n$ we should accept any price; at time $n - 1$ we should accept exactly the expected value 
-of $P\_n$; at time $n - 2$ we should settle for exactly the expected return of our strategy were we to pass on 
-$P\_{n - 2}$ and play on for the final two days; and so on and so forth. Put simply, we should accept exactly that 
-price that we would achieve in expectation were we to pass on today's price and play on.
-
-Indeed, it is possible to do one better and express the right hand side (that is, $\tilde{e}\_{n-i}$) solely in terms 
-of $\tilde{s}\_{i+1}$, finding a recursive relationship between $\tilde{s}\_{i}$ and $\tilde{s}\_{i+1}$ alone.
-
-
-Again, using the total law of expectation we see that
-
-$$
-\begin{align}
-\tilde{e}_{n - i} &= E(S|\tau = i + 1)P(\tau = i + 1 | \tau > i) + E(S| \tau > i + 1)P( \tau > i + 1 | \tau > i)\\
-	&= E(P_{i + 1}|P_{i + 1}\geq \tilde{s}_{i + 1})P(P_{i + 1}\geq \tilde{s}_{i + 1}) + \tilde{e}_{n-(i+1)}P(P_{i + 1} < \tilde{s}_{i + 1})\\
-	&= \frac{1}{2}(1 - \tilde{s}_{i + 1}^2) + \tilde{s}_{i + 1}^2\\
-	&= \frac{1}{2}(1 + \tilde{s}_{i + 1}^2)
-\end{align}
-$$
-
-where in the third equality we make critical use of the fact that $\tilde{e}_{n-(i+1)} = \tilde{s}\_{i + 1}$.
-
-### An alternative way of maximising $\mathbb{E}(S)$
-
-Although our derivation above allows the thresholds to be computed exactly in a recursive fashion, the formulae do not
+Although our derivation allows the thresholds to be computed exactly in a recursive fashion, the formula does not
 admit an easy interpretation. Is there another way to look at the problem, that allows the values of the optimal
 thresholds to be understood in an intuitive way?
 
-To this end, let $\tau$ be the time at which we sell, that is $\tau = \min\\{i\,|\,P_{i}\geq s_{i}\\}$. Then, by the law of total expectation, 
-we see that for any $i$, we have the following expression for the expected sold price:
+To this end, let $\tau$ be the time at which we sell, that is $\tau = \min\\{i\,|\,P_{i}\geq s_{i}\\}$. Then, by 
+conditioning on the value of $\tau$ and using the law of total expectation, we see that for any $i$, we have the 
+following expression for the expected sold price:
 
 $$
 \mathbb{E}(S) = \mathbb{E}(S\,|\,\tau < i)\,\mathbb{P}(\tau < i) + \mathbb{E}(S\,|\,\tau \geq i)\,\mathbb{P}(\tau \geq i).
 $$
 
-Note that $\mathbb{E}(S\\,|\,\tau < i)$, $\mathbb{P}(\tau < i)$ and $\mathbb{P}(\tau \geq i)$ depend only upon $s_{1}, \ldots, s_{i - 1}$, whereas 
-$\mathbb{E}(S\,|\,\tau \geq i)$ depends only upon $s_{i}, \ldots, s_{n}$. Therefore, the optimal choice of $s_{i}$ depends only 
-upon $s_{i + 1}, \ldots, s_{n}$. Indeed, it suffices to choose $s_{i}$ so as to maximise $\mathbb{E}(S\|\tau \geq i)$.
+Note that $\mathbb{E}(S\\,\|\,\tau < i)$, $\mathbb{P}(\tau < i)$ and $\mathbb{P}(\tau \geq i)$ depend only upon $s_{1}, \ldots, s_{i - 1}$,
+(the thresholds up to time $i$), whereas $\mathbb{E}(S\,\|\,\tau \geq i)$ depends only upon $s_{i}, \ldots, s_{n}$ (the thresholds from time $i$ onwards).
 
-Using the law of total expectation again (and assuming a implicit dependence on $\tau\geq 0$ in terms on the RHS),
+Now, consider varying $s_{i}$ in order to maximise this expression for the expected sale price, keeping the other thresholds
+fixed. Due to this observation, the optimal choice of $s_{i}$ depends only upon $s_{i + 1}, \ldots, s_{n}$. Indeed, it suffices to choose 
+$s_{i}$ so as to maximise $\mathbb{E}(S\|\tau \geq i)$.
+
+Using the law of total expectation again (and assuming a implicit dependence on $\tau\geq i$ in terms on the RHS), we
+can expand the term we are looking to maximise:
 
 $$
 \mathbb{E}(S\,|\,\tau \geq i) = \mathbb{E}(P_i\,|\,P_i\geq s_i)\,\mathbb{P}(P_i\geq s_i) + \mathbb{E}(S\,|\,P_i < s_i)\,\mathbb{P}(P_i < s_i).
 $$
 
-Now, as we have assumed that the price $P_{i}$ is uniformly distributed on $\[0, 1\]$, we have that 
+As we have assumed that the price $P_{i}$ is uniformly distributed on $\[0, 1\]$, we have that 
 $\mathbb{E}(P_{i}\|P_{i}\geq s_{i}) = \frac{1}{2}(1+s_{i})$ and $\mathbb{P}(P_i\geq s_i) = 1 - s_{i}$ (this follows
 straight from the definition of the uniform distribution). Substituting this in gives
 
@@ -455,13 +388,24 @@ conditional dependence on $\tau\geq i$.
 
 Let's pause here to think about the meaning of this statement; the implicit
 condition in the expectation is that $\tau\geq i$ (i.e. that we have not sold up to time $i$), and that the current price 
-$P_{i}$ is less than $\tilde{s}_{i}$, meaning that we are not selling now either (by the definition of our strategy).
-This is actually fairly intuitive: as all the prices are independent, the situation at time $i$ of an $n$ period run is 
+$P_{i}$ is less than $$\tilde{s}_{i}$$, meaning that we are not selling now either (by the definition of our strategy and the
+thresholds). This is actually fairly intuitive: as all the prices are independent, the situation at time $i$ of an $n$ period run is 
 equivalent to starting a fresh run at time $i$ of length $n-i$, and we should only sell if the quoted price exceeds
-the expected value of continuing to play on.
+the expected value of continuing to play on. Defining $\tilde{e}_{n}$ to be the expected value of following the optimal
+strategy when played over $n$ days, this result can be simply expressed as
+
+$$
+\tilde{s}_i = \tilde{e}_{n-i}.
+$$
+
+When playing a game of length $n$, this tells us that at time $n$ we should accept any price; at time $n - 1$ we should 
+accept exactly the expected value of $P\_n$; at time $n - 2$ we should settle for exactly the expected return of our 
+strategy were we to pass on $P\_{n - 2}$ and play on for the final two days; and so on and so forth. Put simply, we 
+should accept exactly that price that we would achieve in expectation were we to pass on today's price and play on.
 
 Furthermore, it is possible to recover the recursion relation found earlier between $$\tilde{s}_{i}$$ and
- $$\tilde{s}_{i+1}$$, by using one further application of the law of total expectation:
+ $$\tilde{s}_{i+1}$$, by using one further application of the law of total expectation, this time conditioning on the
+ event $\\{P_{i+1}\geq\tilde{s}_{i+1}\\}$:
 
 $$
 \begin{align}
@@ -469,11 +413,11 @@ $$
 &\quad + \mathbb{E}(S\,|\,P_{i}<\tilde{s}_{i}, P_{i+1}<\tilde{s}_{i+1})\mathbb{P}(P_{i+1}<\tilde{s}_{i+1}) \\[5pt]
 &= \mathbb{E}(P_{i + 1}|P_{i + 1}\geq \tilde{s}_{i + 1})\mathbb{P}(P_{i + 1}\geq \tilde{s}_{i + 1}) + \tilde{s}_{i+1}\mathbb{P}(P_{i + 1} < \tilde{s}_{i + 1})\\
 &= \frac{1}{2}(1 - \tilde{s}_{i + 1}^2) + \tilde{s}_{i + 1}^2\\
-&= \frac{1}{2}(1 + \tilde{s}_{i + 1}^2)
+&= \frac{1}{2}(1 + \tilde{s}_{i + 1}^2).
 \end{align}
 $$
 
-where the first term in the second equality uses the fact that if $P_{i+1}$ exceeds $$\tilde{s}_{i+1}$$, then we are definitely selling
+Here, the first term in the second equality uses the fact that if $P_{i+1}$ exceeds $$\tilde{s}_{i+1}$$, then we are definitely selling
 and the expected price $S$ is equal to the (conditional) expectation of $P_{i+1}$; the second term uses a resubstitution of the
 optimal threshold value $$\tilde{s}_{i+1}$$ in terms of the conditional expectation of $S$, established above; and the third equality
 follows from the uniform distribution of $P_{i+1}$.
@@ -504,23 +448,23 @@ Clearly there is not a great deal to tweak to prove a similar result for a gener
 
 Suppose now that $P\_1, \ldots, P\_n$ are iid and we follow a strategy of the same form. Then the argument above still 
 tells us that the optimal choice of $s\_i$ depends only upon $s\_{i + 1}, \ldots, s\_n$. In particular we must choose 
-$s\_{i}$ so as to maximise $E(S\|\tau \geq i)$. As before we could write
+$s\_{i}$ so as to maximise $\mathbb{E}(S\|\tau \geq i)$. As before we could write
 
 $$
-E(S|\tau \geq i) = E(P_i|P_i\geq s_i)P(P_i\geq s_i) + E(S|\tau>i)P(P_i < s_i),
+\mathbb{E}(S|\tau \geq i) = \mathbb{E}(P_i|P_i\geq s_i)\mathbb{P}(P_i\geq s_i) + \mathbb{E}(S|\tau>i)\mathbb{P}(P_i < s_i),
 $$
 
 however it probably makes more sense to write it as follows:
 
 $$
-E(S|\tau \geq i) = \int_{s_i}^{\infty}xf_X(x)dx + \int_{-\infty}^{s_i} \tilde{e}_{n-i}f_X(x)dx
+\mathbb{E}(S|\tau \geq i) = \int_{s_i}^{\infty}xf_X(x)dx + \int_{-\infty}^{s_i} \tilde{e}_{n-i}f_X(x)dx
 $$
 
-where each integral corresponds exactly to one of the products in the previous expression for $E(S\|\tau \geq i)$. Or, 
+where each integral corresponds exactly to one of the products in the previous expression for $\mathbb{E}(S\|\tau \geq i)$. Or, 
 more succintly, as:
 
 $$
-E(S|\tau \geq i) = \int_{-\infty}^{\infty}g(x;s_i)f_X(x)dx
+\mathbb{E}(S|\tau \geq i) = \int_{-\infty}^{\infty}g(x;s_i)f_X(x)dx
 $$
 
 where $g(x;s\_i)=\tilde{e}\_{n-i}$ for $x\leq s\_i$ and $g(x;s\_i) = x$ otherwise. 
@@ -554,8 +498,8 @@ Much as with the uniform case we begin from
 
 $$
 \begin{align}
-\tilde{e}_{n - i} &= E(S|\tau = i + 1)P(\tau = i + 1 | \tau > i) + E(S| \tau > i + 1)P( \tau > i + 1 | \tau > i)\\
-	&=E(P_{i+1}|P_{i+1}\geq \tilde{s}_{i+1})P(P_{i+1}\geq \tilde{s}_{i+1}) + \tilde{s}_{i+1}F(\tilde{s}_{i+1})
+\tilde{e}_{n - i} &= \mathbb{E}(S|\tau = i + 1)\mathbb{P}(\tau = i + 1 | \tau > i) + \mathbb{E}(S| \tau > i + 1)\mathbb{P}( \tau > i + 1 | \tau > i)\\
+	&=\mathbb{E}(P_{i+1}|P_{i+1}\geq \tilde{s}_{i+1})\mathbb{P}(P_{i+1}\geq \tilde{s}_{i+1}) + \tilde{s}_{i+1}F(\tilde{s}_{i+1})
 	\end{align}
 $$
 
@@ -564,7 +508,7 @@ something cleaner. Writing $\tilde{s}\_{i+1}F(\tilde{s}\_{i+1}) = \tilde{s}\_{i+
 and defining
 
 $$
-\phi(t) =  (E(X|X\geq t) - t)\bar{F}(t)
+\phi(t) =  (\mathbb{E}(X|X\geq t) - t)\bar{F}(t)
 $$
 
 gives
@@ -647,7 +591,7 @@ corresponding cumulative density function $F(x)$. The expected sold price takes 
 
 $$
 \begin{align}
-E(X) &= \sum_{i=1}^{n}E\left(P_{i}|T_{i}\right)P\left(T_{i}\right) \\
+\mathbb{E}(X) &= \sum_{i=1}^{n}E\left(P_{i}|T_{i}\right)P\left(T_{i}\right) \\
 &= \sum_{i=1}^{n}E\left(P_{i}\;\middle|\; S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right)P\left(S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right) \\
 &= g(s_{i})
 \end{align}
@@ -671,7 +615,7 @@ $$
 Putting this together again:
 
 $$
-E(X) = \sum_{i=1}^{n}\left[\int_{s_{i}}^{\infty}xf(x)dx\right]\prod_{i<j}F(s_{j}).
+\mathbb{E}(X) = \sum_{i=1}^{n}\left[\int_{s_{i}}^{\infty}xf(x)dx\right]\prod_{i<j}F(s_{j}).
 $$
 
 So we have an expression for the expected price in terms of the fixed distribution functions $f, F$ and
@@ -682,7 +626,7 @@ stationary point of the expectation. The steps follow the same logic as for the 
 $$
 \begin{align}
 \tilde{s}_{k} &= \tilde{s}_{k+1}F(\tilde{s}_{k+1}) + \int_{\tilde{s}_{k+1}}^{\infty}xf(x)dx \\
-&= \tilde{s}_{k+1}F(\tilde{s}_{k+1}) + E(P_{0}) - \int_{0}^{\tilde{s}_{k+1}}xf(x)dx
+&= \tilde{s}_{k+1}F(\tilde{s}_{k+1}) + \mathbb{E}(P_{0}) - \int_{0}^{\tilde{s}_{k+1}}xf(x)dx
 \end{align}
 $$
 
@@ -694,7 +638,7 @@ the following equivalent recurrence:
 
 $$
 \begin{align}
-\tilde{s}_{k} &= E(X) + \int_{0}^{\tilde{s}_{k+1}} F(x)dx.
+\tilde{s}_{k} &= \mathbb{E}(X) + \int_{0}^{\tilde{s}_{k+1}} F(x)dx.
 \end{align}
 $$
 
@@ -750,11 +694,11 @@ where each $s_i$ is a function of the previous $i-1$ prices offered. We note tha
 distribution of the $P\_i$ we will always have, for any $i$, that
 
 $$
-E(S) = E(S|\tau < i)P(\tau < i) + E(S|\tau \geq i)P(\tau \geq i).
+\mathbb{E}(S) = \mathbb{E}(S|\tau < i)\mathbb{P}(\tau < i) + \mathbb{E}(S|\tau \geq i)\mathbb{P}(\tau \geq i).
 $$
 
-by the law of total expectation. As remarked earlier, $E(S\|\tau < i)$, $P(\tau < i)$ and $P(\tau \geq i)$ depend only 
-upon $s\_1,\ldots, s\_{i-1}$, whereas $E(S\|\tau \geq i)$ depends upon $s\_i, \ldots, s\_n$. Fortunately, as the 
+by the law of total expectation. As remarked earlier, $\mathbb{E}(S\|\tau < i)$, $\mathbb{P}(\tau < i)$ and $\mathbb{P}(\tau \geq i)$ depend only 
+upon $s\_1,\ldots, s\_{i-1}$, whereas $\mathbb{E}(S\|\tau \geq i)$ depends upon $s\_i, \ldots, s\_n$. Fortunately, as the 
 conditional expectation of $S$ given that $\tau\geq i$ for any such fixed specification of $P\_1,\ldots, P\_{i-1}$ does 
 not depend upon the specific choice of these prices, we can happily restrict our attention to those strategies with a 
 constant threshold for each day.
