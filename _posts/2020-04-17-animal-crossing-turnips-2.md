@@ -446,41 +446,58 @@ on and so forth.
 
 Clearly there is not a great deal to tweak to prove a similar result for a general distribution.
 
-Suppose now that $P\_1, \ldots, P\_n$ are iid and we follow a strategy of the same form. Then the argument above still 
-tells us that the optimal choice of $s\_i$ depends only upon $s\_{i + 1}, \ldots, s\_n$. In particular we must choose 
-$s\_{i}$ so as to maximise $\mathbb{E}(S\|\tau \geq i)$. As before we could write
+Suppose now that $P\_1, \ldots, P\_n$ are iid, but with an arbitrary distribution (with pdf $f_{P}$), and that we follow a strategy of the same form. 
+Then the argument above still tells us that the optimal choice of $s\_i$ depends only upon $s\_{i + 1}, \ldots, s\_n$. In particular we must choose 
+$s\_{i}$ so as to maximise $\mathbb{E}(S\|\tau \geq i)$. As before we can write
 
 $$
 \mathbb{E}(S|\tau \geq i) = \mathbb{E}(P_i|P_i\geq s_i)\mathbb{P}(P_i\geq s_i) + \mathbb{E}(S|\tau>i)\mathbb{P}(P_i < s_i),
 $$
 
-however it probably makes more sense to write it as follows:
+and in the general case it makes more sense to write these expectations out in full using their integral representations:
 
 $$
-\mathbb{E}(S|\tau \geq i) = \int_{s_i}^{\infty}xf_X(x)dx + \int_{-\infty}^{s_i} \tilde{e}_{n-i}f_X(x)dx
+\mathbb{E}(S|\tau \geq i) = \int_{s_i}^{\infty}pf_P(p)\;\mathrm{d}p + \tilde{e}_{n-i}\int_{-\infty}^{s_i} f_P(p)\;\mathrm{d}p
 $$
 
-where each integral corresponds exactly to one of the products in the previous expression for $\mathbb{E}(S\|\tau \geq i)$. Or, 
-more succintly, as:
+where each integral corresponds exactly to one of the products in the previous expression for $\mathbb{E}(S\|\tau \geq i)$. 
+Collecting together into a single integral, we can write this more succinctly as
 
 $$
-\mathbb{E}(S|\tau \geq i) = \int_{-\infty}^{\infty}g(x;s_i)f_X(x)dx
+\mathbb{E}(S|\tau \geq i) = \int_{-\infty}^{\infty}g(p;s_i)f_p(p)\;\mathrm{d}p
 $$
 
-where $g(x;s\_i)=\tilde{e}\_{n-i}$ for $x\leq s\_i$ and $g(x;s\_i) = x$ otherwise. 
+where we define the new function $g$ by:
+ 
+$$
+g(p;s_i) = \left\{\begin{matrix}
+\tilde{e}_{n-i} & \text{for } p\leq s_i,\\ 
+p & \text{for } p>s_i.
+\end{matrix}\right.
+$$
 
-Now it is easy to see that $\tilde{e}\_{n-i}$ is the *unique* choice of $s\_i$ which maximises $g(x;s\_i)$ for every 
-$x$. That is to say, we have $g(x;\tilde{e}\_{n-i})\geq g(x;s\_i)$ for all $x$, and if $s\_i\neq\tilde{e}\_{n-i}$ then 
-there exists $x$ such that $g(x;\tilde{e}\_{n-i}) > g(x;s\_i)$.
+Let's have a look at what this function looks like on a graph:
 
-In fact, this is exactly the algebraic way of framing the argument given in [Turnip Mania](post1hyperlink). Indeed, we 
-should certainly never settle for a price less than $\tilde{e}\_{n-i}$ as we would simply be better off (in expectation) 
-by playing on. Algebraically this is reflected by the fact that if $s\_i<\tilde{e}\_{n-i}$, then we have 
-$g(x;s\_i)=x<\tilde{e}\_{n-i}=g(x;\tilde{e}\_{n-i})$ for $s\_i<x< \tilde{e}\_{n-i}$. Whereas, if we are too picky and 
-hold out for a price higher than $\tilde{e}\_{n-i}$, then we are simply wasting a perfectly good price in the event 
-that we are offered something between $\tilde{e}\_{n-i}$ and $s\_i$. Algebraically, this is reflected by the fact that 
-if $s\_i>\tilde{e}\_{n-i}$, then we have $g(x;s\_i)=\tilde{e}\_{n-i}<x=g(x;\tilde{e}\_{n-i})$ for 
-$\tilde{e}\_{n-i}< x< s\_i$.
+| ![The function $g(p;s_{i})$](/assets/images/g_function_plot.png) |
+|:--:|
+| *The function $g(p;s_{i})$ against $p$* |
+
+
+Now it is easy to see that $\tilde{e}\_{n-i}$ is the *unique* choice of $s\_i$ which maximises $g(p;s\_i)$ for every 
+$p$. That is to say, we have:
+- optimality, i.e. $g(p;\tilde{e}\_{n-i})\geq g(p;s\_i)$ for all $p$ and $s_{i}$
+- uniqueness, i.e. if $s\_i\neq\tilde{e}\_{n-i}$, then there exists $p$ such that $g(p;\tilde{e}\_{n-i}) > g(p;s\_i)$.
+
+With this optimal choice, the above graph looks like a ramp function,
+with "corner" at the point $(\tilde{e}\_{n-i}, \tilde{e}\_{n-i})$.
+
+In fact, this is exactly the algebraic way of framing the argument given in [Turnip Mania]({% post_url 2020-12-30-animal-crossing-turnips-1 %}).
+For any non-optimal choice of $s\_{i}\neq\tilde{e}\_{n-i}$, we can find an interpretation for why this choice is sub-optimal:
+
+| Non-optimal condition | Property of $g$ | Interpretation |
+| ----------- | ----------- |
+| $s\_{i}<\tilde{e}\_{n-i}$ | $g(p;s\_i)=p<\tilde{e}\_{n-i}=g(p;\tilde{e}\_{n-i})$ <br/> for $p\in(s\_{i}, \tilde{e}\_{n-i})$ | Never settle for a price less than $\tilde{e}\_{n-i}$, better off <br/> (in expectation) by playing on |
+| $s\_{i}>\tilde{e}\_{n-i}$ | $g(p;s\_i)=\tilde{e}\_{n-i}<p=g(p;\tilde{e}\_{n-i})$ <br/> for $p\in(\tilde{e}\_{n-i}, s\_{i})$ | Not expected to receive more than $\tilde{e}\_{n-i}$ by playing on  |
 
 All this is to say that we recover the key fact that 
 
