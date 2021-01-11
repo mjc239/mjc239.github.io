@@ -314,7 +314,7 @@ $$
 
 (as $n - i$ goes to infinity). 
 
-In fact, from some numerical experiments, the value of $\tau$ appears to be around __-0.232006__.
+In fact, from some numerical experiments, the value of $\tau$ appears to be __$-0.232006 \pm 10^{-6}$__.
 
 ### Overdoing it yet again
 
@@ -509,32 +509,34 @@ All that remains is to give a first order recurrence for these optimal threshold
 
 #### Arbitrary (non-negative continuous) turnips: a recurrence
 
-For algebraic simplicity we consider the case that the random variables are non-negative and continuous.
+For algebraic simplicity we consider the case that the random variables are non-negative and continuous. It is reasonable
+to assume that we will not be paying Timmy and Tommy for the pleasure of taking our turnips! 
 
-Much as with the uniform case we begin from
+The derivation of the recursion relation in the uniform case in a [previous section](#an-instructive-example-revisited-uniformly-distributed-quotes)
+was started in a generic manner, meaning we can start from the following relation, which holds for any price distribution:
+
+$$
+\tilde{s}_{i} = \mathbb{E}(P_{i + 1}|P_{i + 1}\geq \tilde{s}_{i + 1})\mathbb{P}(P_{i + 1}\geq \tilde{s}_{i + 1}) + \tilde{s}_{i+1}\mathbb{P}(P_{i + 1} < \tilde{s}_{i + 1}).
+$$
+
+Let $F(p)$ be the [cdf](https://en.wikipedia.org/wiki/Cumulative_distribution_function) of each price (with associated pdf $f_{p}(p)$), and define $\bar{F}(p)=1-F(p)$.
+Then, in a similar way to the uniform case, we can write the above expression as:
 
 $$
 \begin{align}
-\tilde{e}_{n - i} &= \mathbb{E}(S|\tau = i + 1)\mathbb{P}(\tau = i + 1 | \tau > i) + \mathbb{E}(S| \tau > i + 1)\mathbb{P}( \tau > i + 1 | \tau > i)\\
-	&=\mathbb{E}(P_{i+1}|P_{i+1}\geq \tilde{s}_{i+1})\mathbb{P}(P_{i+1}\geq \tilde{s}_{i+1}) + \tilde{s}_{i+1}F(\tilde{s}_{i+1})
-	\end{align}
+\tilde{s}_{i} &= \mathbb{E}(P_{i+1}|P_{i+1}\geq\tilde{s}_{i+1})\bar{F}(\tilde{s}_{i+1}) + \tilde{s}_{i+1}F(\tilde{s}_{i+1}) \\
+&= \tilde{s}_{i+1} + \phi(\tilde{s}_{i+1})
+\end{align}
 $$
 
-Since $\tilde{e}\_{n - i} = \tilde{s}\_{i+1}$ this at least gives a first order recurrence, however, we would prefer 
-something cleaner. Writing $\tilde{s}\_{i+1}F(\tilde{s}\_{i+1}) = \tilde{s}\_{i+1} - \tilde{s}\_{i+1}\bar{F}(\tilde{s}\_{i+1})$ 
-and defining
+where the function $\phi$ is defined (using a random variable $P$ distributed like the prices $P_{i}$) by
 
 $$
-\phi(t) =  (\mathbb{E}(X|X\geq t) - t)\bar{F}(t)
+\phi(t) =  (\mathbb{E}(P|P\geq t) - t)\bar{F}(t).
 $$
 
-gives
-
-$$
-\tilde{s}_{i} = \tilde{s}_{i+1} + \phi(\tilde{s}_{i+1}).
-$$
-
-Thus it remains to better understand $\phi(\tilde{s}_{i+1})$.
+Thus, to see the behaviour of the recursion relation in the general case, it remains to better understand the function 
+$\phi(\tilde{s}_{i+1})$.
 
 #### The continuous case
 
