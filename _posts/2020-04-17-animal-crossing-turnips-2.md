@@ -507,9 +507,9 @@ $$
 
 All that remains is to give a first order recurrence for these optimal thresholds.
 
-#### Arbitrary (non-negative continuous) turnips: a recurrence
+#### Arbitrary (non-negative) turnips: a recurrence
 
-For algebraic simplicity we consider the case that the random variables are non-negative and continuous. It is reasonable
+For algebraic simplicity we consider the case that the random variables are non-negative. It is reasonable
 to assume that we will not be paying Timmy and Tommy for the pleasure of taking our turnips! 
 
 The derivation of the recursion relation in the uniform case in a [previous section](#an-instructive-example-revisited-uniformly-distributed-quotes)
@@ -540,41 +540,21 @@ $\phi(\tilde{s}_{i+1})$.
 
 #### The continuous case
 
-In the case that the $P\_i$ are continuous we have
+In the case that the $P\_i$ are continuously distributed, we have
 
 $$
-\phi(t) =  \int_{t}^\infty xf(x)dx - t\bar{F}(t).
+\begin{align}
+\phi(t) &= \int_{t}^\infty pf_{p}(p)\mathrm{d}p - t\bar{F}(t) \\
+&= \int_{t}^{\infty}\bar{F}(p)\mathrm{d}p
+\end{align}
 $$
 
-Now, it follows from integration by parts that $\phi(t) = \int\_t^\infty \bar{F}(x)dx$. We note that this does not 
+where the second line follows by using integration by parts. We note that this does not 
 require that the random variables are non-negative. Altogether this gives
 
 $$
-\tilde{s}_{i} = \tilde{s}_{i+1} + \phi(\tilde{s}_{i+1}).
+\tilde{s}_{i} = \tilde{s}_{i+1} + \int_{\tilde{s}_{i+1}}^{\infty}\bar{F}(p)\mathrm{d}p. \\
 $$
-
-where $\phi(t) = \int\_t^\infty \bar{F}(x)dx$.
-
-<!-- In the case that the $P\_i$ are continuous random variables this may be written as: -->
-
-<!-- $$ -->
-<!-- \tilde{e}_{n - i} = \int_{\tilde{s}_{i+1}}^\infty xf(x)dx + \tilde{s}_{i+1}F(\tilde{s}_{i+1}). -->
-<!-- $$ -->
-
-<!-- This at least gives a first order recurrence for the $\tilde{s}_{i}$: -->
-
-<!-- $$ -->
-<!-- \tilde{s}_{i} = \int_{\tilde{s}_{i+1}}^\infty xf(x)dx + \tilde{s}_{i+1}F(\tilde{s}_{i+1}) -->
-<!-- $$ -->
-
-<!-- however we would prefer something cleaner. First we write $\tilde{s}\_{i+1}F(\tilde{s}\_{i+1}) = \tilde{s}\_{i+1} - \tilde{s}\_{i+1}\bar{F}(\tilde{s}\_{i+1})$ to give -->
-
-<!-- $$ -->
-<!-- \tilde{s}_{i} = \tilde{s}_{i+1} + \int_{\tilde{s}_{i+1}}^\infty xf(x)dx - \tilde{s}_{i+1}\bar{F}(\tilde{s}_{i+1}). -->
-<!-- $$ -->
-
-<!-- We then define $\Phi(t) =  \int_{t}^\infty xf(x)dx - t\bar{F}(t). -->
-
 
 Either by integration by parts, or by noting that differentiating the RHS with respect to $\tilde{s}\_{i+1}$ gives 
 $F(\tilde{s}_{i+1})$, we see that
