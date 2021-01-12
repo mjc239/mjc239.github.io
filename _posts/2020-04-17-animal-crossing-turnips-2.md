@@ -4,6 +4,7 @@ excerpt: "Post 2 - Asymptotics and arbitrary distributions"
 header:
     image: assets/images/turniplab.jpg
 toc: true
+published: true
 toc_label: "Contents:"
 classes: wide
 author_profile: false
@@ -66,20 +67,18 @@ tags:
 This post is written in collaboration with [Jack Bartley](http://jackbartley.com/), while playing 
 [Animal Crossing New Horizons](https://www.youtube.com/watch?v=5LAKjL3p6Gw). 
 
-# Post 2: Non-uniform Turnips
-
 ## Last time: Turnip mania
 
-Following on from [last time]({% post_url 2020-04-17-animal-crossing-turnips-1 %}), in this post we're looking again at 
+Following on from [last time]({% post_url 2020-12-30-animal-crossing-turnips-1 %}), in this post we're looking again at 
 optimal strategies for turnip selling in Animal Crossing. Readers are advise to consult the 
-[first post]({% post_url 2020-04-17-animal-crossing-turnips-1 %}) for details on what has been covered so far, but we 
+[first post]({% post_url 2020-12-30-animal-crossing-turnips-1 %}) for details on what has been covered so far, but we 
 give a very brief summary here for the uninitiated.
 
 
 We consider the following game -- a simple model for turnip selling in Animal Crossing. Let $P\_1, \ldots, P\_n$ be iid 
 random variables. At each time $t=1, 2, \ldots, n$ the player is offered the opportunity to sell all the turnips they 
 have for a price of $P\_i$. If the player accepts this offer then the game ends and the player ends with a revenue of 
-$P\_i$, if the player refuses then they move to the next timestamp. If the turnips are not sold on or before time $n$ 
+$P\_i$, if the player refuses then they move to the next time period. If the turnips are not sold on or before time $n$ 
 then the turnips spoil and the player walks away with nothing.
 
 Last time we considered the special case that the $P\_i$ are iid uniform on $[0,1]$, and considered the following 
@@ -105,7 +104,7 @@ solution to this non-linear recurrence and generalise some of our results from l
 At this point it is worth saying that anybody expecting to use our analysis to improve their turnip game would be 
 better off looking elsewhere. Perhaps unsurprisingly it is reasonably well understood<sup>[1](#post2footnote1)</sup> 
 how the prices in Animal Crossing are *actually* generated. Some people have even been so helpful as to make 
-[tools](turnipprophet.io) to help people with their turnip selling, though to say much more than this might constitute 
+[tools](https://turnipprophet.io) to help people with their turnip selling, though to say much more than this might constitute 
 **SPOILERS** (one could argue that the existence of these tools is in itself 
 [**SPOILERS**](https://www.youtube.com/watch?v=KSRWJMM98pM)). Indeed, to identify what part of our model renders it 
 ineffective would certain be 
@@ -119,21 +118,23 @@ Of course, it is the assumption that the prices are independent.
 To kick things off, starting from
 
 <p align="center">
-$\tilde{s}_i = \frac{1}{2}(1 +\tilde{s}_{i + 1}^2)$ for $1\leq i< n$ and $\tilde{s}_n = 0$,
+$\tilde{s}_i = \frac{1}{2}(1 +\tilde{s}_{i + 1}^2)\quad$ for $1\leq i< n,$
 </p>
 
-we perform the substitution $t_i = \frac{1}{2}(1 - \tilde{s}_{n-i})$ to arrive at the logistic map with initial value 
-$1/2$ (as noted last time). That is
+with initial value $$\tilde{s}_n = 0$$, we perform the substitution $$t_i = \frac{1}{2}(1 - \tilde{s}_{n-i})$$ 
+to arrive at the logistic map with initial value $1/2$ (as noted last time). That is,
 
 <p align="center">
-$t_{i+1} = t_{i}(1-t_{i})$ for $0\leq i <n - 1$,
+$t_{i+1} = t_{i}(1-t_{i})\quad$ for $0\leq i <n - 1$,
 </p>
 
-with initial value $t_{0} = \frac{1}{2}$. Next we perform one more change of variables: defining $r\_{i} = 1/t\_{i}$ 
+with initial value $t_{0} = \frac{1}{2}$. 
+
+Next we perform one more change of variables: defining $r\_{i} = 1/t\_{i}$ 
 for all $i$ we obtain 
 
 <p align="center">
-$r_{i+1} = r_{i} + 1 + \frac{1}{r_{i}-1}$ for $0\leq i < n - 1$,
+$r_{i+1} = r_{i} + 1 + \frac{1}{r_{i}-1}\quad$ for $0\leq i < n - 1$,
 </p>
 
 with initial condition $r_{0} = 2$.
@@ -149,15 +150,32 @@ $$
 $$
 </details>
 
-From this recurrence relation, we certainly have $r\_{i}> 1$ for all $i$, e.g. by induction. Thus, we have 
-$\frac{1}{r_i-1}>0$ for all $i$ and so $r\_{i+1}\geq r\_{i} + 1$ and we get the lower bound
+From this recurrence relation, it is possible to construct upper and lower bounds for $r_{i}$ in terms of just the index
+$i$:
+
+### Constructing threshold bounds
+
+#### Lower bound
+
+We certainly have $r\_{i}> 1$ for all $i$ (e.g. by induction). Therefore, we have that
+$\frac{1}{r_i-1}>0$ for all $i$, and substituting this back into the recurrence relation gives the inequality $r\_{i+1}\geq r\_{i} + 1$.
+This in turn (e.g. by induction again) gives the lower bound
 
 $$
 r_{i}\geq i + 2
 $$
 
-for all $i$ (that is, for $0\leq i < n$). In the other direction, since we now have $r\_{i} - 1\geq i + 1$ for all $i$, 
-it follows that $r\_{i+1}\leq r\_{i} + 1 + \frac{1}{i + 1}$ for $0\leq i < n - 1$, and we obtain the upper bound 
+for all $i$ (that is, for $0\leq i < n$). 
+
+#### Upper bound
+In the other direction, first note that we now have $r\_{i} - 1\geq i + 1$ for all $i$. This can be used to get an upper
+bound on the third term in the recurrence relation, resulting in the inequality:
+
+<p align="center">
+$r_{i+1}\leq r_{i} + 1 + \frac{1}{i + 1}\quad$ for $0\leq i < n - 1$. 
+</p>
+
+By again using induction, this can be used to show that
 
 $$
 r_{i}\leq i + 2  + H_i
@@ -169,7 +187,10 @@ $$
 H_i = \sum_{j = 1}^{i}\frac{1}{j}
 $$
 
-for the $i$-th [harmonic number](https://en.wikipedia.org/wiki/Harmonic_number). Putting this all together gives
+for the $i$-th [harmonic number](https://en.wikipedia.org/wiki/Harmonic_number). 
+
+#### Asymptotic behaviour
+Putting these bounds together gives the following asymptotic behaviour:
 
 $$
 r_{i} = i + O(\log{(i + 1)}),
@@ -293,7 +314,7 @@ $$
 
 (as $n - i$ goes to infinity). 
 
-In fact, from some numerical experiments, the value of $\tau$ appears to be around __-0.232006__.
+In fact, from some numerical experiments, the value of $\tau$ appears to be __$-0.232006 \pm 10^{-6}$__.
 
 ### Overdoing it yet again
 
@@ -306,130 +327,177 @@ the results derived above extend easily to the case of a uniform distribution ov
 linear scaling -- specifically, by letting $Y\_{i} = a + (b-a)P\_{i}$.
 
 
-## Arbitrary (non-negative) turnips
+## Arbitrary non-negative turnips
 
-Having gave a much more accurate solution to the uniform case we now turn our attention to the question of what we can 
-do in general. So as to not jump straight in the deep end we first give another approach for the uniform case, being 
+Now that we have a more precise solution to the uniform case, we turn our attention to the question of what we can 
+do in general. So as to not jump straight into the deep end we first give another approach for the uniform case, being 
 careful to keep things as general as possible for as long as possible.
 
 ### An instructive example revisited: Uniformly distributed quotes
 
-Consider as before our strategy:
+Recall again the recursion relation for the optimal threshold we derived in our 
+[previous post]({% post_url 2020-12-30-animal-crossing-turnips-1 %}):
 
 <p align="center">
-Sell at time $i$ if $P_{i}\geq s_{i}$
+$\tilde{s}_i = \frac{1}{2}(1 +\tilde{s}_{i + 1}^2)\quad$ for $1\leq i< n.$
 </p>
 
-and write $S$ for the price the turnips are consequently sold at.
+Although our derivation allows the thresholds to be computed exactly in a recursive fashion, the formula does not
+admit an easy interpretation. Is there another way to look at the problem, that allows the values of the optimal
+thresholds to be understood in an intuitive way?
 
-<!-- Put simply, on each day there is a threshold $s\_{i}$ which represents the minimum price at which we would be 
-prepared to sell on that day. For example, as we need to sell the turnips before they spoil, we should accept any price 
-at time $t=n$; in other words, the optimal such strategy should have $s\_{n}=0$.  -->
-
-Let $\tau$ be the time at which we sell, that is $\tau = \min\\{ i:P\_{i}\geq s\_{i}\\}$. Then, by the law of total 
-expectation, we see that for any $i$, we have
+To this end, let $\tau$ be the time at which we sell, that is $\tau = \min\\{i\,|\,P_{i}\geq s_{i}\\}$. Then, by 
+conditioning on the value of $\tau$ and using the law of total expectation, we see that for any $i$, we have the 
+following expression for the expected sold price:
 
 $$
-E(S) = E(S|\tau < i)P(\tau < i) + E(S|\tau \geq i)P(\tau \geq i).
+\mathbb{E}(S) = \mathbb{E}(S\,|\,\tau < i)\,\mathbb{P}(\tau < i) + \mathbb{E}(S\,|\,\tau \geq i)\,\mathbb{P}(\tau \geq i).
 $$
 
-Note that $E(S\|\tau < i)$, $P(\tau < i)$ and $P(\tau \geq i)$ depend only upon $s\_{1}, \ldots, s\_{i - 1}$, whereas 
-$E(S\|\tau \geq i)$ depends only upon $s\_{i}, \ldots, s\_{n}$. Therefore, the optimal choice of $s\_{i}$ depends only 
-upon $s\_{i + 1}, \ldots, s\_{n}$. Indeed, it suffices to choose $s\_{i}$ so as to maximise $E(S\|\tau \geq i)$.
+Note that $\mathbb{E}(S\\,\|\,\tau < i)$, $\mathbb{P}(\tau < i)$ and $\mathbb{P}(\tau \geq i)$ depend only upon $s_{1}, \ldots, s_{i - 1}$,
+(the thresholds up to time $i$), whereas $\mathbb{E}(S\,\|\,\tau \geq i)$ depends only upon $s_{i}, \ldots, s_{n}$ (the thresholds from time $i$ onwards).
 
-Next,
+Now, consider varying $s_{i}$ in order to maximise this expression for the expected sale price, keeping the other thresholds
+fixed. Due to this observation, the optimal choice of $s_{i}$ depends only upon $s_{i + 1}, \ldots, s_{n}$. Indeed, it suffices to choose 
+$s_{i}$ so as to maximise $\mathbb{E}(S\|\tau \geq i)$.
+
+Using the law of total expectation again (and assuming a implicit dependence on $\tau\geq i$ in terms on the RHS), we
+can expand the term we are looking to maximise:
+
+$$
+\mathbb{E}(S\,|\,\tau \geq i) = \mathbb{E}(P_i\,|\,P_i\geq s_i)\,\mathbb{P}(P_i\geq s_i) + \mathbb{E}(S\,|\,P_i < s_i)\,\mathbb{P}(P_i < s_i).
+$$
+
+As we have assumed that the price $P_{i}$ is uniformly distributed on $\[0, 1\]$, we have that 
+$\mathbb{E}(P_{i}\|P_{i}\geq s_{i}) = \frac{1}{2}(1+s_{i})$ and $\mathbb{P}(P_i\geq s_i) = 1 - s_{i}$ (this follows
+straight from the definition of the uniform distribution). Substituting this in gives
+
+$$
+\mathbb{E}(S\,|\,\tau \geq i) = \frac{1}{2}(1 - s_i^2) + s_{i}\,\mathbb{E}(S\,|\,P_i < s_i).
+$$
+
+This is a quadratic in $s_{i}$, which is maximised when $s_i = \mathbb{E}(S\,|\,P_i < s_i)$. Write $\tilde{s}_i$ for 
+this optimal threshold value:
+
+$$
+\tilde{s}_i = \mathbb{E}(S\,|\,P_i < \tilde{s}_i)
+$$
+
+where, as noted earlier, the right hand expression depends only upon $$\tilde{s}_{i + 1},\ldots,\tilde{s}_{n}$$, due to the implicit 
+conditional dependence on $\tau\geq i$. 
+
+Let's pause here to think about the meaning of this statement; the implicit
+condition in the expectation is that $\tau\geq i$ (i.e. that we have not sold up to time $i$), and that the current price 
+$P_{i}$ is less than $$\tilde{s}_{i}$$, meaning that we are not selling now either (by the definition of our strategy and the
+thresholds). This is actually fairly intuitive: as all the prices are independent, the situation at time $i$ of an $n$ period run is 
+equivalent to starting a fresh run at time $i$ of length $n-i$, and we should only sell if the quoted price exceeds
+the expected value of continuing to play on. Defining $\tilde{e}_{n}$ to be the expected value of following the optimal
+strategy when played over $n$ days, this result can be simply expressed as
+
+$$
+\tilde{s}_i = \tilde{e}_{n-i}.
+$$
+
+When playing a game of length $n$, this tells us that at time $n$ we should accept any price; at time $n - 1$ we should 
+accept exactly the expected value of $P\_n$; at time $n - 2$ we should settle for exactly the expected return of our 
+strategy were we to pass on $P\_{n - 2}$ and play on for the final two days; and so on and so forth. Put simply, we 
+should accept exactly that price that we would achieve in expectation were we to pass on today's price and play on.
+
+Furthermore, it is possible to recover the recursion relation found earlier between $$\tilde{s}_{i}$$ and
+ $$\tilde{s}_{i+1}$$, by using one further application of the law of total expectation, this time conditioning on the
+ event $\\{P_{i+1}\geq\tilde{s}_{i+1}\\}$:
 
 $$
 \begin{align}
-E(S|\tau \geq i) &= E(S|\tau = i)P(\tau = i | \tau \geq i) + E(S|\tau > i)P(\tau>i|\tau\geq i)\\
-	&= E(P_i|P_i\geq s_i)P(P_i\geq s_i) + E(S|\tau>i)P(P_i < s_i).
+\tilde{s}_{i} &= \mathbb{E}(S\,|\,P_{i}<\tilde{s}_{i}, P_{i+1}\geq\tilde{s}_{i+1})\mathbb{P}(P_{i+1}\geq\tilde{s}_{i+1}) \\[5pt]
+&\quad + \mathbb{E}(S\,|\,P_{i}<\tilde{s}_{i}, P_{i+1}<\tilde{s}_{i+1})\mathbb{P}(P_{i+1}<\tilde{s}_{i+1}) \\[5pt]
+&= \mathbb{E}(P_{i + 1}|P_{i + 1}\geq \tilde{s}_{i + 1})\mathbb{P}(P_{i + 1}\geq \tilde{s}_{i + 1}) + \tilde{s}_{i+1}\mathbb{P}(P_{i + 1} < \tilde{s}_{i + 1})\\
+&= \frac{1}{2}(1 - \tilde{s}_{i + 1}^2) + \tilde{s}_{i + 1}^2\\
+&= \frac{1}{2}(1 + \tilde{s}_{i + 1}^2).
 \end{align}
 $$
 
-Now since $E(P\_{i}\|P\_{i}\geq s\_{i}) = \frac{1}{2}(1+s\_{i})$ and $P(P\_i\geq s\_i) = 1 - s\_{i}$ we have 
+Here, the first term in the second equality uses the fact that if $P_{i+1}$ exceeds $$\tilde{s}_{i+1}$$, then we are definitely selling
+and the expected price $S$ is equal to the (conditional) expectation of $P_{i+1}$; the second term uses a resubstitution of the
+optimal threshold value $$\tilde{s}_{i+1}$$ in terms of the conditional expectation of $S$, established above; and the third equality
+follows from the uniform distribution of $P_{i+1}$.
 
-$$
-E(S|\tau \geq i) = \frac{1}{2}(1 - s_i^2) + s_i E(S|\tau > i).
-$$
+<!-- 
+Define $e_{n-j}$ to be the expected return of the strategy
+<p align="center">
+Sell at time $i > j$ if $P_{i}\geq s_{i}$.
+</p>
 
-Writing $\tilde{s}\_i$ for the optimal choice of $s_i$, we then have
-
-$$
-\tilde{s}_i = E(S|\tau > i)
-$$
-
-where, as noted earlier, the right hand expression depends only upon $s\_{i + 1}, \ldots, s\_n$. 
-
-Now define $\tilde{e}\_n$ to be the expectation of the optimal strategy of this form when this game is played over $n$ 
-days. Then noting that $E(S\|\tau > i)$ is simply the expectation of this game played over $n-j$ days with thresholds 
-$s\_{i+1}, \ldots, s\_n$ we obtain the recurrence:
+That is, the expected return, were we to see all but the first $j$ prices. Moreover, writing $\tilde{e}\_{n - j}$ for 
+the expected return of this strategy with the optimal thresholds, we see that $\mathbb{E}(S\|P_{i} < s_{i}) = e_{n - i}$ and 
+this gives the recurrence:
 
 $$
 \tilde{s}_i = \tilde{e}_{n - i}.
 $$
 
-
 This tells us that at time $n$ we should accept any price; at time $n - 1$ we should accept exactly the expected value 
-of $P\_n$; at time $n - 2$ we should settle for exactly the expected return of our strategy were we to pass on 
-$P\_{n - 2}$ and play on for the final two days; and so on and so forth. Put simply, we should accept exactly that 
-price that we would achieve in expectation were we to pass on today's price and play on.
+of $P_n$; at time $n - 2$ we should settle for the exactly the expected value were we to pass on $P_{n - 2}$; and so 
+on and so forth.
 
-Indeed, it is possible to do one better and express the right hand side (that is, $\tilde{e}\_{n-i}$) solely in terms 
-of $\tilde{s}\_{i+1}$, finding a recursive relationship between $\tilde{s}\_{i}$ and $\tilde{s}\_{i+1}$ alone.
-
-
-Again, using the total law of expectation we see that
-
-$$
-\begin{align}
-\tilde{e}_{n - i} &= E(S|\tau = i + 1)P(\tau = i + 1 | \tau > i) + E(S| \tau > i + 1)P( \tau > i + 1 | \tau > i)\\
-	&= E(P_{i + 1}|P_{i + 1}\geq \tilde{s}_{i + 1})P(P_{i + 1}\geq \tilde{s}_{i + 1}) + \tilde{e}_{n-(i+1)}P(P_{i + 1} < \tilde{s}_{i + 1})\\
-	&= \frac{1}{2}(1 - \tilde{s}_{i + 1}^2) + \tilde{s}_{i + 1}^2\\
-	&= \frac{1}{2}(1 + \tilde{s}_{i + 1}^2)
-\end{align}
-$$
-
-where in the third equality we make critial use of the fact that $\tilde{e}_{n-(i+1)} = \tilde{s}\_{i + 1}$.
+-->
 
 ### Non-negative Turnips
 
 Clearly there is not a great deal to tweak to prove a similar result for a general distribution.
 
-Suppose now that $P\_1, \ldots, P\_n$ are iid and we follow a strategy of the same form. Then the argument above still 
-tells us that the optimal choice of $s\_i$ depends only upon $s\_{i + 1}, \ldots, s\_n$. In particular we must choose 
-$s\_{i}$ so as to maximise $E(S\|\tau \geq i)$. As before we could write
+Suppose now that $P\_1, \ldots, P\_n$ are iid, but with an arbitrary distribution (with pdf $f_{P}$), and that we follow a strategy of the same form. 
+Then the argument above still tells us that the optimal choice of $s\_i$ depends only upon $s\_{i + 1}, \ldots, s\_n$. In particular we must choose 
+$s\_{i}$ so as to maximise $\mathbb{E}(S\|\tau \geq i)$. As before we can write
 
 $$
-E(S|\tau \geq i) = E(P_i|P_i\geq s_i)P(P_i\geq s_i) + E(S|\tau>i)P(P_i < s_i),
+\mathbb{E}(S|\tau \geq i) = \mathbb{E}(P_i|P_i\geq s_i)\mathbb{P}(P_i\geq s_i) + \mathbb{E}(S|\tau>i)\mathbb{P}(P_i < s_i),
 $$
 
-however it probably makes more sense to write it as follows:
+and in the general case it makes more sense to write these expectations out in full using their integral representations:
 
 $$
-E(S|\tau \geq i) = \int_{s_i}^{\infty}xf_X(x)dx + \int_{-\infty}^{s_i} \tilde{e}_{n-i}f_X(x)dx
+\mathbb{E}(S|\tau \geq i) = \int_{s_i}^{\infty}pf_P(p)\;\mathrm{d}p + \tilde{e}_{n-i}\int_{-\infty}^{s_i} f_P(p)\;\mathrm{d}p
 $$
 
-where each integral corresponds exactly to one of the products in the previous expression for $E(S\|\tau \geq i)$. Or, 
-more succintly, as:
+where each integral corresponds exactly to one of the products in the previous expression for $\mathbb{E}(S\|\tau \geq i)$. 
+Collecting together into a single integral, we can write this more succinctly as
 
 $$
-E(S|\tau \geq i) = \int_{-\infty}^{\infty}g(x;s_i)f_X(x)dx
+\mathbb{E}(S|\tau \geq i) = \int_{-\infty}^{\infty}g(p;s_i)f_p(p)\;\mathrm{d}p
 $$
 
-where $g(x;s\_i)=\tilde{e}\_{n-i}$ for $x\leq s\_i$ and $g(x;s\_i) = x$ otherwise. 
+where we define the new function $g$ by:
+ 
+$$
+g(p;s_i) = \left\{\begin{matrix}
+\tilde{e}_{n-i} & \text{for } p\leq s_i,\\ 
+p & \text{for } p>s_i.
+\end{matrix}\right.
+$$
 
-Now it is easy to see that $\tilde{e}\_{n-i}$ is the *unique* choice of $s\_i$ which maximises $g(x;s\_i)$ for every 
-$x$. That is to say, we have $g(x;\tilde{e}\_{n-i})\geq g(x;s\_i)$ for all $x$, and if $s\_i\neq\tilde{e}\_{n-i}$ then 
-there exists $x$ such that $g(x;\tilde{e}\_{n-i}) > g(x;s\_i)$.
+Let's have a look at what this function looks like on a graph:
 
-In fact, this is exactly the algebraic way of framing the argument given in [Turnip Mania](post1hyperlink). Indeed, we 
-should certainly never settle for a price less than $\tilde{e}\_{n-i}$ as we would simply be better off (in expectation) 
-by playing on. Algebraically this is reflected by the fact that if $s\_i<\tilde{e}\_{n-i}$, then we have 
-$g(x;s\_i)=x<\tilde{e}\_{n-i}=g(x;\tilde{e}\_{n-i})$ for $s\_i<x< \tilde{e}\_{n-i}$. Whereas, if we are too picky and 
-hold out for a price higher than $\tilde{e}\_{n-i}$, then we are simply wasting a perfectly good price in the event 
-that we are offered something between $\tilde{e}\_{n-i}$ and $s\_i$. Algebraically, this is reflected by the fact that 
-if $s\_i>\tilde{e}\_{n-i}$, then we have $g(x;s\_i)=\tilde{e}\_{n-i}<x=g(x;\tilde{e}\_{n-i})$ for 
-$\tilde{e}\_{n-i}< x< s\_i$.
+| ![The function $g(p;s_{i})$](/assets/images/g_function_plot.png) |
+|:--:|
+| *The function $g(p;s_{i})$ against $p$* |
+
+
+Now it is easy to see that $\tilde{e}\_{n-i}$ is the *unique* choice of $s\_i$ which maximises $g(p;s\_i)$ for every 
+$p$. That is to say, we have:
+- optimality, i.e. $g(p;\tilde{e}\_{n-i})\geq g(p;s\_i)$ for all $p$ and $s_{i}$
+- uniqueness, i.e. if $s\_i\neq\tilde{e}\_{n-i}$, then there exists $p$ such that $g(p;\tilde{e}\_{n-i}) > g(p;s\_i)$.
+
+With this optimal choice, the above graph looks like a ramp function,
+with "corner" at the point $(\tilde{e}\_{n-i}, \tilde{e}\_{n-i})$.
+
+In fact, this is exactly the algebraic way of framing the argument given in [Turnip Mania]({% post_url 2020-12-30-animal-crossing-turnips-1 %}).
+For any non-optimal choice of $s\_{i}\neq\tilde{e}\_{n-i}$, we can find an interpretation for why this choice is sub-optimal:
+
+| Non-optimal condition | Property of $g$ | Interpretation |
+| ----------- | ----------- |
+| $s\_{i}<\tilde{e}\_{n-i}$ | $g(p;s\_i)=p<\tilde{e}\_{n-i}=g(p;\tilde{e}\_{n-i})$ <br/> for $p\in(s\_{i}, \tilde{e}\_{n-i})$ | Never settle for a price less than $\tilde{e}\_{n-i}$, better off <br/> (in expectation) by playing on |
+| $s\_{i}>\tilde{e}\_{n-i}$ | $g(p;s\_i)=\tilde{e}\_{n-i}<p=g(p;\tilde{e}\_{n-i})$ <br/> for $p\in(\tilde{e}\_{n-i}, s\_{i})$ | Not expected to receive more than $\tilde{e}\_{n-i}$ by playing on  |
 
 All this is to say that we recover the key fact that 
 
@@ -439,72 +507,54 @@ $$
 
 All that remains is to give a first order recurrence for these optimal thresholds.
 
-#### Arbitrary (non-negative continuous) turnips: a recurrence
+#### Arbitrary (non-negative) turnips: a recurrence
 
-For algebraic simplicity we consider the case that the random variables are non-negative and continuous.
+For algebraic simplicity we consider the case that the random variables are non-negative. It is reasonable
+to assume that we will not be paying Timmy and Tommy for the pleasure of taking our turnips! 
 
-Much as with the uniform case we begin from
+The derivation of the recursion relation in the uniform case in a [previous section](#an-instructive-example-revisited-uniformly-distributed-quotes)
+was started in a generic manner, meaning we can start from the following relation, which holds for any price distribution:
+
+$$
+\tilde{s}_{i} = \mathbb{E}(P_{i + 1}|P_{i + 1}\geq \tilde{s}_{i + 1})\mathbb{P}(P_{i + 1}\geq \tilde{s}_{i + 1}) + \tilde{s}_{i+1}\mathbb{P}(P_{i + 1} < \tilde{s}_{i + 1}).
+$$
+
+Let $F(p)$ be the [cdf](https://en.wikipedia.org/wiki/Cumulative_distribution_function) of each price (with associated pdf $f_{p}(p)$), and define $\bar{F}(p)=1-F(p)$.
+Then, in a similar way to the uniform case, we can write the above expression as:
 
 $$
 \begin{align}
-\tilde{e}_{n - i} &= E(S|\tau = i + 1)P(\tau = i + 1 | \tau > i) + E(S| \tau > i + 1)P( \tau > i + 1 | \tau > i)\\
-	&=E(P_{i+1}|P_{i+1}\geq \tilde{s}_{i+1})P(P_{i+1}\geq \tilde{s}_{i+1}) + \tilde{s}_{i+1}F(\tilde{s}_{i+1})
-	\end{align}
+\tilde{s}_{i} &= \mathbb{E}(P_{i+1}|P_{i+1}\geq\tilde{s}_{i+1})\bar{F}(\tilde{s}_{i+1}) + \tilde{s}_{i+1}F(\tilde{s}_{i+1}) \\
+&= \tilde{s}_{i+1} + \phi(\tilde{s}_{i+1})
+\end{align}
 $$
 
-Since $\tilde{e}\_{n - i} = \tilde{s}\_{i+1}$ this at least gives a first order recurrence, however, we would prefer 
-something cleaner. Writing $\tilde{s}\_{i+1}F(\tilde{s}\_{i+1}) = \tilde{s}\_{i+1} - \tilde{s}\_{i+1}\bar{F}(\tilde{s}\_{i+1})$ 
-and defining
+where the function $\phi$ is defined (using a random variable $P$ distributed like the prices $P_{i}$) by
 
 $$
-\phi(t) =  (E(X|X\geq t) - t)\bar{F}(t)
+\phi(t) =  (\mathbb{E}(P|P\geq t) - t)\bar{F}(t).
 $$
 
-gives
-
-$$
-\tilde{s}_{i} = \tilde{s}_{i+1} + \phi(\tilde{s}_{i+1}).
-$$
-
-Thus it remains to better understand $\phi(\tilde{s}_{i+1})$.
+Thus, to see the behaviour of the recursion relation in the general case, it remains to better understand the function 
+$\phi(\tilde{s}_{i+1})$.
 
 #### The continuous case
 
-In the case that the $P\_i$ are continuous we have
+In the case that the $P\_i$ are continuously distributed, we have
 
 $$
-\phi(t) =  \int_{t}^\infty xf(x)dx - t\bar{F}(t).
+\begin{align}
+\phi(t) &= \int_{t}^\infty pf_{p}(p)\mathrm{d}p - t\bar{F}(t) \\
+&= \int_{t}^{\infty}\bar{F}(p)\mathrm{d}p
+\end{align}
 $$
 
-Now, it follows from integration by parts that $\phi(t) = \int\_t^\infty \bar{F}(x)dx$. We note that this does not 
+where the second line follows by using integration by parts. We note that this does not 
 require that the random variables are non-negative. Altogether this gives
 
 $$
-\tilde{s}_{i} = \tilde{s}_{i+1} + \phi(\tilde{s}_{i+1}).
+\tilde{s}_{i} = \tilde{s}_{i+1} + \int_{\tilde{s}_{i+1}}^{\infty}\bar{F}(p)\mathrm{d}p. \\
 $$
-
-where $\phi(t) = \int\_t^\infty \bar{F}(x)dx$.
-
-<!-- In the case that the $P\_i$ are continuous random variables this may be written as: -->
-
-<!-- $$ -->
-<!-- \tilde{e}_{n - i} = \int_{\tilde{s}_{i+1}}^\infty xf(x)dx + \tilde{s}_{i+1}F(\tilde{s}_{i+1}). -->
-<!-- $$ -->
-
-<!-- This at least gives a first order recurrence for the $\tilde{s}_{i}$: -->
-
-<!-- $$ -->
-<!-- \tilde{s}_{i} = \int_{\tilde{s}_{i+1}}^\infty xf(x)dx + \tilde{s}_{i+1}F(\tilde{s}_{i+1}) -->
-<!-- $$ -->
-
-<!-- however we would prefer something cleaner. First we write $\tilde{s}\_{i+1}F(\tilde{s}\_{i+1}) = \tilde{s}\_{i+1} - \tilde{s}\_{i+1}\bar{F}(\tilde{s}\_{i+1})$ to give -->
-
-<!-- $$ -->
-<!-- \tilde{s}_{i} = \tilde{s}_{i+1} + \int_{\tilde{s}_{i+1}}^\infty xf(x)dx - \tilde{s}_{i+1}\bar{F}(\tilde{s}_{i+1}). -->
-<!-- $$ -->
-
-<!-- We then define $\Phi(t) =  \int_{t}^\infty xf(x)dx - t\bar{F}(t). -->
-
 
 Either by integration by parts, or by noting that differentiating the RHS with respect to $\tilde{s}\_{i+1}$ gives 
 $F(\tilde{s}_{i+1})$, we see that
@@ -540,7 +590,7 @@ corresponding cumulative density function $F(x)$. The expected sold price takes 
 
 $$
 \begin{align}
-E(X) &= \sum_{i=1}^{n}E\left(P_{i}|T_{i}\right)P\left(T_{i}\right) \\
+\mathbb{E}(X) &= \sum_{i=1}^{n}E\left(P_{i}|T_{i}\right)P\left(T_{i}\right) \\
 &= \sum_{i=1}^{n}E\left(P_{i}\;\middle|\; S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right)P\left(S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right) \\
 &= g(s_{i})
 \end{align}
@@ -564,7 +614,7 @@ $$
 Putting this together again:
 
 $$
-E(X) = \sum_{i=1}^{n}\left[\int_{s_{i}}^{\infty}xf(x)dx\right]\prod_{i<j}F(s_{j}).
+\mathbb{E}(X) = \sum_{i=1}^{n}\left[\int_{s_{i}}^{\infty}xf(x)dx\right]\prod_{i<j}F(s_{j}).
 $$
 
 So we have an expression for the expected price in terms of the fixed distribution functions $f, F$ and
@@ -575,7 +625,7 @@ stationary point of the expectation. The steps follow the same logic as for the 
 $$
 \begin{align}
 \tilde{s}_{k} &= \tilde{s}_{k+1}F(\tilde{s}_{k+1}) + \int_{\tilde{s}_{k+1}}^{\infty}xf(x)dx \\
-&= \tilde{s}_{k+1}F(\tilde{s}_{k+1}) + E(P_{0}) - \int_{0}^{\tilde{s}_{k+1}}xf(x)dx
+&= \tilde{s}_{k+1}F(\tilde{s}_{k+1}) + \mathbb{E}(P_{0}) - \int_{0}^{\tilde{s}_{k+1}}xf(x)dx
 \end{align}
 $$
 
@@ -587,7 +637,7 @@ the following equivalent recurrence:
 
 $$
 \begin{align}
-\tilde{s}_{k} &= E(X) + \int_{0}^{\tilde{s}_{k+1}} F(x)dx.
+\tilde{s}_{k} &= \mathbb{E}(X) + \int_{0}^{\tilde{s}_{k+1}} F(x)dx.
 \end{align}
 $$
 
@@ -643,11 +693,11 @@ where each $s_i$ is a function of the previous $i-1$ prices offered. We note tha
 distribution of the $P\_i$ we will always have, for any $i$, that
 
 $$
-E(S) = E(S|\tau < i)P(\tau < i) + E(S|\tau \geq i)P(\tau \geq i).
+\mathbb{E}(S) = \mathbb{E}(S|\tau < i)\mathbb{P}(\tau < i) + \mathbb{E}(S|\tau \geq i)\mathbb{P}(\tau \geq i).
 $$
 
-by the law of total expectation. As remarked earlier, $E(S\|\tau < i)$, $P(\tau < i)$ and $P(\tau \geq i)$ depend only 
-upon $s\_1,\ldots, s\_{i-1}$, whereas $E(S\|\tau \geq i)$ depends upon $s\_i, \ldots, s\_n$. Fortunately, as the 
+by the law of total expectation. As remarked earlier, $\mathbb{E}(S\|\tau < i)$, $\mathbb{P}(\tau < i)$ and $\mathbb{P}(\tau \geq i)$ depend only 
+upon $s\_1,\ldots, s\_{i-1}$, whereas $\mathbb{E}(S\|\tau \geq i)$ depends upon $s\_i, \ldots, s\_n$. Fortunately, as the 
 conditional expectation of $S$ given that $\tau\geq i$ for any such fixed specification of $P\_1,\ldots, P\_{i-1}$ does 
 not depend upon the specific choice of these prices, we can happily restrict our attention to those strategies with a 
 constant threshold for each day.
