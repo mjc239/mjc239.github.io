@@ -70,7 +70,7 @@ This post is written in collaboration with [Jack Bartley](http://jackbartley.com
 ## Last time: Turnip mania
 
 Following on from [last time]({% post_url 2020-12-30-animal-crossing-turnips-1 %}), in this post we're looking again at 
-optimal strategies for turnip selling in Animal Crossing. Readers are advise to consult the 
+optimal strategies for turnip selling in Animal Crossing. Readers are advised to consult the 
 [first post]({% post_url 2020-12-30-animal-crossing-turnips-1 %}) for details on what has been covered so far, but we 
 give a very brief summary here for the uninitiated.
 
@@ -78,7 +78,7 @@ give a very brief summary here for the uninitiated.
 We consider the following game -- a simple model for turnip selling in Animal Crossing. Let $P\_1, \ldots, P\_n$ be iid 
 random variables. At each time $t=1, 2, \ldots, n$ the player is offered the opportunity to sell all the turnips they 
 have for a price of $P\_i$. If the player accepts this offer then the game ends and the player ends with a revenue of 
-$P\_i$, if the player refuses then they move to the next time period. If the turnips are not sold on or before time $n$ 
+$P\_i$, if the player refuses then they move to the next time period. If the turnips are not sold at or before time $n$ 
 then the turnips spoil and the player walks away with nothing.
 
 Last time we considered the special case that the $P\_i$ are iid uniform on $[0,1]$, and considered the following 
@@ -97,7 +97,7 @@ $\tilde{s}_i = \frac{1}{2}(1 +\tilde{s}_{i + 1}^2)$ for $1\leq i<n$, with $\tild
 </p>
 
 In today's post we seek to address the questions posed at the end of the last. That is, we wish to give an asymptotic 
-solution to this non-linear recurrence and generalise some of our results from last time to arbitrary distributions.
+solution to this non-linear recurrence and generalise some of our results from last time to arbitrary distributions. We will also consider whether strategies of the shape we considered last time are indeed optimal.
 
 ### A disclaimer
 
@@ -105,13 +105,9 @@ At this point it is worth saying that anybody expecting to use our analysis to i
 better off looking elsewhere. Perhaps unsurprisingly it is reasonably well understood<sup>[1](#post2footnote1)</sup> 
 how the prices in Animal Crossing are *actually* generated. Some people have even been so helpful as to make 
 [tools](https://turnipprophet.io) to help people with their turnip selling, though to say much more than this might constitute 
-**SPOILERS** (one could argue that the existence of these tools is in itself 
-[**SPOILERS**](https://www.youtube.com/watch?v=KSRWJMM98pM)). Indeed, to identify what part of our model renders it 
-ineffective would certain be 
-<details> 
-<summary> SPOILERS </summary> 
-Of course, it is the assumption that the prices are independent. 
-</details>
+**SPOILERS**<sup>[2](#post2footnote2)</sup>. Indeed, to identify what part of our model renders it ineffective would certainly be **SPOILERS**<sup>[3](#post2footnote3)</sup>
+
+
 
 ## An approximate solution: Uniformly distributed quotes
 
@@ -121,7 +117,7 @@ To kick things off, starting from
 $\tilde{s}_i = \frac{1}{2}(1 +\tilde{s}_{i + 1}^2)\quad$ for $1\leq i< n,$
 </p>
 
-with initial value $$\tilde{s}_n = 0$$, we perform the substitution $$t_i = \frac{1}{2}(1 - \tilde{s}_{n-i})$$ 
+with 'initial' value $$\tilde{s}_n = 0$$, we perform the substitution $$t_i = \frac{1}{2}(1 - \tilde{s}_{n-i})$$ 
 to arrive at the logistic map with initial value $1/2$ (as noted last time). That is,
 
 <p align="center">
@@ -138,20 +134,19 @@ $r_{i+1} = r_{i} + 1 + \frac{1}{r_{i}-1}\quad$ for $0\leq i < n - 1$,
 </p>
 
 with initial condition $r_{0} = 2$.
-<details>
-<summary> CLICK FOR ALGEBRA </summary>
-$$
-\begin{align}
-	\frac{1}{t_{i+1}}&=\frac{1}{t_i(1-t_i)}\\
-	&=\frac{1}{t_i}\frac{\frac{1}{t_i}}{(\frac{1}{t_i}-1)}\\
-	&=\frac{r_i^2}{r_i-1}\\
-	&=r_i + 1 + \frac{1}{r_i-1}.
-\end{align}
-$$
-</details>
+<!-- <details> -->
+<!-- <summary> CLICK FOR ALGEBRA </summary> -->
+<!-- $$ -->
+<!-- \begin{align} -->
+<!-- 	\frac{1}{t_{i+1}}&=\frac{1}{t_i(1-t_i)}\\ -->
+<!-- 	&=\frac{1}{t_i}\frac{\frac{1}{t_i}}{(\frac{1}{t_i}-1)}\\ -->
+<!-- 	&=\frac{r_i^2}{r_i-1}\\ -->
+<!-- 	&=r_i + 1 + \frac{1}{r_i-1}. -->
+<!-- \end{align} -->
+<!-- $$ -->
+<!-- </details> -->
 
-From this recurrence relation, it is possible to construct upper and lower bounds for $r_{i}$ in terms of just the index
-$i$:
+From this recurrence relation it is possible to construct upper and lower bounds for $r_{i}$ in terms of $i$.
 
 ### Constructing threshold bounds
 
@@ -175,7 +170,7 @@ bound on the third term in the recurrence relation, resulting in the inequality:
 $r_{i+1}\leq r_{i} + 1 + \frac{1}{i + 1}\quad$ for $0\leq i < n - 1$. 
 </p>
 
-By again using induction, this can be used to show that
+By again using induction this can be used to show that
 
 $$
 r_{i}\leq i + 2  + H_i
@@ -270,14 +265,13 @@ $$
 
 Of course, we actually have $H\_i = \log(i + 1) + \gamma + o(1)$, where $\gamma$ is the 
 [Euler-Mascharoni constant](https://en.wikipedia.org/wiki/Euler%E2%80%93Mascheroni_constant), but since the additive 
-error in our estimate for $r_i$ is otherwise $O(1)$ this named constant would be eaten up by our error. As it happens, 
+error in our estimate for $r_i$ is otherwise $O(1)$ this named constant is eaten up by the error. As it happens, 
 we can push our argument a bit further and, in a sense, obtain an analogous result for the $r_i$ themselves. Here there 
 will be a fixed constant cropping up, but it will not be the Euler-Mascharoni constant.
 
-### Overdoing just one last time: The "Bartley-Cole" constant
+### Overoverdoing just one last time: The "Uniform Turnips" constant
 
-
-Consider $\varepsilon_i = r_i - (i + 2) - H_i$, then we have 
+Writing $\varepsilon_i = r_i - (i + 2) - H_i$, we have
 
 $$
 r_{i+1} - (i+3) - H_{i+1} = r_{i} -(i+2) - H_i -\left(\frac{1}{i+1}-\frac{1}{r_i - 1}\right)
@@ -297,28 +291,28 @@ $0<\frac{1}{j+1} - \frac{1}{r\_j - 1}\leq O\left(\frac{\log(j+1)}{(j+1)^2}\right
 to some limit and combining this with the fact that $H\_i = \log(i+1) + \gamma + o(1)$ we see that
 
 $$
-r_i= i + 2 + \log(i+1) + \tau + o(1),
+r_i= i + 2 + \log(i+1) - \tau + o(1),
 $$
 
-for some fixed constant $\tau$, which we call the [Bartley-Cole constant](citationneeded). This then gives
+for some fixed constant $\tau$, which we call the Uniform Turnips constant. This then gives
 
 $$
-\tilde{s}_{i} = 1 - \frac{2}{n - i + 1 + \log{(n - i + 1)} + \tau + o(1)}.
+\tilde{s}_{i} = 1 - \frac{2}{n - i + 1 + \log{(n - i + 1)} - \tau + o(1)}.
 $$
 
-and
+and, rewriting as an additive error:
 
 $$
-\tilde{s}_{i} = 1 - \frac{2}{n - i + 1} + \frac{2\log{(n - i + 1)}}{(n - i + 1)^2}+ \frac{2\tau}{(n - i + 1)^2} + o\left(\frac{1}{(n - i + 1)^2}\right)
+\tilde{s}_{i} = 1 - \frac{2}{n - i + 1} + \frac{2\log{(n - i + 1)}}{(n - i + 1)^2} - \frac{2\tau}{(n - i + 1)^2} + o\left(\frac{1}{(n - i + 1)^2}\right)
 $$
 
 (as $n - i$ goes to infinity). 
 
-In fact, from some numerical experiments, the value of $\tau$ appears to be __$-0.232006 \pm 10^{-6}$__.
+In fact, from some numerical experiments, the value of $\tau$ appears to be __$0.232006 \pm 10^{-6}$__.
 
-### Overdoing it yet again
+### Overoveroverdoing it
 
-Naturally this sort of thing could go on forever, but we'll leave it there!
+Naturally this is not the end of the road, but as this gives us $r_i$ up to $o(1)$ this seems as good a place as any to stop. We cannot rule out of course that there is a simpler closed form solution to the recursion, but this author feels this is unlikely.
 
 ### Uniform on an arbitrary interval
 
@@ -674,7 +668,7 @@ not given any real thought to the discrete case.
 
 ## Carpe rāpa!: optimality and sticking to your guns
 
-It is high time we address on small technical question, must the optimal strategy actually be of the stated form? 
+It is high time we address one small technical question: must the optimal strategy actually be of the form we have been considering? 
 Recall that we have thus for only considered strategies of the form:
 
 <p align="center">
@@ -689,18 +683,16 @@ future prices, the most general form a strategy could take would be:
 Sell at time $i$ if $P_{i}\geq s_{i}(P_1, \ldots, P_{i-1})$
 </p>
 
-where each $s_i$ is a function of the previous $i-1$ prices offered. We note that, regardless of the specific 
+where each $s_i$ is a function of the previous $i-1$ prices offered. We note that regardless of the specific 
 distribution of the $P\_i$ we will always have, for any $i$, that
 
 $$
 \mathbb{E}(S) = \mathbb{E}(S|\tau < i)\mathbb{P}(\tau < i) + \mathbb{E}(S|\tau \geq i)\mathbb{P}(\tau \geq i).
 $$
-
-by the law of total expectation. As remarked earlier, $\mathbb{E}(S\|\tau < i)$, $\mathbb{P}(\tau < i)$ and $\mathbb{P}(\tau \geq i)$ depend only 
-upon $s\_1,\ldots, s\_{i-1}$, whereas $\mathbb{E}(S\|\tau \geq i)$ depends upon $s\_i, \ldots, s\_n$. Fortunately, as the 
-conditional expectation of $S$ given that $\tau\geq i$ for any such fixed specification of $P\_1,\ldots, P\_{i-1}$ does 
-not depend upon the specific choice of these prices, we can happily restrict our attention to those strategies with a 
-constant threshold for each day.
+As remarked earlier, $\mathbb{E}(S\|\tau < i)$, $\mathbb{P}(\tau < i)$ and $\mathbb{P}(\tau \geq i)$ depend only 
+upon $s\_1,\ldots, s\_{i-1}$, whereas $\mathbb{E}(S\|\tau \geq i)$ depends upon $s\_i, \ldots, s\_n$. In particular, the only term that depends upon the threshold $s_i$ does not depend upon any of the earlier thresholds. Moreover, as the 
+conditional expectation of $S$ given that $\tau\geq i$ and any such fixed specification of $P\_1,\ldots, P\_{i-1}$ does 
+not depend upon the specific choice of these prices, we can maximise the expectation by choosing $s_i$ purely in terms of the later thresholds. That is to say, we can happily restrict our attention to those strategies with a fixed threshold for each day not depending upon.
 
 ## Outstanding questions
 
@@ -722,6 +714,13 @@ In the next post we hope to address both of these questions.
 
 <!-- Add outstanding questions -->
 
+## Footnotes
+
 <a name="post2footnote1">1</a> This author doesn't know to what degree people know their models to be correct. It's my 
 understanding that the way the prices are generated hasn't changed a great deal for earlier games in the series but I'm 
-unsure if at any point people were certain of the model.
+unsure if at any point people were certain of the model in the sense that they had seen the code, or whether they're simply certain in the 
+sense that it has been experimentally verified to some high degree of accuracy. 
+
+<a name="post2footnote2">2</a> One could argue that the existence of these tools is in itself [**SPOILERS**](https://www.youtube.com/watch?v=KSRWJMM98pM).
+
+<a name="post2footnote2">3</a> It is the assumption of independence that causes our model to not accurately describe the true behaviour of the turnip pricing in Animal Crossing.
