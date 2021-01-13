@@ -4,6 +4,7 @@ excerpt: "Post 3 - Exponentially distributed prices and further asymptotics"
 header:
     image: assets/images/moneybags.jpg
 toc: true
+published: false
 toc_label: "Contents:"
 classes: wide
 author_profile: false

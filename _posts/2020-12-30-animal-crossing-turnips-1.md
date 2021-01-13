@@ -34,6 +34,7 @@ sidebar:
         </li>
         </ul>
         </div>
+        <hr style="width:50%">
   - text: |
         <div class="author__avatar">
         <img src="/assets/images/bartley.jpg" alt="Jack Bartley" itemprop="image">
@@ -121,9 +122,9 @@ the expected price we get for our turnips.
 
 #### Keeping it simple
 
-In the spirit of keeping things as simple as we can for as long as we can will first calculate this expecatation in a fairly direct way. We will split the expectation up depending upon the day that the turnips are sold (using the [law of total expectation](https://en.wikipedia.org/wiki/Law_of_total_expectation)).
+In the spirit of keeping things as simple as we can for as long as we can will first calculate this expectation in a fairly direct way. We will split the expectation up depending upon the day that the turnips are sold (using the [law of total expectation](https://en.wikipedia.org/wiki/Law_of_total_expectation)).
 
-The probability that the turnips are sold on the first day is simply the probability that $P_1\geq s_1$, that is $1-s_1$. Then, if the price is at least $s_1$, it is consequently uniformly distributed from $s_1$ to 1, and as such its expectation is simply their average: $\frac{1}{2}(1+s_1)$. The contribution to the overall expectation is then simply the product of $1-s_1$ and $\frac{1}{2}(1+s_1)$, that is $\frac{1}{2}(1-s_1^2)$.
+The probability that the turnips are sold on the first day is simply the probability that $P_1\geq s_1$, that is $1-s_1$. Then, if the price is at least $s_1$, it is consequently uniformly distributed from $s_1$ to $1$, and as such its expectation is simply their average: $\frac{1}{2}(1+s_1)$. The contribution to the overall expectation is then simply the product of $1-s_1$ and $\frac{1}{2}(1+s_1)$, that is $\frac{1}{2}(1-s_1^2)$.
 
 Similarly, the turnips are sold on the second day if both $P_1<s_1$ and $P_2\geq s_2$ which occurs with probability $s_1(1-s_2)$. Then, if the price on the second day is at least $s_2$ then it is uniformly distributed from $s_2$ to 1 and its expectation is $\frac{1}{2}(1+s_2)$. Here the contribution to the expected sale price is $\frac{1}{2}s_1(1-s_2^2)$.
 
@@ -133,11 +134,11 @@ Putting this all together gives the expected sale price:
 
 $$
 \begin{align}
-\mathbb{E}(S)=&\frac{1}{2}(1-s_1^2)\\
-+&\frac{1}{2}s_1(1-s_2^2)\\
-+&\ldots\\
-+&\frac{1}{2}s_1 s_2\cdots s_{n-2}(1-s_{n-1}^2)\\
-+&\frac{1}{2}s_1 s_2\cdots s_{n-2}s_{n-1}(1-s_n^2).
+\mathbb{E}(S)=&\;\frac{1}{2}(1-s_1^2)\\
++&\;\frac{1}{2}s_1(1-s_2^2)\\
++&\;\ldots\\
++&\;\frac{1}{2}s_1 s_2\cdots s_{n-2}(1-s_{n-1}^2)\\
++&\;\frac{1}{2}s_1 s_2\cdots s_{n-2}s_{n-1}(1-s_n^2).
 \end{align}
 $$
 
@@ -145,11 +146,11 @@ At first this looks as though it could be a little unwieldy. We notice however t
 
 $$
 \begin{align}
-\mathbb{E}(S)=&\frac{1}{2}(1-s_1^2)\\
-+&\frac{1}{2}s_1(1-s_2^2)\\
-+&\ldots\\
-+&\frac{1}{2}s_1 s_2\cdots s_{n-2}(1-s_{n-1}^2)\\
-+&\frac{1}{2}s_1 s_2\cdots s_{n-2}s_{n-1}(1-\tilde{s}_n^2).
+\mathbb{E}(S)=&\;\frac{1}{2}(1-s_1^2)\\
++&\;\frac{1}{2}s_1(1-s_2^2)\\
++&\;\ldots\\
++&\;\frac{1}{2}s_1 s_2\cdots s_{n-2}(1-s_{n-1}^2)\\
++&\;\frac{1}{2}s_1 s_2\cdots s_{n-2}s_{n-1}(1-\tilde{s}_n^2).
 \end{align}
 $$
 
@@ -165,12 +166,12 @@ So far so good! Perhaps we can continue in this way and find the optimal thresho
 
 $$
 \begin{align}
-\mathbb{E}(S)=&\frac{1}{2}(1-s_1^2)\\
-+&\frac{1}{2}s_1(1-s_2^2)\\
-+&\ldots\\
-+&\frac{1}{2}s_1 s_2\cdots s_{n-3}(1-s_{n-2}^2)\\
-+&\frac{1}{2}s_1 s_2\cdots s_{n-3}s_{n-2}(1-\tilde{s}_{n-1}^2)\\
-+&\frac{1}{2}s_1 s_2\cdots s_{n-3}s_{n-2}\tilde{s}_{n-1}(1-\tilde{s}_n^2).
+\mathbb{E}(S)=&\;\frac{1}{2}(1-s_1^2)\\
++&\;\frac{1}{2}s_1(1-s_2^2)\\
++&\;\ldots\\
++&\;\frac{1}{2}s_1 s_2\cdots s_{n-3}(1-s_{n-2}^2)\\
++&\;\frac{1}{2}s_1 s_2\cdots s_{n-3}s_{n-2}(1-\tilde{s}_{n-1}^2)\\
++&\;\frac{1}{2}s_1 s_2\cdots s_{n-3}s_{n-2}\tilde{s}_{n-1}(1-\tilde{s}_n^2).
 \end{align}
 $$
 
@@ -178,9 +179,9 @@ Much as before only the last three terms feature $s_{n-2}$, and as before they d
 
 $$
 \begin{align}
-&(1-s_{n-2}^2)\\
-+&s_{n-2}(1-\tilde{s}_{n-1}^2)\\
-+&s_{n-2}\tilde{s}_{n-1}(1-\tilde{s}_n^2).
+&\;(1-s_{n-2}^2)\\
++&\;s_{n-2}(1-\tilde{s}_{n-1}^2)\\
++&\;s_{n-2}\tilde{s}_{n-1}(1-\tilde{s}_n^2).
 \end{align}
 $$
 
@@ -199,15 +200,15 @@ Let's now see if we can't generalise this argument. Suppose we have already foun
 
 $$
 \begin{align}
-\mathbb{E}(S)=&\frac{1}{2}(1-s_1^2)\\
-+&\frac{1}{2}s_1(1-s_2^2)\\
-+&\ldots\\
-+&\frac{1}{2}s_1 s_2\cdots s_{i-2}(1-s_{i-1}^2)\\
-+&\frac{1}{2}s_1 s_2\cdots s_{i-2}s_{i-1}(1-s_i^2)\\
-+&\frac{1}{2}s_1 s_2\cdots s_{i-2}s_{i-1}s_i(1-\tilde{s}_{i+1}^2)\\
-+&\frac{1}{2}s_1 s_2\cdots s_{i-2}s_{i-1}s_i \tilde{s}_{i+1}(1-\tilde{s}_{i+2}^2)\\
-+&\ldots\\
-+&\frac{1}{2}s_1 s_2\cdots s_{i-2}s_{i-1}s_i \tilde{s}_{i+1}\cdots \tilde{s}_{n-1}(1-\tilde{s}_n^2).
+\mathbb{E}(S)=&\;\frac{1}{2}(1-s_1^2)\\
++&\;\frac{1}{2}s_1(1-s_2^2)\\
++&\;\ldots\\
++&\;\frac{1}{2}s_1 s_2\cdots s_{i-2}(1-s_{i-1}^2)\\
++&\;\frac{1}{2}s_1 s_2\cdots s_{i-2}s_{i-1}(1-s_i^2)\\
++&\;\frac{1}{2}s_1 s_2\cdots s_{i-2}s_{i-1}s_i(1-\tilde{s}_{i+1}^2)\\
++&\;\frac{1}{2}s_1 s_2\cdots s_{i-2}s_{i-1}s_i \tilde{s}_{i+1}(1-\tilde{s}_{i+2}^2)\\
++&\;\ldots\\
++&\;\frac{1}{2}s_1 s_2\cdots s_{i-2}s_{i-1}s_i \tilde{s}_{i+1}\cdots \tilde{s}_{n-1}(1-\tilde{s}_n^2).
 \end{align}
 $$
 
@@ -215,11 +216,11 @@ Now, as before, only the later terms feature $s_i$, so we can focus only on thos
 
 $$
 \begin{align}
-&1-s_i^2\\
-+&s_i(1-\tilde{s}_{i+1}^2)\\
-+&s_i \tilde{s}_{i+1}(1-\tilde{s}_{i+2}^2)\\
-+&\ldots\\
-+&s_i \tilde{s}_{i+1}\cdots \tilde{s}_{n-1}(1-\tilde{s}_n^2).
+&\;1-s_i^2\\
++&\;s_i(1-\tilde{s}_{i+1}^2)\\
++&\;s_i \tilde{s}_{i+1}(1-\tilde{s}_{i+2}^2)\\
++&\;\ldots\\
++&\;s_i \tilde{s}_{i+1}\cdots \tilde{s}_{n-1}(1-\tilde{s}_n^2).
 \end{align}
 $$
 
@@ -227,10 +228,10 @@ This is again of the form $1-x^2+ax$ where $x=s_i$ and
 
 $$
 \begin{align}
-a=&1-\tilde{s}_{i+1}^2\\
-+&\tilde{s}_{i+1}(1-\tilde{s}_{i+2}^2)\\
-+&\ldots\\
-+&\tilde{s}_{i+1}\cdots \tilde{s}_{n-1}(1-\tilde{s}_n^2).
+a=&\;1-\tilde{s}_{i+1}^2\\
++&\;\tilde{s}_{i+1}(1-\tilde{s}_{i+2}^2)\\
++&\;\ldots\\
++&\;\tilde{s}_{i+1}\cdots \tilde{s}_{n-1}(1-\tilde{s}_n^2).
 \end{align}
 $$
 
@@ -238,10 +239,10 @@ Therefore we obtain
 
 $$
 \begin{align}
-\tilde{s}_i=&\frac{1}{2}(1-\tilde{s}_{i+1}^2)\\
-+&\frac{1}{2}\tilde{s}_{i+1}(1-\tilde{s}_{i+2}^2)\\
-+&\ldots\\
-+&\frac{1}{2}\tilde{s}_{i+1}\cdots \tilde{s}_{n-1}(1-\tilde{s}_n^2).
+\tilde{s}_i=&\;\frac{1}{2}(1-\tilde{s}_{i+1}^2)\\
++&\;\frac{1}{2}\tilde{s}_{i+1}(1-\tilde{s}_{i+2}^2)\\
++&\;\ldots\\
++&\;\frac{1}{2}\tilde{s}_{i+1}\cdots \tilde{s}_{n-1}(1-\tilde{s}_n^2).
 \end{align}
 $$
 
@@ -249,9 +250,9 @@ Now finally, since
 
 $$
 \begin{align}
-\tilde{s}_{i+1}=&\frac{1}{2}(1-\tilde{s}_{i+2}^2)\\
-+&\ldots\\
-+&\frac{1}{2}\tilde{s}_{i+2}\cdots \tilde{s}_{n-1}(1-\tilde{s}_n^2).
+\tilde{s}_{i+1}=&\;\frac{1}{2}(1-\tilde{s}_{i+2}^2)\\
++&\;\ldots\\
++&\;\frac{1}{2}\tilde{s}_{i+2}\cdots \tilde{s}_{n-1}(1-\tilde{s}_n^2).
 \end{align}
 $$
 
@@ -259,13 +260,13 @@ we see that
 
 $$
 \begin{align}
-\tilde{s}_i=&\frac{1}{2}(1-\tilde{s}_{i+1}^2)\\
-+&\tilde{s}_{i+1}^2\\
-=&\frac{1}{2}(1+\tilde{s}_{i+1}^2).
+\tilde{s}_i=&\;\frac{1}{2}(1-\tilde{s}_{i+1}^2)\\
++&\;\tilde{s}_{i+1}^2\\
+=&\;\frac{1}{2}(1+\tilde{s}_{i+1}^2).
 \end{align}
 $$
 
-So we see that the optimal thresholds satisfy a reasonably simple first order backwards recursion
+So we see that the optimal thresholds satisfy a reasonably simple first order backwards recursion relation
 
 $$
 \tilde{s}_i=\frac{1}{2}(1+\tilde{s}_{i+1}^2).
@@ -359,92 +360,6 @@ $$
 <!-- Therefore, the recurrence relation is first order, meaning the value of each $\tilde{s}\_{i}$ can  -->
 <!-- be computed directly from a single successive value $\tilde{s}\_{i+1}$. Starting from $\tilde{s}_{n}=0$, this allows -->
 <!-- all of the optimal thresholds to be computed in a backwards recursion. -->
-
-### An alternative way of maximising $\mathbb{E}(S)$
-Although our derivation above allows the thresholds to be computed exactly in a recursive fashion, the formulae do not
-admit an easy interpretation. Is there another way to look at the problem, that allows the values of the optimal
-thresholds to be understood in an intuitive way?
-
-To this end, let $\tau$ be the time at which we sell, that is $\tau = \min\\{i\,|\,P_{i}\geq s_{i}\\}$. Then, by the law of total expectation, 
-we see that for any $i$, we have the following expression for the expected sold price:
-
-$$
-\mathbb{E}(S) = \mathbb{E}(S\,|\,\tau < i)\,\mathbb{P}(\tau < i) + \mathbb{E}(S\,|\,\tau \geq i)\,\mathbb{P}(\tau \geq i).
-$$
-
-Note that $\mathbb{E}(S\\,|\,\tau < i)$, $\mathbb{P}(\tau < i)$ and $\mathbb{P}(\tau \geq i)$ depend only upon $s_{1}, \ldots, s_{i - 1}$, whereas 
-$\mathbb{E}(S\,|\,\tau \geq i)$ depends only upon $s_{i}, \ldots, s_{n}$. Therefore, the optimal choice of $s_{i}$ depends only 
-upon $s_{i + 1}, \ldots, s_{n}$. Indeed, it suffices to choose $s_{i}$ so as to maximise $\mathbb{E}(S\|\tau \geq i)$.
-
-Using the law of total expectation again (and assuming a implicit dependence on $\tau\geq 0$ in terms on the RHS),
-
-$$
-\mathbb{E}(S\,|\,\tau \geq i) = \mathbb{E}(P_i\,|\,P_i\geq s_i)\,\mathbb{P}(P_i\geq s_i) + \mathbb{E}(S\,|\,P_i < s_i)\,\mathbb{P}(P_i < s_i).
-$$
-
-Now, as we have assumed that the price $P_{i}$ is uniformly distributed on $\[0, 1\]$, we have that 
-$\mathbb{E}(P_{i}\|P_{i}\geq s_{i}) = \frac{1}{2}(1+s_{i})$ and $\mathbb{P}(P_i\geq s_i) = 1 - s_{i}$ (this follows
-straight from the definition of the uniform distribution). Substituting this in gives
-
-$$
-\mathbb{E}(S\,|\,\tau \geq i) = \frac{1}{2}(1 - s_i^2) + s_{i}\,\mathbb{E}(S\,|\,P_i < s_i).
-$$
-
-This is a quadratic in $s_{i}$, which is maximised when $s_i = \mathbb{E}(S\,|\,P_i < s_i)$. Write $\tilde{s}_i$ for 
-this optimal threshold value:
-
-$$
-\tilde{s}_i = \mathbb{E}(S\,|\,P_i < \tilde{s}_i)
-$$
-
-where, as noted earlier, the right hand expression depends only upon $$\tilde{s}_{i + 1},\ldots,\tilde{s}_{n}$$, due to the implicit 
-conditional dependence on $\tau\geq i$. 
-
-Let's pause here to think about the meaning of this statement; the implicit
-condition in the expectation is that $\tau\geq i$ (i.e. that we have not sold up to time $i$), and that the current price 
-$P_{i}$ is less than $\tilde{s}_{i}$, meaning that we are not selling now either (by the definition of our strategy).
-This is actually fairly intuitive: as all the prices are independent, the situation at time $i$ of an $n$ period run is 
-equivalent to starting a fresh run at time $i$ of length $n-i$, and we should only sell if the quoted price exceeds
-the expected value of continuing to play on.
-
-Furthermore, it is possible to recover the recursion relation found earlier between $$\tilde{s}_{i}$$ and
- $$\tilde{s}_{i+1}$$, by using one further application of the law of total expectation:
-
-$$
-\begin{align}
-\tilde{s}_{i} &= \mathbb{E}(S\,|\,P_{i}<\tilde{s}_{i}, P_{i+1}\geq\tilde{s}_{i+1})\mathbb{P}(P_{i+1}\geq\tilde{s}_{i+1}) \\[5pt]
-&\quad + \mathbb{E}(S\,|\,P_{i}<\tilde{s}_{i}, P_{i+1}<\tilde{s}_{i+1})\mathbb{P}(P_{i+1}<\tilde{s}_{i+1}) \\[5pt]
-&= \mathbb{E}(P_{i + 1}|P_{i + 1}\geq \tilde{s}_{i + 1})\mathbb{P}(P_{i + 1}\geq \tilde{s}_{i + 1}) + \tilde{s}_{i+1}\mathbb{P}(P_{i + 1} < \tilde{s}_{i + 1})\\
-&= \frac{1}{2}(1 - \tilde{s}_{i + 1}^2) + \tilde{s}_{i + 1}^2\\
-&= \frac{1}{2}(1 + \tilde{s}_{i + 1}^2)
-\end{align}
-$$
-
-where the first term in the second inequality uses the fact that if $P_{i+1}$ exceeds $$\tilde{s}_{i+1}$$, then we are definitely selling
-and the expected price $S$ is equal to the (conditional) expectation of $P_{i+1}$; the second term uses a resubstitution of the
-optimal threshold value $$\tilde{s}_{i+1}$$ in terms of the conditional expectation of $S$, established above; and the third equality
-follows from the uniform distribution of $P_{i+1}$.
-
-<!-- 
-Define $e_{n-j}$ to be the expected return of the strategy
-<p align="center">
-Sell at time $i > j$ if $P_{i}\geq s_{i}$.
-</p>
-
-That is, the expected return, were we to see all but the first $j$ prices. Moreover, writing $\tilde{e}\_{n - j}$ for 
-the expected return of this strategy with the optimal thresholds, we see that $\mathbb{E}(S\|P_{i} < s_{i}) = e_{n - i}$ and 
-this gives the recurrence:
-
-$$
-\tilde{s}_i = \tilde{e}_{n - i}.
-$$
-
-This tells us that at time $n$ we should accept any price; at time $n - 1$ we should accept exactly the expected value 
-of $P_n$; at time $n - 2$ we should settle for the exactly the expected value were we to pass on $P_{n - 2}$; and so 
-on and so forth.
-
--->
-
 
 ### The recursion relation for $\tilde{s}_{i}$
 
