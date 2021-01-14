@@ -474,7 +474,11 @@ Let's have a look at what this function looks like on a graph:
 
 | ![The function $g(p;s_{i})$](/assets/images/g_function_plot.png) |
 |:--:|
-| *The function $g(p;s_{i})$ against $p$* |
+| *The function $g(p;s_{i})$ against $p$ for $s_{i}>\tilde{e}_{n-i}$* |
+
+| ![The function $g(p;s_{i})$](/assets/images/g_function_plot_2.png) |
+|:--:|
+| *The function $g(p;s_{i})$ against $p$ for $s_{i}<\tilde{e}_{n-i}$* |
 
 
 Now it is easy to see that $\tilde{e}\_{n-i}$ is the *unique* choice of $s\_i$ which maximises $g(p;s\_i)$ for every 
