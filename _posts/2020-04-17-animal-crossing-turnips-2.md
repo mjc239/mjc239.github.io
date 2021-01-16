@@ -554,100 +554,23 @@ $$
 \tilde{s}_{i} = \tilde{s}_{i+1} + \int_{\tilde{s}_{i+1}}^{\infty}\bar{F}(p)\mathrm{d}p. \\
 $$
 
-Either by integration by parts, or by noting that differentiating the RHS with respect to $\tilde{s}\_{i+1}$ gives 
-$F(\tilde{s}_{i+1})$, we see that
+Using integration by parts, note that 
 
 $$
-\tilde{e}_{n - i} = \mu + \int_{0}^{\tilde{s}_{i+1}}F(x)dx.
+\int_{0}^{\infty}\bar{F}(p)\mathrm{d}p=\mu
 $$
 
-Now since $\mu = \int\_0^\infty \bar{F}(x)dx$, and of course $F(x) = 1 - \bar{F}(x)$, the RHS is equal to 
-$\tilde{s}\_{i+1} + \int\_{\tilde{s}\_{i+1}}^\infty \bar{F}(x) dx$. That is to say, we obtain a rather nice first order 
-recurrence:
-
-$$
-\tilde{s}_{i} = \tilde{s}_{i+1} + \int_{\tilde{s}_{i+1}}^\infty \bar{F}(x) dx.
-$$
-
-Writing $\phi(t)=\int_{t}^\infty \bar{F}(x) dx$, this can then be expressed as
-
-$$
-\tilde{s}_{i} = \tilde{s}_{i+1} + \phi(\tilde{s}_{i+1}).
-$$
-
-
-<!-- Below is the old version of the arbitrary distribution -->
-
-<!-- ## Quotes with an arbitrary distribution
-
-What about more general distributions? In particular, if the distribution is known for prices $x>0$, 
-what can we infer about the optimal threshold values $\tilde{s}\_{i}$?
-
-Let $f(x),\, x\in [0, \infty)$ be the probability density function of the daily quotes $P\_{i}$, with 
-corresponding cumulative density function $F(x)$. The expected sold price takes the same form as given earlier:
+where $\mu=\mathbb{E}(P)$ is the mean of the quoted prices. This allows the recurrence relation to be written in an
+alternative form, using a finite integral rather than an infinite one:
 
 $$
 \begin{align}
-\mathbb{E}(X) &= \sum_{i=1}^{n}E\left(P_{i}|T_{i}\right)P\left(T_{i}\right) \\
-&= \sum_{i=1}^{n}E\left(P_{i}\;\middle|\; S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right)P\left(S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right) \\
-&= g(s_{i})
+\tilde{s}_{i} &= \tilde{s}_{i+1} + \int_{0}^{\infty}\bar{F}(p)\mathrm{d}p - \int_{0}^{\tilde{s}_{i+1}}\bar{F}(p)\mathrm{d}p \\
+&= \mu + \int_{0}^{\tilde{s}_{i+1}}\left(1 - \bar{F}(p)\right)\mathrm{d}p \\
+&= \mu + \int_{0}^{\tilde{s}_{i+1}}F(p)\mathrm{d}p.
 \end{align}
 $$
 
-However, this time we have that
-
-$$
-P\left(S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right) = \left(1 - F(s_{i})\right)\prod_{i<j}F(s_{j})
-$$
-
-and,
-
-$$
-\begin{align}
-E\left(P_{i}\;\middle|\; S_{i}\cap\bigcap_{j<i}S_{j}^{c}\right) &= E\left(P_{i}\;\middle|\;S_{i}\right) \\
-&=\frac{\int_{s_{i}}^{\infty}xf(x)dx}{1-F(s_{i})}.
-\end{align}
-$$
-
-Putting this together again:
-
-$$
-\mathbb{E}(X) = \sum_{i=1}^{n}\left[\int_{s_{i}}^{\infty}xf(x)dx\right]\prod_{i<j}F(s_{j}).
-$$
-
-So we have an expression for the expected price in terms of the fixed distribution functions $f, F$ and
-the threshold values $\{s\_{i}\}$. To maximise the expected price, we do as we did before and find the
-stationary point of the expectation. The steps follow the same logic as for the uniform case, and give a set
- of equations for the optimal threshold values $\tilde{s}\_{k}$.
-
-$$
-\begin{align}
-\tilde{s}_{k} &= \tilde{s}_{k+1}F(\tilde{s}_{k+1}) + \int_{\tilde{s}_{k+1}}^{\infty}xf(x)dx \\
-&= \tilde{s}_{k+1}F(\tilde{s}_{k+1}) + \mathbb{E}(P_{0}) - \int_{0}^{\tilde{s}_{k+1}}xf(x)dx
-\end{align}
-$$
-
-In this formula, $P\_{0}$ has pdf $f(x)$, and this step is only done to avoid the computation of repeated infinite
-integrals. 
-
-By integration by parts (or simply differentiating the right hand side with respect to $\tilde{s}\_{k + 1}$) we obtain 
-the following equivalent recurrence:
-
-$$
-\begin{align}
-\tilde{s}_{k} &= \mathbb{E}(X) + \int_{0}^{\tilde{s}_{k+1}} F(x)dx.
-\end{align}
-$$
-
-In the case that the $P\_{i}$ are non-negative, writing $\bar{F}(x) = 1 - F(x)$, we have
-
-$$
-\begin{align}
-\tilde{s}_{k} &= \tilde{s}_{k+1} + \int_{\tilde{s}_{k+1}}^{\infty}\bar{F}(x)dx.
-\end{align}
-$$
--->
- 
 ### A note on our assumptions: existence of expectations
 
 We have implicitly assumed throughout that all expectations exist. This is not an issue since the original question 
@@ -693,10 +616,14 @@ distribution of the $P\_i$ we will always have, for any $i$, that
 $$
 \mathbb{E}(S) = \mathbb{E}(S|\tau < i)\mathbb{P}(\tau < i) + \mathbb{E}(S|\tau \geq i)\mathbb{P}(\tau \geq i).
 $$
+
 As remarked earlier, $\mathbb{E}(S\|\tau < i)$, $\mathbb{P}(\tau < i)$ and $\mathbb{P}(\tau \geq i)$ depend only 
-upon $s\_1,\ldots, s\_{i-1}$, whereas $\mathbb{E}(S\|\tau \geq i)$ depends upon $s\_i, \ldots, s\_n$. In particular, the only term that depends upon the threshold $s_i$ does not depend upon any of the earlier thresholds. Moreover, as the 
+upon $s\_1,\ldots, s\_{i-1}$, whereas $\mathbb{E}(S\|\tau \geq i)$ depends upon $s\_i, \ldots, s\_n$. In particular, the
+ only term that depends upon the threshold $s_i$ does not depend upon any of the earlier thresholds. Moreover, as the 
 conditional expectation of $S$ given that $\tau\geq i$ and any such fixed specification of $P\_1,\ldots, P\_{i-1}$ does 
-not depend upon the specific choice of these prices, we can maximise the expectation by choosing $s_i$ purely in terms of the later thresholds. That is to say, we can happily restrict our attention to those strategies with a fixed threshold for each day not depending upon.
+not depend upon the specific choice of these prices, we can maximise the expectation by choosing $s_i$ purely in terms 
+of the later thresholds. That is to say, we can happily restrict our attention to those strategies with a fixed 
+threshold for each day, not depending upon previous days.
 
 ## Outstanding questions
 
