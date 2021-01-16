@@ -645,6 +645,8 @@ In the next post we hope to address both of these questions.
 
 <!-- Add outstanding questions -->
 
+![Eureka!](/assets/images/eureka.jpg)
+
 ## Footnotes
 
 <a name="post2footnote1">1</a> This author doesn't know to what degree people know their models to be correct. It's my 
