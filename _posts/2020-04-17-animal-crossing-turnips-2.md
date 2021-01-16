@@ -503,6 +503,25 @@ $$
 \tilde{s_i}=\tilde{e}_{n-i}.
 $$
 
+<div class="notice--info" markdown="1">
+__Note__: The values of the optimal thresholds are only unique under the assumption that the values of the future expectations
+$e_{n-i}$ occur in regions of the real line where the pdf $f_{P}$ is supported. This will be the case for all of the 
+distributions we are considering, and is the case for any distribution where the support of $f_{P}$ is a connected interval 
+(e.g. uniform, exponential, normal). To illustrate non-uniqueness where the support of $f_{P}$ doesn't satisfy this
+criterion, consider the distribution:
+
+$$
+\hat{f}_{P}(p) = \left\{\begin{matrix}
+\frac{3}{2} & \text{for } 0\leq p\leq \frac{1}{3},\\ 
+\frac{3}{2} & \text{for } \frac{2}{3}\leq p\leq 1, \\
+0 & \text{otherwise.}
+\end{matrix}\right.
+$$
+
+On the penultimate day, we should clearly take the quoted price if it exceeds the expected price of $\frac{1}{2}$; however,
+the threshold can take any value in the interval $\left[\frac{1}{3}, \frac{2}{3}\right]$.
+</div>
+
 All that remains is to give a first order recurrence for these optimal thresholds.
 
 #### Arbitrary (non-negative) turnips: a recurrence
