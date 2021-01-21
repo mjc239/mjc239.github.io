@@ -355,35 +355,43 @@ Now, consider varying $s_{i}$ in order to maximise this expression for the expec
 fixed. Due to this observation, the optimal choice of $s_{i}$ depends only upon $s_{i + 1}, \ldots, s_{n}$. Indeed, it suffices to choose 
 $s_{i}$ so as to maximise $\mathbb{E}(S\|\tau \geq i)$.
 
-Using the law of total expectation again (and assuming a implicit dependence on $\tau\geq i$ in terms on the RHS), we
-can expand the term we are looking to maximise:
+Using the law of total expectation again, this time conditioning on the value of $P_{i}$, 
+we can expand the term we are looking to maximise:
 
 $$
-\mathbb{E}(S\,|\,\tau \geq i) = \mathbb{E}(P_i\,|\,P_i\geq s_i)\,\mathbb{P}(P_i\geq s_i) + \mathbb{E}(S\,|\,P_i < s_i)\,\mathbb{P}(P_i < s_i).
+\begin{align}
+\mathbb{E}(S\,|\,\tau\geq i) =& \;\mathbb{E}(S\,|\,P_i\geq s_i,\, \tau\geq i)\,\mathbb{P}(P_i\geq s_i\,|\,\tau\geq i) \\
+&+ \mathbb{E}(S\,|\,P_i < s_i,\, \tau\geq i)\,\mathbb{P}(P_i < s_i\,|\,\tau\geq i) \\[10pt]
+=& \;\mathbb{E}(P_i\,|\,P_i\geq s_i,\, \tau\geq i)\,\mathbb{P}(P_i\geq s_i) \\
+&+ \mathbb{E}(S\,|\,P_i < s_i,\, \tau\geq i)\,\mathbb{P}(P_i < s_i).
+\end{align}
 $$
 
 As we have assumed that the price $P_{i}$ is uniformly distributed on $\[0, 1\]$, we have that 
-$\mathbb{E}(P_{i}\|P_{i}\geq s_{i}) = \frac{1}{2}(1+s_{i})$ and $\mathbb{P}(P_i\geq s_i) = 1 - s_{i}$ (this follows
-straight from the definition of the uniform distribution). Substituting this in gives
+$\mathbb{E}(P_{i}\|P_{i}\geq s_{i}\,|\,\tau\geq i) = \frac{1}{2}(1+s_{i})$ and $\mathbb{P}(P_i\geq s_i) = 1 - s_{i}$ 
+(this follows straight from the definition of the uniform distribution). Substituting this in gives
 
 $$
-\mathbb{E}(S\,|\,\tau \geq i) = \frac{1}{2}(1 - s_i^2) + s_{i}\,\mathbb{E}(S\,|\,P_i < s_i).
+\mathbb{E}(S\,|\,\tau \geq i) = \frac{1}{2}(1 - s_i^2) + s_{i}\,\mathbb{E}(S\,|\,P_i < s_i,\,\tau\geq i).
 $$
 
-This is a quadratic in $s_{i}$, which is maximised when $s_i = \mathbb{E}(S\,|\,P_i < s_i)$. Write $\tilde{s}_i$ for 
-this optimal threshold value:
+This is a quadratic in $s_{i}$, which is maximised when $s_i = \mathbb{E}(S\,|\,P_i < s_i,\,\tau\geq i)$. 
+Write $\tilde{s}_i$ for this optimal threshold value:
 
 $$
-\tilde{s}_i = \mathbb{E}(S\,|\,P_i < \tilde{s}_i)
+\begin{align}
+\tilde{s}_i &= \mathbb{E}(S\,|\,P_i < \tilde{s}_i,\,\tau\geq i) \\[5pt]
+&= \mathbb{E}(S\,|\,\tau\geq i+1)
+\end{align}
 $$
 
-where, as noted earlier, the right hand expression depends only upon $$\tilde{s}_{i + 1},\ldots,\tilde{s}_{n}$$, due to the implicit 
-conditional dependence on $\tau\geq i$. 
+where the second line follows by the definition of our strategy - if the price at time $i$ is less than the threshold,
+then we play on until the next time. As noted earlier, the right hand expression depends only upon 
+$$\tilde{s}_{i + 1},\ldots,\tilde{s}_{n}$$, due to the dependence on $\tau\geq i+1$. 
 
-Let's pause here to think about the meaning of this statement; the implicit
-condition in the expectation is that $\tau\geq i$ (i.e. that we have not sold up to time $i$), and that the current price 
-$P_{i}$ is less than $$\tilde{s}_{i}$$, meaning that we are not selling now either (by the definition of our strategy and the
-thresholds). This is actually fairly intuitive: as all the prices are independent, the situation at time $i$ of an $n$ period run is 
+Let's pause here to think about the meaning of this statement; the threshold at time $i$ is equal to the expected sale
+ price given we turn down the current price and play on. This is actually fairly intuitive: as all the prices are 
+ independent, the situation at time $i$ of an $n$ period run is 
 equivalent to starting a fresh run at time $i$ of length $n-i$, and we should only sell if the quoted price exceeds
 the expected value of continuing to play on. Defining $\tilde{e}_{n}$ to be the expected value of following the optimal
 strategy when played over $n$ days, this result can be simply expressed as
@@ -403,18 +411,20 @@ Furthermore, it is possible to recover the recursion relation found earlier betw
 
 $$
 \begin{align}
-\tilde{s}_{i} &= \mathbb{E}(S\,|\,P_{i}<\tilde{s}_{i}, P_{i+1}\geq\tilde{s}_{i+1})\mathbb{P}(P_{i+1}\geq\tilde{s}_{i+1}) \\[5pt]
-&\quad + \mathbb{E}(S\,|\,P_{i}<\tilde{s}_{i}, P_{i+1}<\tilde{s}_{i+1})\mathbb{P}(P_{i+1}<\tilde{s}_{i+1}) \\[5pt]
-&= \mathbb{E}(P_{i + 1}|P_{i + 1}\geq \tilde{s}_{i + 1})\mathbb{P}(P_{i + 1}\geq \tilde{s}_{i + 1}) + \tilde{s}_{i+1}\mathbb{P}(P_{i + 1} < \tilde{s}_{i + 1})\\
-&= \frac{1}{2}(1 - \tilde{s}_{i + 1}^2) + \tilde{s}_{i + 1}^2\\
+\tilde{s}_{i} &= \;\mathbb{E}(S\,|\,\tau\geq i+1, P_{i+1}\geq\tilde{s}_{i+1})\mathbb{P}(P_{i+1}\geq\tilde{s}_{i+1}) \\[5pt]
+&\quad + \mathbb{E}(S\,|\,\tau\geq i+1, P_{i+1}<\tilde{s}_{i+1})\mathbb{P}(P_{i+1}<\tilde{s}_{i+1}) \\[5pt]
+&= \mathbb{E}(P_{i+1}\,|\,P_{i+1}\geq\tilde{s}_{i+1})\mathbb{P}(P_{i+1}\geq\tilde{s}_{i+1}) \\[5pt]
+&\quad + \mathbb{E}(S\,|\,\tau\geq i+2)\mathbb{P}(P_{i + 1} < \tilde{s}_{i + 1}) \\
+&= \frac{1}{2}(1 - \tilde{s}_{i + 1}^2) + \tilde{s}_{i + 1}\cdot\tilde{s}_{i+1}\\
 &= \frac{1}{2}(1 + \tilde{s}_{i + 1}^2).
 \end{align}
 $$
 
 Here, the first term in the second equality uses the fact that if $P_{i+1}$ exceeds $$\tilde{s}_{i+1}$$, then we are definitely selling
-and the expected price $S$ is equal to the (conditional) expectation of $P_{i+1}$; the second term uses a resubstitution of the
-optimal threshold value $$\tilde{s}_{i+1}$$ in terms of the conditional expectation of $S$, established above; and the third equality
-follows from the uniform distribution of $P_{i+1}$.
+at time $i+1$ and the expected price $S$ is equal to the (conditional) expectation of $P_{i+1}$; the second term uses the definition of
+ the strategy at time $i+1$; and the third equality comes from a resubstitution of the
+optimal threshold value $$\tilde{s}_{i+1}$$ in terms of the conditional expectation of $S$, established above, as well 
+as the uniform distribution of $P_{i+1}$.
 
 <!-- 
 Define $e_{n-j}$ to be the expected return of the strategy
