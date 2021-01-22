@@ -362,30 +362,27 @@ $$
 \begin{align}
 \mathbb{E}(S\,|\,\tau\geq i) =& \;\mathbb{E}(S\,|\,P_i\geq s_i,\, \tau\geq i)\,\mathbb{P}(P_i\geq s_i\,|\,\tau\geq i) \\
 &+ \mathbb{E}(S\,|\,P_i < s_i,\, \tau\geq i)\,\mathbb{P}(P_i < s_i\,|\,\tau\geq i) \\[10pt]
-=& \;\mathbb{E}(P_i\,|\,P_i\geq s_i,\, \tau\geq i)\,\mathbb{P}(P_i\geq s_i) \\
-&+ \mathbb{E}(S\,|\,P_i < s_i,\, \tau\geq i)\,\mathbb{P}(P_i < s_i).
+=& \;\mathbb{E}(P_i\,|\,P_i\geq s_i)\,\mathbb{P}(P_i\geq s_i) \\
+&+ \mathbb{E}(S\,|\,\tau\geq i+1)\,\mathbb{P}(P_i < s_i).
 \end{align}
 $$
 
 As we have assumed that the price $P_{i}$ is uniformly distributed on $\[0, 1\]$, we have that 
-$\mathbb{E}(P_{i}\|P_{i}\geq s_{i}\,|\,\tau\geq i) = \frac{1}{2}(1+s_{i})$ and $\mathbb{P}(P_i\geq s_i) = 1 - s_{i}$ 
+$\mathbb{E}(P_{i}\|P_{i}\geq s_{i}) = \frac{1}{2}(1+s_{i})$ and $\mathbb{P}(P_i\geq s_i) = 1 - s_{i}$ 
 (this follows straight from the definition of the uniform distribution). Substituting this in gives
 
 $$
-\mathbb{E}(S\,|\,\tau \geq i) = \frac{1}{2}(1 - s_i^2) + s_{i}\,\mathbb{E}(S\,|\,P_i < s_i,\,\tau\geq i).
+\mathbb{E}(S\,|\,\tau \geq i) = \frac{1}{2}(1 - s_i^2) + s_{i}\,\mathbb{E}(S\,|\,\tau\geq i+1).
 $$
 
-This is a quadratic in $s_{i}$, which is maximised when $s_i = \mathbb{E}(S\,|\,P_i < s_i,\,\tau\geq i)$. 
+This is a quadratic in $s_{i}$, which is maximised when $s_i = \mathbb{E}(S\,|\,\tau\geq i+1)$. 
 Write $\tilde{s}_i$ for this optimal threshold value:
 
 $$
-\begin{align}
-\tilde{s}_i &= \mathbb{E}(S\,|\,P_i < \tilde{s}_i,\,\tau\geq i) \\[5pt]
-&= \mathbb{E}(S\,|\,\tau\geq i+1)
-\end{align}
+\tilde{s}_i = \mathbb{E}(S\,|\,\tau\geq i+1)
 $$
 
-where the second line follows by the definition of our strategy - if the price at time $i$ is less than the threshold,
+where the second line follows by the definition of our strategy -- if the price at time $i$ is less than the threshold,
 then we play on until the next time. As noted earlier, the right hand expression depends only upon 
 $$\tilde{s}_{i + 1},\ldots,\tilde{s}_{n}$$, due to the dependence on $\tau\geq i+1$. 
 
