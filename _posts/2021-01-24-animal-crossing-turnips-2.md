@@ -634,7 +634,7 @@ threshold for each day, not depending upon previous days.
 
 ## Outstanding questions
 
-Now that we've shown that the optimal thresholds are indeed the 'play on' expectations, and found a rather simply 
+Now that we've shown that the optimal thresholds are indeed the 'play on' expectations, and found a rather simple 
 looking (albeit non-linear) first order recurrence governing these, a few questions come to mind.
 
 ### Other test cases
