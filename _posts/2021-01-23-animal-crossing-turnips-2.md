@@ -1,6 +1,6 @@
 ---
 title: "Animal Crossing Turnip Market -- When to sell?"
-excerpt: "Post 2 - Asymptotics and arbitrary distributions"
+excerpt: "Post 2 -- Asymptotics and arbitrary distributions"
 header:
     image: assets/images/turniplab.jpg
 toc: true
@@ -385,7 +385,7 @@ $$
 \end{align}
 $$
 
-where the second line follows by the definition of our strategy - if the price at time $i$ is less than the threshold,
+where the second line follows by the definition of our strategy -- if the price at time $i$ is less than the threshold,
 then we play on until the next time. As noted earlier, the right hand expression depends only upon 
 $$\tilde{s}_{i + 1},\ldots,\tilde{s}_{n}$$, due to the dependence on $\tau\geq i+1$. 
 
@@ -426,31 +426,11 @@ at time $i+1$ and the expected price $S$ is equal to the (conditional) expectati
 optimal threshold value $$\tilde{s}_{i+1}$$ in terms of the conditional expectation of $S$, established above, as well 
 as the uniform distribution of $P_{i+1}$.
 
-<!-- 
-Define $e_{n-j}$ to be the expected return of the strategy
-<p align="center">
-Sell at time $i > j$ if $P_{i}\geq s_{i}$.
-</p>
-
-That is, the expected return, were we to see all but the first $j$ prices. Moreover, writing $\tilde{e}\_{n - j}$ for 
-the expected return of this strategy with the optimal thresholds, we see that $\mathbb{E}(S\|P_{i} < s_{i}) = e_{n - i}$ and 
-this gives the recurrence:
-
-$$
-\tilde{s}_i = \tilde{e}_{n - i}.
-$$
-
-This tells us that at time $n$ we should accept any price; at time $n - 1$ we should accept exactly the expected value 
-of $P_n$; at time $n - 2$ we should settle for the exactly the expected value were we to pass on $P_{n - 2}$; and so 
-on and so forth.
-
--->
-
 ### Non-negative Turnips
 
 Clearly there is not a great deal to tweak to prove a similar result for a general distribution.
 
-Suppose now that $P\_1, \ldots, P\_n$ are iid, but with an arbitrary distribution (with pdf $f_{P}$), and that we follow a strategy of the same form. 
+Suppose now that $P\_1, \ldots, P\_n$ are iid, but with an arbitrary continuous distribution (with pdf $f_{P}$), and that we follow a strategy of the same form. 
 Then the argument above still tells us that the optimal choice of $s\_i$ depends only upon $s\_{i + 1}, \ldots, s\_n$. In particular we must choose 
 $s\_{i}$ so as to maximise $\mathbb{E}(S\|\tau \geq i)$. As before we can write
 
@@ -536,9 +516,6 @@ All that remains is to give a first order recurrence for these optimal threshold
 
 #### Arbitrary (non-negative) turnips: a recurrence
 
-For algebraic simplicity we consider the case that the random variables are non-negative. It is reasonable
-to assume that we will not be paying Timmy and Tommy for the pleasure of taking our turnips! 
-
 The derivation of the recursion relation in the uniform case in a [previous section](#an-instructive-example-revisited-uniformly-distributed-quotes)
 was started in a generic manner, meaning we can start from the following relation, which holds for any price distribution:
 
@@ -565,9 +542,7 @@ $$
 Thus, to see the behaviour of the recursion relation in the general case, it remains to better understand the function 
 $\phi(\tilde{s}_{i+1})$.
 
-#### The continuous case
-
-In the case that the $P\_i$ are continuously distributed, we have
+For continuously distributed $P\_i$, we have
 
 $$
 \begin{align}
@@ -576,21 +551,24 @@ $$
 \end{align}
 $$
 
-where the second line follows by using integration by parts. We note that this does not 
-require that the random variables are non-negative. Altogether this gives
+where the second line can be shown to be equal by expressing $\bar{F}$ in integral form and switching the orders of
+integration (making use of [Fubini's theorem](https://en.wikipedia.org/wiki/Fubini%27s_theorem)). 
+We note that this does not require that the random variables are non-negative. Altogether this gives
 
 $$
 \tilde{s}_{i} = \tilde{s}_{i+1} + \int_{\tilde{s}_{i+1}}^{\infty}\bar{F}(p)\mathrm{d}p. \\
 $$
 
-Using integration by parts, note that 
+This is as far as we can get in simplifying the recursion relation in the general case. However, there is another form
+we can write this in when assuming that the pdf $f_{P}(p)$ is only supported for $p\geq 0$, a reasonable assumption given
+that $P$ represents a price. Using integration by parts, note that 
 
 $$
 \int_{0}^{\infty}\bar{F}(p)\mathrm{d}p=\mu
 $$
 
-where $\mu=\mathbb{E}(P)$ is the mean of the quoted prices. This allows the recurrence relation to be written in an
-alternative form, using a finite integral rather than an infinite one:
+where $\mu=\mathbb{E}(P)$ is the mean of the quoted prices. This allows the recurrence relation to be written 
+using a finite integral rather than an infinite one:
 
 $$
 \begin{align}
@@ -608,24 +586,24 @@ expectations exist.
 
 #### Discrete random variables
 
-We have also assumed throughout that the random variables are continuous. From here on we will consider only the case 
-that the $P\_i$ are continuous. All we will say on this subject is that a similar result will still hold relating the 
-optimal thresholds to the 'play on' expectations. Indeed, such a result can be obtained simply by replacing integrals 
-with sums in the proof given earlier. The key difference of course is that these expectations may not be in the support 
-of the pmf, but this is not a problem since there is a natural ambiguity in the choice of thresholds when working with 
-such random variables.
+We have also assumed throughout that the random variables $P_{i}$ are continuously distributed. In the case that they are
+discretely distributed instead, we still have the formula for the recursion function $\phi$:
 
-We note that when we later come back to trying to make some headway with this recurrence in general we largely treat the 
-function $\phi(t)$ as an abstract function, but we do assume that it can be expressed as in the continuous case, we have 
-not given any real thought to the discrete case.
+$$
+\phi(t) =  (\mathbb{E}(P|P\geq t) - t)\bar{F}(t)
+$$
 
-<!-- Say something about the non-negativity and continuity assumptions -->
-
+and from here on, similar results for the threshold recursion relation can be shown using summations instead of integrals, 
+and the [pmf](https://en.wikipedia.org/wiki/Probability_mass_function) rather than the pdf for the random variable $P$. 
+As mentioned in an earlier note, the threshold will no longer be unique in this case, but there is a natural choice of 
+unique threshold by restricting possible thresholds to values where the pmf is non-zero (i.e. prices which can actually 
+be realised). As the specific examples of distributions for $P$ that we will be considering are all continuous, we will 
+not give the discrete case any further attention.
 
 ## Carpe rāpa!: optimality and sticking to your guns
 
-It is high time we address one small technical question: must the optimal strategy actually be of the form we have been considering? 
-Recall that we have thus for only considered strategies of the form:
+It is high time we address one small technical question: must the optimal strategy actually be of the form we have 
+been considering? Recall that we have thus for only considered strategies of the form:
 
 <p align="center">
 Sell at time $i$ if $P_{i}\geq s_{i}$
@@ -671,8 +649,6 @@ On top of this, it would be great to be able to say something about the solution
 ## Next time: Asymptotic Swede
 
 In the next post we hope to address both of these questions.
-
-<!-- Add outstanding questions -->
 
 ![Eureka!](/assets/images/eureka.jpg)
 
