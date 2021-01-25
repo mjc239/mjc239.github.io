@@ -429,7 +429,7 @@ $$
 Here, the first term in the second equality uses the fact that if $P_{i+1}$ exceeds $\tilde{s}\_{i+1}$, then we are definitely selling
 at time $i+1$ and the expected price $S$ is equal to the (conditional) expectation of $P_{i+1}$; the second term uses the definition of
  the strategy at time $i+1$; and the third equality comes from a resubstitution of the
-optimal threshold value $tilde{s}\_{i+1}$ in terms of the conditional expectation of $S$, established above, as well 
+optimal threshold value $\tilde{s}\_{i+1}$ in terms of the conditional expectation of $S$, established above, as well 
 as the uniform distribution of $P_{i+1}$.
 
 ### Non-negative Turnips
