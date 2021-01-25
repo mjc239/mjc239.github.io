@@ -393,7 +393,7 @@ $$
 
 where the second line follows by the definition of our strategy -- if the price at time $i$ is less than the threshold,
 then we play on until the next time. As noted earlier, the right hand expression depends only upon 
-$$\tilde{s}\_{i + 1},\ldots,\tilde{s}\_{n}$$, due to the dependence on $\tau\geq i+1$. 
+$\tilde{s}\_{i + 1},\ldots,\tilde{s}\_{n}$, due to the dependence on $\tau\geq i+1$. 
 
 Let's pause here to think about the meaning of this statement; the threshold at time $i$ is equal to the expected sale
  price given we turn down the current price and play on. This is actually fairly intuitive: as all the prices are 
@@ -411,8 +411,8 @@ accept exactly the expected value of $P\_n$; at time $n - 2$ we should settle fo
 strategy were we to pass on $P\_{n - 2}$ and play on for the final two days; and so on and so forth. Put simply, we 
 should accept exactly that price that we would achieve in expectation were we to pass on today's price and play on.
 
-Furthermore, it is possible to recover the recursion relation found earlier between $$\tilde{s}\_{i}$$ and
- $$\tilde{s}\_{i+1}$$, by using one further application of the law of total expectation, this time conditioning on the
+Furthermore, it is possible to recover the recursion relation found earlier between $\tilde{s}\_{i}$ and
+ $\tilde{s}\_{i+1}$, by using one further application of the law of total expectation, this time conditioning on the
  event $\\{P_{i+1}\geq\tilde{s}_{i+1}\\}$:
 
 $$
@@ -426,10 +426,10 @@ $$
 \end{align}
 $$
 
-Here, the first term in the second equality uses the fact that if $P_{i+1}$ exceeds $$\tilde{s}\_{i+1}$$, then we are definitely selling
+Here, the first term in the second equality uses the fact that if $P_{i+1}$ exceeds $\tilde{s}\_{i+1}$, then we are definitely selling
 at time $i+1$ and the expected price $S$ is equal to the (conditional) expectation of $P_{i+1}$; the second term uses the definition of
  the strategy at time $i+1$; and the third equality comes from a resubstitution of the
-optimal threshold value $$\tilde{s}\_{i+1}$$ in terms of the conditional expectation of $S$, established above, as well 
+optimal threshold value $$tilde{s}\_{i+1}$ in terms of the conditional expectation of $S$, established above, as well 
 as the uniform distribution of $P_{i+1}$.
 
 ### Non-negative Turnips
