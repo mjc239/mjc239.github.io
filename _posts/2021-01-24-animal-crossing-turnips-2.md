@@ -374,7 +374,7 @@ $$
 $$
 
 As we have assumed that the price $P_{i}$ is uniformly distributed on $\[0, 1\]$, we have that 
-$\mathbb{E}(P_{i}\|P_{i}\geq s_{i}\,|\,\tau\geq i) = \frac{1}{2}(1+s_{i})$ and $\mathbb{P}(P_i\geq s_i) = 1 - s_{i}$ 
+$\mathbb{E}(P_{i}\,|\,P_{i}\geq s_{i},\,\tau\geq i) = \frac{1}{2}(1+s_{i})$ and $\mathbb{P}(P_i\geq s_i) = 1 - s_{i}$ 
 (this follows straight from the definition of the uniform distribution). Substituting this in gives
 
 $$
