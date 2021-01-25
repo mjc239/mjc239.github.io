@@ -117,7 +117,7 @@ To kick things off, starting from
 $\tilde{s}_i = \frac{1}{2}(1 +\tilde{s}_{i + 1}^2)\quad$ for $1\leq i< n,$
 </p>
 
-with 'initial' value $$\tilde{s}_n = 0$$, we perform the substitution $$t_i = \frac{1}{2}(1 - \tilde{s}_{n-i})$$ 
+with 'initial' value $\tilde{s}_n = 0$, we perform the substitution $t_i = \frac{1}{2}(1 - \tilde{s}_{n-i})$ 
 to arrive at the logistic map with initial value $1/2$ (as noted last time). That is,
 
 <p align="center">
