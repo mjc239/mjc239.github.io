@@ -258,7 +258,10 @@ $$
 Expressing in terms of an additive error this gives
 
 $$
-\tilde{s}_{i} = 1 - \frac{2}{n - i + 1} + \frac{2\log{(n - i + 1)}}{(n - i + 1)^2}+ O\left(\frac{1}{(n - i + 1)^2}\right).
+\begin{align}
+\tilde{s}_{i} =&\; 1 - \frac{2}{n - i + 1} + \frac{2\log{(n - i + 1)}}{(n - i + 1)^2} \\
+&+ O\left(\frac{1}{(n - i + 1)^2}\right).
+\end{align}
 $$
 
 #### The Euler-Mascharoni constant
@@ -274,7 +277,7 @@ will be a fixed constant cropping up, but it will not be the Euler-Mascharoni co
 Writing $\varepsilon_i = r_i - (i + 2) - H_i$, we have
 
 $$
-r_{i+1} - (i+3) - H_{i+1} = r_{i} -(i+2) - H_i -\left(\frac{1}{i+1}-\frac{1}{r_i - 1}\right)
+\varepsilon_{i+1} = \varepsilon_{i} -\left(\frac{1}{i+1}-\frac{1}{r_i - 1}\right)
 $$
 
 or, in other words,
@@ -303,7 +306,10 @@ $$
 and, rewriting as an additive error:
 
 $$
-\tilde{s}_{i} = 1 - \frac{2}{n - i + 1} + \frac{2\log{(n - i + 1)}}{(n - i + 1)^2} - \frac{2\tau}{(n - i + 1)^2} + o\left(\frac{1}{(n - i + 1)^2}\right)
+\begin{align}
+\tilde{s}_{i} =&\; 1 - \frac{2}{n - i + 1} + \frac{2\log{(n - i + 1)}}{(n - i + 1)^2} \\
+&- \frac{2\tau}{(n - i + 1)^2} + o\left(\frac{1}{(n - i + 1)^2}\right)
+\end{align}
 $$
 
 (as $n - i$ goes to infinity). 
@@ -387,7 +393,7 @@ $$
 
 where the second line follows by the definition of our strategy -- if the price at time $i$ is less than the threshold,
 then we play on until the next time. As noted earlier, the right hand expression depends only upon 
-$$\tilde{s}_{i + 1},\ldots,\tilde{s}_{n}$$, due to the dependence on $\tau\geq i+1$. 
+$$\tilde{s}\_{i + 1},\ldots,\tilde{s}\_{n}$$, due to the dependence on $\tau\geq i+1$. 
 
 Let's pause here to think about the meaning of this statement; the threshold at time $i$ is equal to the expected sale
  price given we turn down the current price and play on. This is actually fairly intuitive: as all the prices are 
@@ -405,8 +411,8 @@ accept exactly the expected value of $P\_n$; at time $n - 2$ we should settle fo
 strategy were we to pass on $P\_{n - 2}$ and play on for the final two days; and so on and so forth. Put simply, we 
 should accept exactly that price that we would achieve in expectation were we to pass on today's price and play on.
 
-Furthermore, it is possible to recover the recursion relation found earlier between $$\tilde{s}_{i}$$ and
- $$\tilde{s}_{i+1}$$, by using one further application of the law of total expectation, this time conditioning on the
+Furthermore, it is possible to recover the recursion relation found earlier between $$\tilde{s}\_{i}$$ and
+ $$\tilde{s}\_{i+1}$$, by using one further application of the law of total expectation, this time conditioning on the
  event $\\{P_{i+1}\geq\tilde{s}_{i+1}\\}$:
 
 $$
@@ -420,10 +426,10 @@ $$
 \end{align}
 $$
 
-Here, the first term in the second equality uses the fact that if $P_{i+1}$ exceeds $$\tilde{s}_{i+1}$$, then we are definitely selling
+Here, the first term in the second equality uses the fact that if $P_{i+1}$ exceeds $$\tilde{s}\_{i+1}$$, then we are definitely selling
 at time $i+1$ and the expected price $S$ is equal to the (conditional) expectation of $P_{i+1}$; the second term uses the definition of
  the strategy at time $i+1$; and the third equality comes from a resubstitution of the
-optimal threshold value $$\tilde{s}_{i+1}$$ in terms of the conditional expectation of $S$, established above, as well 
+optimal threshold value $$\tilde{s}\_{i+1}$$ in terms of the conditional expectation of $S$, established above, as well 
 as the uniform distribution of $P_{i+1}$.
 
 ### Non-negative Turnips
@@ -435,7 +441,10 @@ Then the argument above still tells us that the optimal choice of $s\_i$ depends
 $s\_{i}$ so as to maximise $\mathbb{E}(S\|\tau \geq i)$. As before we can write
 
 $$
-\mathbb{E}(S|\tau \geq i) = \mathbb{E}(P_i|P_i\geq s_i)\mathbb{P}(P_i\geq s_i) + \mathbb{E}(S|\tau>i)\mathbb{P}(P_i < s_i),
+\begin{align}
+\mathbb{E}(S|\tau \geq i) =&\; \mathbb{E}(P_i|P_i\geq s_i)\mathbb{P}(P_i\geq s_i) \\[5pt]
+&+ \mathbb{E}(S|\tau>i)\mathbb{P}(P_i < s_i),
+\end{align}
 $$
 
 and in the general case it makes more sense to write these expectations out in full using their integral representations:
@@ -520,7 +529,10 @@ The derivation of the recursion relation in the uniform case in a [previous sect
 was started in a generic manner, meaning we can start from the following relation, which holds for any price distribution:
 
 $$
-\tilde{s}_{i} = \mathbb{E}(P_{i + 1}|P_{i + 1}\geq \tilde{s}_{i + 1})\mathbb{P}(P_{i + 1}\geq \tilde{s}_{i + 1}) + \tilde{s}_{i+1}\mathbb{P}(P_{i + 1} < \tilde{s}_{i + 1}).
+\begin{align}
+\tilde{s}_{i} =&\; \mathbb{E}(P_{i + 1}|P_{i + 1}\geq \tilde{s}_{i + 1})\mathbb{P}(P_{i + 1}\geq \tilde{s}_{i + 1}) \\[5pt]
+&+ \tilde{s}_{i+1}\mathbb{P}(P_{i + 1} < \tilde{s}_{i + 1}).
+\end{align}
 $$
 
 Let $F(p)$ be the [cdf](https://en.wikipedia.org/wiki/Cumulative_distribution_function) of each price (with associated pdf $f_{p}(p)$), and define $\bar{F}(p)=1-F(p)$.
@@ -528,7 +540,7 @@ Then, in a similar way to the uniform case, we can write the above expression as
 
 $$
 \begin{align}
-\tilde{s}_{i} &= \mathbb{E}(P_{i+1}|P_{i+1}\geq\tilde{s}_{i+1})\bar{F}(\tilde{s}_{i+1}) + \tilde{s}_{i+1}F(\tilde{s}_{i+1}) \\
+\tilde{s}_{i} &= \mathbb{E}(P_{i+1}|P_{i+1}\geq\tilde{s}_{i+1})\bar{F}(\tilde{s}_{i+1}) + \tilde{s}_{i+1}F(\tilde{s}_{i+1}) \\[5pt]
 &= \tilde{s}_{i+1} + \phi(\tilde{s}_{i+1})
 \end{align}
 $$
