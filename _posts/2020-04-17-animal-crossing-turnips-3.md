@@ -3,6 +3,7 @@ title: "Animal Crossing Turnip Market -- When to sell?"
 excerpt: "Post 3 - Exponentially distributed prices and further asymptotics"
 header:
     image: assets/images/moneybags.jpg
+    teaser: assets/images/moneybags.jpg
 toc: true
 published: false
 toc_label: "Contents:"

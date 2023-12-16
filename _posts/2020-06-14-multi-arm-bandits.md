@@ -2,6 +2,7 @@
 title: "Multi-armed bandits"
 header:
     image: assets/images/casino.jpg
+    teaser: assets/images/casino.jpg
 toc: true
 toc_label: "Contents:"
 classes: wide

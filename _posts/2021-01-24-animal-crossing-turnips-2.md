@@ -3,6 +3,7 @@ title: "Animal Crossing Turnip Market -- When to sell?"
 excerpt: "Post 2 -- Asymptotics and arbitrary distributions"
 header:
     image: assets/images/turniplab.jpg
+    teaser: assets/images/turniplab.jpg
 toc: true
 published: true
 toc_label: "Contents:"

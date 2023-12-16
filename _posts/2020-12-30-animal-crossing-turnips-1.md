@@ -3,6 +3,7 @@ title: "Animal Crossing Turnip Market -- Turnip Mania"
 excerpt: "Post 1 - Uniformly distributed prices"
 header:
     image: assets/images/turniproom.jpeg
+    teaser: assets/images/turniproom.jpeg
 toc: true
 toc_label: "Contents:"
 classes: wide
