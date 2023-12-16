@@ -2,6 +2,7 @@
 layout: single
 title: "About me"
 permalink: /about/
+author_profile: true
 ---
 
 I am a Data Science Manager at [C3 AI](https://c3.ai/), developing data science 
