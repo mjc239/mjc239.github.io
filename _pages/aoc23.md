@@ -9,7 +9,7 @@ classes: wide
 
 My solutions for all of the puzzles in the [Advent of Code 2023](https://adventofcode.com/2023).
 
-📖📖📖 [Day 1](../_posts/2023-12-01-aoc23-day1.md)
+📖🏹📖 [Day 1](../_posts/2023-12-01-aoc23-day1.md)
 
 🟦🟥🟩 [Day 2](../_posts/2023-12-02-aoc23-day2.md)
 
@@ -17,7 +17,7 @@ My solutions for all of the puzzles in the [Advent of Code 2023](https://advento
 
 🪙🎫💰 [Day 4](../_posts/2023-12-04-aoc23-day4.md)
 
-🌱🌱🌱 [Day 5](../_posts/2023-12-05-aoc23-day5.md)
+🌱🚿👨‍🌾 [Day 5](../_posts/2023-12-05-aoc23-day5.md)
 
 🌊🛥️🔴 [Day 6](../_posts/2023-12-06-aoc23-day6.md)
 
