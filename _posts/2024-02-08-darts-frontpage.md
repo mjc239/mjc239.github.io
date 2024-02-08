@@ -1,12 +1,11 @@
 ---
-title: "## The Quadro board - why did it flop?"
+title: "The Quadro board - why did it flop?"
 excerpt: "Using statistics to investigate darts strategies - the introduction"
 header:
     image: assets/images/day25.png
     teaser: assets/images/day25.png
-toc: true
+toc: false
 published: true
-toc_label: "Contents:"
 classes: wide
 tags:
  - darts
