@@ -11,7 +11,7 @@ tags:
  - darts
 ---
 
-The year of 1993 was one of the most eventful and consequential years in the history of the sport of darts. This was the year of the "split in darts", when 16 of the best players in the world (including household names such as Jocky Wilson, Eric Bristow and Phil Taylor) formed the WDC (i.e. the World Darts Council), an organisation to compete against the existing governing body, the British Darts Organisation (BDO). This was in response to complaints the players had about the BDO's rule; it had presided over the ongoing decline in the popularity of the sport over the 1980s and 90s, as well as exhibiting dictatorial behaviour in the treatment of players. Shortly after the split, players in the WDC were banned from participating in any BDO tournaments, at any level.
+The year of 1993 was one of the most eventful and consequential years in the history of the sport of darts. This was the year of the "split in darts"[^1], when 16 of the best players in the world (including household names such as Jocky Wilson, Eric Bristow and Phil Taylor) formed the WDC (i.e. the World Darts Council), an organisation to compete against the existing governing body, the British Darts Organisation (BDO). This was in response to complaints the players had about the BDO's rule; it had presided over the ongoing decline in the popularity of the sport over the 1980s and 90s, as well as exhibiting dictatorial behaviour in the treatment of players. Shortly after the split, players in the WDC were banned from participating in any BDO tournaments, at any level.
 
 The new sporting body started to organise its own tournaments, accessible only to members of the WDC. In order to attract fans over to the new tournaments, new innovations in the game were considered. One of these was the introduction of the Quadro board, first used professionally in the 1993 WDC UK Matchplay tournament.
 
@@ -31,7 +31,7 @@ Whereas the highest score with 3 darts in a normal game could score a maximum of
 
 {% include video id="oom6lF-hGHU" provider="youtube" %}
 
-What an exciting way to liven up the game - higher scores, harder to hit maximums, more variety in strategy... what's not to like? Well, the players turned out not to appreciate the additional burden of all the additional checkout combinations that were possible with the new board. It was used for the next few WDC UK Matchplay tournaments, up until the year 1996, after which it was retired from use in professional tournaments. The manufacturer stopped producing the boards by 2000 ([reference](https://patrickchaplin.com/2019/10/07/the-quadro-240/)). You can still find the boards occasionally on eBay, where they typically sell for a few hundred pounds to collectors of historical darts memorabilia.
+What an exciting way to liven up the game - higher scores, harder to hit maximums, more variety in strategy... what's not to like? Well, the players turned out not to appreciate the additional burden of all the additional checkout combinations that were possible with the new board. It was used for the next few WDC UK Matchplay tournaments, up until the year 1996, after which it was retired from use in professional tournaments. The manufacturer stopped producing the boards by 2000[^2]. You can still find the boards occasionally on eBay, where they typically sell for a few hundred pounds to collectors of historical darts memorabilia.
 
 But how well founded are complaints about the Quadro board? For example, how does optimal strategy on a Quadro board compare to the strategy for a conventional darts board?
 
@@ -61,3 +61,6 @@ There have been a number of interesting papers and analyses produced which aim t
 Dynamic Zero-Sum Game](https://arxiv.org/pdf/2011.11031.pdf), by Haugh & Wang - An extension to the paper by Baird, to a 2-player ZSG (zero-sum game) where the behaviour of a player depends not just on the player's current score, but also on their opponent's score. They are also able to compare strategies of real professional players from the 2019 season.
 
 Of course, all of these papers focus on the standard dart board with only double and triple rings. Over the next few posts, I want to recreate the results of some of these papers, explore the strategies that are identified, and see what they have to say about the Quadro board. With the resurgence of the popularity of professional darts in recent years, amplified by the stunning rise of 16-year old [Luke Littler](https://en.wikipedia.org/wiki/Luke_Littler) at the 2024 PDC World Darts Championship, maybe there is a case to be made that the Quadro board deserves to be brought back?
+
+[^1]: [Split in darts](https://en.wikipedia.org/wiki/Split_in_darts) Wikipedia page
+[^2]: [History of the Quadro board](https://patrickchaplin.com/2019/10/07/the-quadro-240/)
