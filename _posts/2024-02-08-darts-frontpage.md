@@ -2,8 +2,8 @@
 title: "The Quadro board - why did it flop?"
 excerpt: "Using statistics to investigate darts strategies - the introduction"
 header:
-    image: assets/images/day25.png
-    teaser: assets/images/day25.png
+    image: assets/images/darts_figurative.png
+    teaser: assets/images/darts_figurative.png
 toc: false
 published: true
 classes: wide
@@ -23,7 +23,7 @@ The Quadro board was first manufactured by Harrows in 1992, and joins an eclecti
 
 The new Quadro board attempted to liven up the game by adding an additional ring, between the triple ring and the bullseye, which would quadruple the segment score when hit:
 
-| ![Quadro dartboard (:O)](/assets/images/dartboard.png) |
+| ![Quadro dartboard (:O)](/assets/images/quadro.png) |
 |:--:|
 | The Quadro dartboard, with the additional quadruple ring inside the triple ring | 
 
