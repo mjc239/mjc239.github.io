@@ -2,8 +2,8 @@
 title: "The Quadro board - why did it flop?"
 excerpt: "Using statistics to investigate darts strategies - the introduction"
 header:
-    image: assets/images/darts_figurative.png
-    teaser: assets/images/darts_figurative.png
+    image: assets/images/darts_frontpage.jpg
+    teaser: assets/images/darts_frontpage.jpg
 toc: false
 published: true
 classes: wide
