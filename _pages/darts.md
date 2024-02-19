@@ -12,6 +12,7 @@ A collection of posts, using a statistical approach to analyse the game of darts
 - Analysing the Quadro board, a variant of the standard board used briefly in the 90s
 - Constructing tools to help players optimise their game.
 
+![Heatmaps for various sigmas](/assets/images/2024-02-18-dartboard-heatmaps.png)
 
 🎯[Introduction + motivation](../_posts/2024-02-07-darts-frontpage.md) - why did the Quadro board flop?
 
