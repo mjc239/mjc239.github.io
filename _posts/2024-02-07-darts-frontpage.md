@@ -62,5 +62,8 @@ Dynamic Zero-Sum Game](https://arxiv.org/pdf/2011.11031.pdf), by Haugh & Wang - 
 
 Of course, all of these papers focus on the standard dart board with only double and triple rings. Over the next few posts, I want to recreate the results of some of these papers, explore the strategies that are identified, and see what they have to say about the Quadro board. With the resurgence of the popularity of professional darts in recent years, amplified by the stunning rise of 16-year old [Luke Littler](https://en.wikipedia.org/wiki/Luke_Littler) at the 2024 PDC World Darts Championship, maybe there is a case to be made that the Quadro board deserves to be brought back?
 
+### Posts in the series:
+- [How do I throw high scoring darts?](https://mjc239.github.io/maximising-single-dart/)
+
 [^1]: [Split in darts](https://en.wikipedia.org/wiki/Split_in_darts) Wikipedia page
 [^2]: [History of the Quadro board](https://patrickchaplin.com/2019/10/07/the-quadro-240/)
