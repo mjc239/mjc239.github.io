@@ -19,10 +19,10 @@ This is my personal blog.
 
 Here are some of my personal highlights:
 
-🎯[A Data Scientist Plays Darts](../pages/darts.md) - analysing darts using statistics
+🎯[A Data Scientist Plays Darts](https://mjc239.github.io/darts/) - analysing darts using statistics
 
-❄️[Advent of Code 2023](../pages/aoc23.md) - worked solutions and discussions
+❄️[Advent of Code 2023](https://mjc239.github.io/aoc23/) - worked solutions and discussions
 
-🦝[Animal Crossing Stalk Market](../pages/animalcrossing.md) - analysing when to buy turnips
+🦝[Animal Crossing Stalk Market](https://mjc239.github.io/animalcrossing/) - analysing when to buy turnips
 
 

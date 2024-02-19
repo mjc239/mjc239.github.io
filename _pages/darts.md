@@ -13,5 +13,6 @@ A collection of posts, using a statistical approach to analyse the game of darts
 - Constructing tools to help players optimise their game.
 
 
-🎯[Introduction + motivation](../_posts/2024-02-18-maximising-single-dart.md) - why did the Quadro board flop?
+🎯[Introduction + motivation](../_posts/2024-02-07-darts-frontpage.md) - why did the Quadro board flop?
 
+🎯["How do I throw high scoring darts?"](../_posts/2024-02-18-maximising-single-dart.md) - where should I aim on the board, to maximise my score?
