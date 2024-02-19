@@ -16,3 +16,13 @@ completed my PhD in 2018 at Queen Mary University of London in Mathematics,
  {: .text-justify}
  
 This is my personal blog.
+
+Here are some of my personal highlights:
+
+🎯[A Data Scientist Plays Darts](../pages/darts.md) - analysing darts using statistics
+
+❄️[Advent of Code 2023](../pages/aoc23.md) - worked solutions and discussions
+
+🦝[Animal Crossing Stalk Market](../pages/animalcrossing.md) - analysing when to buy turnips
+
+
