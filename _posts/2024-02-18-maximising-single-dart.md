@@ -1,6 +1,6 @@
 ---
 title: "How do I throw high scoring darts?"
-excerpt: "Where should I aim on the board, maximise my score?"
+excerpt: "Where should I aim on the board, to maximise my score?"
 header:
     image: assets/images/darts_frontpage.jpg
     teaser: assets/images/darts_frontpage.jpg
@@ -17,7 +17,7 @@ tags:
 
 This post draws on methods outlined in the paper [A Statistician Plays Darts](https://www.stat.cmu.edu/~ryantibs/papers/darts.pdf), by Ryan J. Tibshirani, Andrew Price and Jonathan Taylor. I will refer to the paper as ASPD for the rest of the post.
 
-Consider a player (Alice) throwing darts at the standard dart board. In a normal game (or leg in a professional match), Alice starts with a score of 501, and each score from a throw of a dart is taken off of the player's total. Therefore, at least in the early stages of the game, she is seeking to maximise the score of each dart. A good player will obviously aim for the highest scoring regions of the board (the triple 20, the bullseye, the triple 19). However, this may not be a good strategy for an amateur player - for example, the triple 20 region is surrounded by low scoring regions (in the 1 and 5 segments). This means that they may be better off aiming at a lower scoring region, which is surrounded by regions of similar score, so as to minimise the risk of hitting these regions due to a less accurate aim.
+Consider a player (Alice) throwing darts at the standard dart board. In a normal game (or leg in a professional match), Alice starts with a total score of 501, and the score from each dart is taken off her total. Therefore, at least in the early stages of the game, she is seeking to maximise the score of each dart. A good player will obviously aim for the highest scoring regions of the board (the triple 20, the bullseye, the triple 19). However, this may not be a good strategy for an amateur player - for example, the triple 20 region is surrounded by low scoring regions (e.g. in the 1 and 5 segments). So Alice may be better off aiming at a lower scoring region, surrounded by regions of similar score, so as to minimise the risk of hitting these regions due to a less accurate aim.
 
 How should we quantify Alice's ability? To start with, let's make the simplifying assumption that when she aims at a particular point on the dartboard $p$, the probability of the dart hitting the board at a specific location $Z$ is given by a 2-D spherical Gaussian distribution:
 
@@ -25,7 +25,7 @@ $$
 Z\sim N(p, \sigma^2 \mathbf{I})
 $$
 
-The parameter $\sigma$ is the standard deviation of the throw, and parameterises the skill level of the player. This is the initial assumption made in ASPD; later, we will follow the lead of ASPD in generalising this to a general covariance matrix $\Sigma$.
+The parameter $\sigma$ is the standard deviation parameter of the throw, and parameterises the skill level of the player. This is the initial assumption made in ASPD; later, we will follow the lead of ASPD in generalising this to a general covariance matrix $\Sigma$.
 
 
 
@@ -93,7 +93,7 @@ We can also visualize the path that the optimal point traces across the face of 
 The following video shows how the heat map of expected score changes as $\sigma$ increases - the frames are normalized so that the brightest colour corresponds to the current largest expected score. This makes the change in the heat map easier to see, and shows how the optimal aiming point moves up towards the bullseye in the limit of $\sigma\rightarrow\infty$.
 
 
-<video width="700" height="700" controls autoplay loop>
+<video style="outline:none; width:100%;" controls autoplay loop>
   <source type="video/mp4" src="/assets/images/2024-02-18-heatmaps.mp4">
 </video>
 
@@ -106,7 +106,7 @@ $$
 \Sigma_{sph} = \sigma^{2}\mathrm{I}
 $$
 
-This has been convenient, as means that the player's skill is represented by the single parameter $\sigma$, making it easier to visualise performance as a function of skill. Of course, it is possible to model the player's throwing distribution using a more general set of throwing distributions, by allowing $\Sigma$ to be any symmetric positive semi-definite matrix. In fact, as pointed out in ASPD, this is likely to be observed in the throwing distributions of real players:
+This has been convenient, as it means that the player's skill is represented by the single parameter $\sigma$, making it easier to visualise performance as a function of skill. Of course, it is possible to model the player's throwing distribution using a more general set of throwing distributions, by allowing $\Sigma$ to be any symmetric positive semi-definite matrix. In fact, as pointed out in ASPD, this is likely to be observed in the throwing distributions of real players:
 
 - There is usually a larger variance in the vertical direction than the horizontal direction, as it is harder to account for the additional affect of gravity on the dart in this direction. So a more representative throwing distribution can be modelled using a diagonal covariance matrix with distinct horizontal and vertical variances:
 
@@ -123,7 +123,7 @@ $$
 - The authors of ASPD also investigate alternative, non-Gaussian models which are able to capture effects such as skewness, not represented in the simplified Gaussian model. However, they find that the added complexity does not provide much additional value over the Gaussian model.
 
 
-- The assumption of a constant throwing distribution may also be a too restrictive assumption. There are ways in which one might expect the parameters of the distribution to change, both in space (e.g. when aiming at different parts of the board, such as a double) and in time (when the player has had a chance to 'warm up').
+- The assumption of a constant throwing distribution may also be too restrictive. There are ways in which one might expect the parameters of the distribution to change, both in space (e.g. when aiming at different parts of the board, such as a double) and in time (when the player has had a chance to 'warm up').
 
 In the case of a general positive-definite symmetric covariance matrix $\Sigma$, we can visualize the heat map and recommended aiming point in the same way as before. For example, here is the heat map for the throwing distribution with non-diagonal covariance given by:
 
