@@ -11,6 +11,8 @@ tags:
  - darts
 ---
 
+{% include mathjax.html %}
+
 ## Analysing the standard dartboard
 
 This post draws on methods outlined in the paper [A Statistician Plays Darts](https://www.stat.cmu.edu/~ryantibs/papers/darts.pdf), by Ryan J. Tibshirani, Andrew Price and Jonathan Taylor. I will refer to the paper as ASPD for the rest of the post.
@@ -91,7 +93,7 @@ We can also visualize the path that the optimal point traces across the face of 
 The following video shows how the heat map of expected score changes as $\sigma$ increases - the frames are normalized so that the brightest colour corresponds to the current largest expected score. This makes the change in the heat map easier to see, and shows how the optimal aiming point moves up towards the bullseye in the limit of $\sigma\rightarrow\infty$.
 
 
-<video width="500" height="500" controls autoplay loop>
+<video width="700" height="700" controls autoplay loop>
   <source type="video/mp4" src="/assets/images/2024-02-18-heatmaps.mp4">
 </video>
 
