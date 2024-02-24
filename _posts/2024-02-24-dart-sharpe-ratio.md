@@ -318,7 +318,7 @@ To explain how to interpret these plots, and describe how they might help when p
 
 - For large $k$ (i.e. when Bob is very skillful), Alice needs to persue a more risky strategy in order to reach checkout at a similar time to Bob. For example, for $k>30$, Alice is recommended to always aim at (or near) the triple $20$; in the analysis focussing on just maximising expected score, Alice is recommended to switch to the triple $19$ when her throwing distribution gets too broad. This shows how the Sharpe ratio approach allows Alice to take into account her opponents skill when determining her strategy.
 
-## Repeating for the Quadro board
+### Repeating for the Quadro board
 
 How does the results of this analysis change when applied to the Quadro board, instead of the standard board? First, it is worth noting that the Central Limit Theorem approximation that allows us to use the Sharpe ratio as a sensible optimisation function is less accurate than for the standard board. This is because the 1-dart probability distribution for score is even more positively skewed, due to the presence of higher number scores from the quadruple ring adding weight to the upper tail:
 
