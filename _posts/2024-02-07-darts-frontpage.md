@@ -64,6 +64,7 @@ Of course, all of these papers focus on the standard dart board with only double
 
 ### Posts in the series:
 - [How do I throw high scoring darts?](https://mjc239.github.io/maximising-single-dart/)
+- [How can I reach checkout before my opponent?](https://mjc239.github.io/dart-sharpe-ratio/)
 
 [^1]: [Split in darts](https://en.wikipedia.org/wiki/Split_in_darts) Wikipedia page
 [^2]: [History of the Quadro board](https://patrickchaplin.com/2019/10/07/the-quadro-240/)
