@@ -124,8 +124,8 @@ For example, we can find the limiting distribution of $\sqrt{S_N}$ by manipulati
 
 $$
 \begin{align}
-\Phi(\alpha)=\lim_{N\rightarrow\infty}\mathbf{P}\left(\frac{S_N - N\mu}{\omega\sqrt{N}}\leq\alpha\right) &= 
-\lim_{N\rightarrow\infty}\mathbf{P}\left(\frac{S_N - N\mu}{\omega\sqrt{N}}\leq \alpha + \frac{\alpha^2\omega}{4\mu\sqrt{N}}\right) \\
+\Phi(\alpha)&=\lim_{N\rightarrow\infty}\mathbf{P}\left(\frac{S_N - N\mu}{\omega\sqrt{N}}\leq\alpha\right) \\
+&=\lim_{N\rightarrow\infty}\mathbf{P}\left(\frac{S_N - N\mu}{\omega\sqrt{N}}\leq \alpha + \frac{\alpha^2\omega}{4\mu\sqrt{N}}\right) \\
 &= \lim_{N\rightarrow\infty}\mathbf{P}\left(S_N\leq N\mu+\alpha\omega\sqrt{N} + \frac{\alpha^2\omega^2}{4\mu}\right) \\
 &= \lim_{N\rightarrow\infty}\mathbf{P}\left(S_N\leq\left(\sqrt{N\mu}+\frac{\alpha\omega}{2\sqrt{\mu}}\right)^2\right) \\
 &= \lim_{N\rightarrow\infty}\mathbf{P}\left(\sqrt{S_N}\leq\sqrt{N\mu}+\frac{\alpha\omega}{2\sqrt{\mu}}\right) \\
@@ -170,7 +170,8 @@ Let's apply the same method to another function - this time, $f(X)=\log{X}$:
 
 $$
 \begin{align}
-\Phi(\alpha)=\lim_{N\rightarrow\infty}\mathbf{P}\left(\frac{S_N - N\mu}{\omega\sqrt{N}}\leq\alpha\right) &= \lim_{N\rightarrow\infty}\mathbf{P}\left(S_N\leq N\mu\left(1+\frac{\alpha\omega}{\mu\sqrt{N}}\right)\right) \\
+\Phi(\alpha)&=\lim_{N\rightarrow\infty}\mathbf{P}\left(\frac{S_N - N\mu}{\omega\sqrt{N}}\leq\alpha\right) //
+&=\lim_{N\rightarrow\infty}\mathbf{P}\left(S_N\leq N\mu\left(1+\frac{\alpha\omega}{\mu\sqrt{N}}\right)\right) \\
 &=\lim_{N\rightarrow\infty}\mathbf{P}\left(S_N\leq N\mu\exp{\left[\frac{\alpha\omega}{\mu\sqrt{N}}\right]}\right) \\
 &=\lim_{N\rightarrow\infty}\mathbf{P}\left(\log{S_N}\leq\log{N\mu} + \frac{\alpha\omega}{\mu\sqrt{N}}\right) \\
 &=\lim_{N\rightarrow\infty}\mathbf{P}\left(\frac{\mu\sqrt{N}}{\omega}\left[\log{S_N} - \log{N\mu}\right]\leq\alpha\right) \\
