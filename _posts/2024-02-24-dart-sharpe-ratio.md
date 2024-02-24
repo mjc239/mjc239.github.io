@@ -152,9 +152,7 @@ Here, the limiting value of $\text{Var}(\sqrt{S_N})$ has been used to provide an
 
 |Limiting distribution for $\sqrt{S_N}$|
 |:--:|
-| $$
-\frac{2\sqrt{\mu}}{\omega}\left(\sqrt{S_N} - \sqrt{N\mu - \frac{\omega^2}{4\mu}}\right)\rightarrow \mathcal{N}(0, 1)
-$$|
+|$\frac{2\sqrt{\mu}}{\omega}\left(\sqrt{S_N} - \sqrt{N\mu - \frac{\omega^2}{4\mu}}\right)\rightarrow \mathcal{N}(0, 1)$|
 
 Let's see what the resulting observed distributions look like, compared to the theoretical limiting distribution given above:
 
@@ -213,9 +211,7 @@ Substituting this back into the limiting distribution gives the following result
 
 |Limiting distribution for $\log{S_N}$|
 |:--:|
-|$$
-\frac{\mu\sqrt{N}}{\omega}\left(\log{S_N} - \log{N\mu} + \frac{\omega^2}{2N\mu^2}\right)\rightarrow \mathcal{N}(0, 1)
-$$|
+|$\frac{\mu\sqrt{N}}{\omega}\left(\log{S_N} - \log{N\mu} + \frac{\omega^2}{2N\mu^2}\right)\rightarrow \mathcal{N}(0, 1)$|
 
 One more time, let's look at the observed distributions of $\log{S_N}$ against the theoretical distribution suggested above:
 
@@ -233,9 +229,7 @@ A generalization of the $f(S_N)=\sqrt{S_N}$ example is considering $f(S_N)=S_N^k
 
 |Limiting distribution for ${S}_N^{k}$|
 |:--:|
-|$$
-S_N^k\approx \mathcal{N}\left(\left(N\mu\right)^{k}\left[1 + \frac{k(k-1)\omega^2}{2N\mu^2}\right], \;\frac{k\omega\left(N\mu\right)^k}{\mu\sqrt{N}}\right)
-$$|
+|$S_N^k\approx \mathcal{N}\left(\left(N\mu\right)^{k}\left[1 + \frac{k(k-1)\omega^2}{2N\mu^2}\right], \;\frac{k\omega\left(N\mu\right)^k}{\mu\sqrt{N}}\right)$|
 
 It is straightforward to verify that the limiting distributions for $k=1$ and $k=\frac{1}{2}$ match the limiting distributions for $S_N$ and $\sqrt{S_N}$ observed earlier (at least asymptotically).
 
