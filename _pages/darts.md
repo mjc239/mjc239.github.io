@@ -18,4 +18,6 @@ A collection of posts, using a statistical approach to analyse the game of darts
 
 🎯[Introduction + motivation](../_posts/2024-02-07-darts-frontpage.md) - why did the Quadro board flop?
 
-🎯["How do I throw high scoring darts?"](../_posts/2024-02-18-maximising-single-dart.md) - where should I aim on the board, to maximise my score?
+🎯[How do I throw high scoring darts?](../_posts/2024-02-18-maximising-single-dart.md) - where should I aim on the board, to maximise my score?
+
+🎯[How can I reach checkout before my opponent?](../_posts/2024-02-24-dart-sharpe-ratio.md) - maximising the probability of reaching checkout in N moves
