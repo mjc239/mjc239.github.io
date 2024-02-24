@@ -260,7 +260,7 @@ Computing this function for both the observed and theoretical distributions is u
 | A similar plot to earlier, comparing the empirical and theoretical probability point functions (PPFs) for $\log{S_N}$.  | 
     
 
-We see that for all values of $\sigma$, and for the almost whole range of percentiles $p$, the difference between the observed and theoretical PPFs are of the order of $10^{-2}$ or smaller. In the tails, this rises to the order of $10^{-1}$ to $10^0$, which is still small enough to be able to identify specific total scores (which are confined to whole numbers) for specific percentiles.
+We see that for all values of $\sigma$, and for the almost whole range of percentiles $p$, the difference between the observed and theoretical PPFs are of the order of $10^{-2}$ or smaller. In the tails, this rises to the order of $10^{-1}$ to $10^0$.
 
 ### Sharpe ratio
 
