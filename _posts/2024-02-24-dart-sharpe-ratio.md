@@ -168,7 +168,7 @@ Let's apply the same method to another function - this time, $f(X)=\log{X}$:
 
 $$
 \begin{align}
-\Phi(\alpha)&=\lim_{N\rightarrow\infty}\mathbf{P}\left(\frac{S_N - N\mu}{\omega\sqrt{N}}\leq\alpha\right) //
+\Phi(\alpha)&=\lim_{N\rightarrow\infty}\mathbf{P}\left(\frac{S_N - N\mu}{\omega\sqrt{N}}\leq\alpha\right) \\
 &=\lim_{N\rightarrow\infty}\mathbf{P}\left(S_N\leq N\mu\left(1+\frac{\alpha\omega}{\mu\sqrt{N}}\right)\right) \\
 &=\lim_{N\rightarrow\infty}\mathbf{P}\left(S_N\leq N\mu\exp{\left[\frac{\alpha\omega}{\mu\sqrt{N}}\right]}\right) \\
 &=\lim_{N\rightarrow\infty}\mathbf{P}\left(\log{S_N}\leq\log{N\mu} + \frac{\alpha\omega}{\mu\sqrt{N}}\right) \\
