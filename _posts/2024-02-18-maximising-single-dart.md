@@ -17,7 +17,7 @@ tags:
 
 This post draws on methods outlined in the paper [A Statistician Plays Darts](https://www.stat.cmu.edu/~ryantibs/papers/darts.pdf), by Ryan J. Tibshirani, Andrew Price and Jonathan Taylor. I will refer to the paper as ASPD for the rest of the post.
 
-Consider a player (Alice) throwing darts at the standard dart board. In a normal game (or leg in a professional match), Alice starts with a total score of 501, and the score from each dart is taken off her total. Therefore, at least in the early stages of the game, she is seeking to maximise the score of each dart. A good player will obviously aim for the highest scoring regions of the board (the triple 20, the bullseye, the triple 19). However, this may not be a good strategy for an amateur player - for example, the triple 20 region is surrounded by low scoring regions (e.g. in the 1 and 5 segments). So Alice may be better off aiming at a lower scoring region, surrounded by regions of similar score, so as to minimise the risk of hitting these regions due to a less accurate aim.
+Consider a player (Alice) throwing darts at the standard dart board. In a normal game (or leg in a professional match), Alice starts with a total score of 501, and the score from each dart is taken off her total. Therefore, at least in the early stages of the game, she is seeking to maximise the score of each dart. A good player will obviously aim for the highest scoring regions of the board (the triple $20$, the bullseye, the triple $19$). However, this may not be a good strategy for an amateur player - for example, the triple $20$ region is surrounded by low scoring regions (e.g. in the $1$ and $5$ segments), meaning a minor miss could drastically affect her score. So Alice may be better off aiming at a lower scoring region, surrounded by regions of similar score, so as to minimise the risk of hitting these regions due to a less accurate aim.
 
 How should we quantify Alice's ability? To start with, let's make the simplifying assumption that when she aims at a particular point on the dartboard $p$, the probability of the dart hitting the board at a specific location $Z$ is given by a 2-D spherical Gaussian distribution:
 
@@ -61,7 +61,7 @@ Let's start be recreating some of the heat plots produced in ASPD, using a range
     
 
 
-We see from these plots that strong players should aim for the triple 20 to maximise their 1-dart score. Below a certain skill threshold, this switches over to the triple 19. As the throwing distribution gets more and more spread (i.e. as $\sigma$ increases), the optimal aim spot moves closer to the bullseye. As the skill of the player decreases, the maximum expected score that the player can expect to achieve also decreases.
+We see from these plots that strong players should aim for the triple $20$ to maximise their $1$-dart score. However, once the player's skill level falls below a certain skill threshold, this switches over to the triple $19$. As the throwing distribution gets more and more spread (i.e. as $\sigma$ increases), the optimal aim spot moves closer to the bullseye. As the skill of the player decreases, the maximum expected score that the player can expect to achieve also decreases.
 
 The visualizations above have been used to find the optimal aiming points for 4 specific values of $\sigma$. Instead, let's look at a range of possible values, and identify the optimial aiming point, the maximum expected score, and the standard deviation of the score when aiming for this point:
 
@@ -73,13 +73,13 @@ The visualizations above have been used to find the optimal aiming points for 4 
 
 
 The takeaways from this plot are:
-- For players with $\sigma<17$ millimetres, the triple 20 is the best place to aim. As $\sigma$ rises from 0, the standard deviation of the expected score rises until it reaches a maximum at $\sigma=6.5$ millimetres, after which it begins to decrease. Expected scores decrease from the maximum of 60 (for players with near perfect aim) down to 20 as $\sigma$ increases.
+- For players with $\sigma<17$ millimetres, the triple $20$ is the best place to aim. As $\sigma$ rises from $0$, the standard deviation of the expected score rises until it reaches a maximum at $\sigma=6.5$ millimetres, after which it begins to decrease. Expected scores decrease from the maximum of $60$ (for players with near perfect aim) down to $20$ as $\sigma$ increases.
 
 
-- At $\sigma\approx 17$ millimetres, the optimal aim point makes a discontinuous jump to the triple 19. The exact aim point is not always in the triple 19 region - for example, it drifts slightly outside the triple 19 region into the single 19 region, taking advantage of the larger area of the outer single 19 region. Expected scores for players with this skill level are in the 15-20 point range.
+- At $\sigma\approx 17$ millimetres, the optimal aim point makes a discontinuous jump to the triple $19$. The exact aim point is not always in the triple $19$ region - for example, it drifts slightly outside the triple $19$ region into the single $19$ region, taking advantage of the larger surface area of the outer single $19$ region. Expected scores for players with this skill level are in the $15-20$ point range.
 
 
-- As $\sigma$ increases further, the optimal point drifts upwards and closer to the bullseye, to minimise the probability of missing the board entirely and scoring 0. The expected score drops more slowly as $\sigma$ increases, staying above 10 expected points even for large values of $\sigma$.
+- As $\sigma$ increases further, the optimal point drifts upwards and closer to the bullseye, to minimise the probability of missing the board entirely and scoring $0$. The expected score drops more slowly as $\sigma$ increases, staying above $10$ expected points even for large values of $\sigma$.
 
 We can also visualize the path that the optimal point traces across the face of the dartboard, as $\sigma$ increases:
 
@@ -132,7 +132,7 @@ In the case of a general positive-definite symmetric covariance matrix $\Sigma$,
 Sigma = np.array([[400, 500], [500, 900]]) # note: units here are pixels, not mm
 ```
 
-As mentioned earlier, this has a larger variance in the vertical direction, and has a slight leftwards tilt corresponding to a right-handed player. We see that the triple 15 is recommended now, due to the smaller variance in the direction in the direction perpendicular to the 15 segment.
+As mentioned earlier, this has a larger variance in the vertical direction, and has a slight leftwards tilt corresponding to a right-handed player. We see that the triple $15$ is recommended now, due to the smaller variance in the direction in the direction perpendicular to the $15$ segment.
 
 | ![Heatmap for a general Gaussian](/assets/images/2024-02-18-general-gaussian.png) |
 |:--:|
@@ -157,7 +157,7 @@ For the same values of $\sigma$ plotted earlier, we can visualize the heat maps 
 | Expected score heatmaps on the Quadro board, for 4 values of $\sigma$, including two from the original ASPD paper. | 
     
 
-Clearly, very strong players are incentivised to aim for the quadruple in order to maximise their expected scores. Even weaker players are seen to take advantage of the quaduple 19 (over the triple 19) to increase their expected scores. We can again visualize the expected score (and standard deviation) for a single dart throw, for a range of $\sigma$ values representing players of varying skills:
+Clearly, very strong players are incentivised to aim for the quadruple in order to maximise their expected scores. Even weaker players are seen to take advantage of the quaduple $19$ (over the triple $19$) to increase their expected scores. We can again visualize the expected score (and standard deviation) for a single dart throw, for a range of $\sigma$ values representing players of varying skills:
 
 
 | ![Quadro expected score against sigma](/assets/images/2024-02-18-quadro-exp-std.png) |
@@ -176,14 +176,14 @@ Also plotted is the path of optimal aim point across the face of the board, as $
 
 The takeaways from these plots are:
 
-- The strongest players aim for the quadruple 20 (no surprises there).
-- At $\sigma=8.5$mm, the recommendation is to aim for the triple 20 instead of the quadruple 20. This is probably due to the larger area of the triple 20 region, reducing the probability of missing the 20 segment entirely and scoring a low score in the 1 or 5 segment.
-- At $\sigma\approx17$mm, the player should aim for the triple 19, instead of the triple 20. The matches very closely to the recommendation given by the analysis for the standard board.
-- At $\sigma=19.4$mm (not long after the previous jump to the triple 19), the recommendation is to switch to the quadruple 19.
-- As $\sigma$ increases further, the expected score obtained does not decrease significantly, dropping only by a few point between $\sigma=20$mm and $\sigma=70$mm. The optimal aim point drifts left into the quadruple 7 region, before drifting upwards towards the centre of the dartboard as the variance grows.
+- The strongest players aim for the quadruple $20$ (no surprises there).
+- At $\sigma=8.5$mm, the recommendation is to aim for the triple $20$ instead of the quadruple $20$. This is probably due to the larger area of the triple $20$ region, reducing the probability of missing the $20$ segment entirely and scoring a low score in the $1$ or $5$ segment.
+- At $\sigma\approx17$mm, the player should aim for the triple $19$, instead of the triple $20$. The matches very closely to the recommendation given by the analysis for the standard board.
+- At $\sigma=19.4$mm (not long after the previous jump to the triple $19$), the recommendation is to switch to the quadruple $19$.
+- As $\sigma$ increases further, the expected score obtained does not decrease significantly, dropping only by a few point between $\sigma=20$mm and $\sigma=70$mm. The optimal aim point drifts left into the quadruple $7$ region, before drifting upwards towards the centre of the dartboard as the variance grows.
 
 ## Quadro vs standard board
 
-What can we conclude about the 1-dart strategy on the Quadro board, compared to the standard dartboard? For very good players (such as professionals), it is certainly harder to know for sure whether to aim for the quadruple 20 or triple 20 without a good estimate of their throwing variances. At a relatively small value of $\sigma$ (less than 1cm), the recommendation from the simplified symmetric Gaussian analysis is that the player is best off aiming for the triple 20, rather than the quadruple 20. This suggests that, at least for very strong players, the addition of the quadruple scoring regions may not affect the optimal strategy that much, negating the motivation for introducing the board.
+What can we conclude about the $1$-dart strategy on the Quadro board, compared to the standard dartboard? For very good players (such as professionals), it is certainly harder to know for sure whether to aim for the quadruple $20$ or triple $20$ without a good estimate of their throwing variances. At a relatively small value of $\sigma$ (less than $1$cm), the recommendation from the simplified symmetric Gaussian analysis is that the player is best off aiming for the triple $20$, rather than the quadruple $20$. This suggests that, at least for very strong players, the addition of the quadruple scoring regions may not affect the optimal strategy that much, negating the motivation for introducing the board.
 
-For less strong players, and even for enthusiastic amateurs, the strategy does appear to have changed slightly; players are recommended to aim for the quadruple 19 region over the triple 19. The expected score does not change that much when compared to the standard dartboard - for example, for a player with $\sigma=25$mm has an expected score of 15.8 points on the standard dart board, and 17.5 on the Quadro board, less than 2 additional average points. The standard deviations are slightly more distinct (12.7 for the standard board, 16.3 for the Quadro board), capturing the increased variance that comes from aiming at the smaller quadruple ring, and the corresponding differences in scores either side of the quadruple ring wire. For the amateur player, the addition of the quadruple ring could be argued to add some additional excitement, and potentially allow weaker players to get lucky against stronger players more frequently.
+For less strong players, and even for enthusiastic amateurs, the strategy does appear to have changed slightly; players are recommended to aim for the quadruple $19$ region over the triple $19$. The expected score does not change that much when compared to the standard dartboard - for example, for a player with $\sigma=25$mm has an expected score of $15.8$ points on the standard dart board, and $17.5$ on the Quadro board, less than 2 additional average points. The standard deviations are slightly more distinct ($12.7$ for the standard board, $16.3$ for the Quadro board), capturing the increased variance that comes from aiming at the smaller quadruple ring, and the corresponding differences in scores either side of the quadruple ring wire. For the amateur player, the addition of the quadruple ring could be argued to add some additional excitement, and potentially allow weaker players to get lucky against stronger players more frequently.

@@ -38,7 +38,7 @@ $$
 \mathbf{P}\left[S_N \geq N\mu + t\right]\leq \exp{\left[\frac{-t^2}{1800N}\right]}.
 $$
 
-In other words, the probability that after $N$ throws Alice has exceeded the expected score of $N\mu$ by $t$ points is bounded above by an exponentially decreasing function of $t^2/N$. For example, assume Alice has an expected single-dart score of $15$ points. Bob has a 1-dart expected score of $30$, so is expected to reach the checkout stage in about $16$ turns. After $16$ throws, Alice should expect to score $240$ points; the probability that she has in fact scored more than $461$ points (and therefore bringing her into checkout range) is bounded above by this inequality:
+In other words, the probability that after $N$ throws Alice has exceeded the expected score of $N\mu$ by $t$ points is bounded above by an exponentially decreasing function of $t^2/N$. For example, assume Alice has an expected single-dart score of $15$ points. Bob has a $1$-dart expected score of $30$, so is expected to reach the checkout stage in about $16$ turns. After $16$ throws, Alice should expect to score $240$ points; the probability that she has in fact scored more than $461$ points (and therefore bringing her into checkout range) is bounded above by this inequality:
 
 $$
 \mathbf{P}\left(S_N \geq 461\right)\leq\exp{\left(\frac{-(461-240)^2}{1800*16}\right)}\approx0.18
@@ -83,7 +83,7 @@ $$
 \end{align}
 $$
 
-where we have defined $k=K/N$. In words, this result says that the probability of scoring greater than $Nk$ points with $N$ darts (i.e. the expected score with a 1-dart average of $k$) is given by the Gaussian CDF $\Phi$, evaluated at the point $\sqrt{N}\frac{\mu-k}{\omega}$, in the limit as $N\rightarrow\infty$. In practice, Alice will only be throwing finitely many darts at the dartboard, so it needs to be investigated whether the approximation is valid for various $N$ (we won't be making the common mistake of assuming $30=\infty$!). 
+where we have defined $k=K/N$. In words, this result says that the probability of scoring greater than $Nk$ points with $N$ darts (i.e. the expected score with a $1$-dart average of $k$) is given by the Gaussian CDF $\Phi$, evaluated at the point $\sqrt{N}\frac{\mu-k}{\omega}$, in the limit as $N\rightarrow\infty$. In practice, Alice will only be throwing finitely many darts at the dartboard, so it needs to be investigated whether the approximation is valid for various $N$ (we won't be making the common mistake of assuming $30=\infty$!). 
 
 ### Testing the validity of the CLT approximation
 
@@ -91,9 +91,9 @@ In this section, we investigate some methods for improving the approximation giv
 
 The method for testing the validity of the approximation is as follows:
 1. Choose a range of $\sigma$ values, parametrising Alice's skill level.
-2. For each choice of $\sigma$, compute the optimal aim point on the dartboard Find the expected 1-dart distribution when aiming at this point, including the expected 1-dart score $\mu$.
+2. For each choice of $\sigma$, compute the optimal aim point on the dartboard Find the expected $1$-dart distribution when aiming at this point, including the expected $1$-dart score $\mu$.
 3. Choose the number of darts $N$ such that $N\mu\approx 501$, i.e. the expected number of darts needed to reach 0 (ignoring checkout rules for now).
-4. Compute the distribution of the total score with $N$ throws, from the 1-dart distribution.
+4. Compute the distribution of the total score with $N$ throws, from the $1$-dart distribution.
 5. Compare the observed distribution against the theoretical distribution, given by the CLT.
 
 
@@ -103,12 +103,12 @@ The method for testing the validity of the approximation is as follows:
     
 
 
-We see here that, as expected from the CLT, the distribution of $S_N$ approaches a Gaussian distribution as $N$ increases. In fact, the difference between the observed CDF and the theoretical Gaussian CDF differ by less than 3% almost everywhere. The main differences appear to be due to the positive skewness in the underlying 1-dart distributions, which are significant particularly when $\omega$ increases in value:
+We see here that, as expected from the CLT, the distribution of $S_N$ approaches a Gaussian distribution as $N$ increases. In fact, the difference between the observed CDF and the theoretical Gaussian CDF differ by less than 3% almost everywhere. The main differences appear to be due to the positive skewness in the underlying $1$-dart distributions, which are significant particularly when $\omega$ increases in value:
 
     
-| ![Demonstrating the skewness of the 1-dart scores](/assets/images/2024-02-24-skewness.png) |
+| ![Demonstrating the skewness of the $1$-dart scores](/assets/images/2024-02-24-skewness.png) |
 |:--:|
-| The plot on the left shows the empirical skewness of the 1-dart scores, as the throwing distribution parameter $\sigma$ varies. On the right, an example of the score distribution for $\sigma=60$mm. | 
+| The plot on the left shows the empirical skewness of the $1$-dart scores, as the throwing distribution parameter $\sigma$ varies. On the right, an example of the score distribution for $\sigma=60$mm. | 
     
 
 
@@ -290,10 +290,10 @@ Also made explicit in the formula above is the dependence of the optimal aim poi
 
 | ![Expected scores and standard deviations for each k](/assets/images/2024-02-24-exp-stds.png) |
 |:--:|
-| Visualising the expected scores and standard deviations, as the throwing distribution parameter $\sigma$ increases. For each choice of $\sigma$, the dart is aimed at the point on the board which maximises the Sharpe ratio, for specific value of the target 1-dart expected score $k$. | 
+| Visualising the expected scores and standard deviations, as the throwing distribution parameter $\sigma$ increases. For each choice of $\sigma$, the dart is aimed at the point on the board which maximises the Sharpe ratio, for specific value of the target $1$-dart expected score $k$. | 
 
 
-We can also visualise the specific points on the board that Alice should aim for as her throwing distribution gets more spread, for varying values of Bob's 1-dart average $k$:
+We can also visualise the specific points on the board that Alice should aim for as her throwing distribution gets more spread, for varying values of Bob's $1$-dart average $k$:
 
 | ![Sharpe maximising aim points](/assets/images/2024-02-24-board-paths.png) |
 |:--:|
@@ -315,12 +315,12 @@ To explain how to interpret these plots, and describe how they might help when p
 
 ### Repeating for the Quadro board
 
-How does the results of this analysis change when applied to the Quadro board, instead of the standard board? First, it is worth noting that the Central Limit Theorem approximation that allows us to use the Sharpe ratio as a sensible optimisation function is less accurate than for the standard board. This is because the 1-dart probability distribution for score is even more positively skewed, due to the presence of higher number scores from the quadruple ring adding weight to the upper tail:
+How does the results of this analysis change when applied to the Quadro board, instead of the standard board? First, it is worth noting that the Central Limit Theorem approximation that allows us to use the Sharpe ratio as a sensible optimisation function is less accurate than for the standard board. This is because the $1$-dart probability distribution for score is even more positively skewed, due to the presence of higher number scores from the quadruple ring adding weight to the upper tail:
 
 
 | ![Skewness for the Quadro board](/assets/images/2024-02-24-quadro-skewness.png) |
 |:--:|
-| The plot on the left shows the empirical skewness of the 1-dart scores for the Quadro board, as the throwing distribution parameter $\sigma$ varies. On the right, an example of the score distribution for $\sigma=60$mm. Note that the 1-dart scores now go up to $80$ points instead of $60$.|
+| The plot on the left shows the empirical skewness of the $1$-dart scores for the Quadro board, as the throwing distribution parameter $\sigma$ varies. On the right, an example of the score distribution for $\sigma=60$mm. Note that the $1$-dart scores now go up to $80$ points instead of $60$.|
     
 
 Regardless, the theoretical limiting distribution still does a reasonable job at approximating the observed total sum, with the CDFs differing by less than $3$% for most values of $\sigma$ (in fact, the transformed sum given by $\log{S_N}$ brings the error down to less than $1$%).
@@ -330,7 +330,7 @@ Regardless, the theoretical limiting distribution still does a reasonable job at
 | Comparing the observed distribution of $S_N$ to the theoretical distribution from the central limit theorem, this time for the Quadro board. Each plot chooses a value of $\sigma$ for the throwing distribution, then throws $N$ darts such that the expected score after $N$ darts is $\approx 501$. |
     
 
-We can visualize the optimal aim points for each value of the opponent's average 1-dart score $k$, as the throwing distribution parameter $\sigma$ ranges from $0$ up to $70$mm:
+We can visualize the optimal aim points for each value of the opponent's average $1$-dart score $k$, as the throwing distribution parameter $\sigma$ ranges from $0$ up to $70$mm:
 
 
 | ![Quadro board Sharpe maximising aim points](/assets/images/2024-02-24-quadro-paths.png) |
