@@ -252,15 +252,15 @@ $$
 \text{ppf}(p) = \underset{z\in\mathbb{R}}{\text{argmax}}\left\{z : \mathbf{P}\left(f(S_N)\leq z\right)\leq p\right\}
 $$
 
-Computing this function for both the observed and theoretical distributions is useful, particularly when evaluating whether the distributions have a good match in the tails (i.e. $p=\varepsilon$ and $p=1-\varepsilon$ for $\varepsilon\ll 1$). The plot below shows the comparison for $\log{S_N}$:
+Computing this function for both the observed and theoretical distributions is useful, particularly when evaluating whether the distributions have a good match in the tails (i.e. $p=\varepsilon$ and $p=1-\varepsilon$ for $\varepsilon\ll 1$). The plot below shows the comparison for $S_N$, using the approximation derived by applying the CLT for $\log{S_N}$, and transformed back to the original units (i.e. points scored):
 
 
-| ![Comparing PPFs for the log transformed sum](/assets/images/2024-02-24-log-ppfs.png) |
+| ![Comparing PPFs for the log transformed sum](/assets/images/2024-02-24-log-ppfs-2.png) |
 |:--:|
-| A similar plot to earlier, comparing the empirical and theoretical probability point functions (PPFs) for $\log{S_N}$.  | 
+| A similar plot to earlier, comparing the empirical and theoretical probability point functions (PPFs) for $S_N$ using the CLT approximation for $\log{S_N}$.  | 
     
 
-We see that for all values of $\sigma$, and for the almost whole range of percentiles $p$, the difference between the observed and theoretical PPFs are of the order of $10^{-2}$ or smaller. In the tails, this rises to the order of $10^{-1}$ to $10^0$.
+We see that for most values of $\sigma$, and for percentiles between $0.1$ and $0.9$, the difference between the observed and theoretical PPFs are of the order of $10^{0}=1$ point or smaller, allowing the PPF to be resolved accurately to the nearest whole number. In the tails, this rises to the order of $10^{1}$ points or higher, meaning that the approximation is not reliable for these extreme percentiles.
 
 ### Sharpe ratio
 
