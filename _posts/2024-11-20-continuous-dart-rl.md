@@ -45,7 +45,7 @@ The size of the spacing between the grid of aiming points determines the total n
 
 
     
-![png](20241120_output_11_1.png)
+![png](/assets/images/20241120/20241120_output_11_1.png)
     
 
 
@@ -111,8 +111,7 @@ $$
 where we choose the variance parameter $\sigma=40$mm. Then, we can follow the above algorithm to find the value function for each starting score:
 
 
-    
-![png](20241120_output_17_0.png)
+![png](/assets/images/20241120/20241120_output_17_0.png)
     
 
 
@@ -121,14 +120,14 @@ Some initial observations from this plot are:
 - For a score of below around $50$, the start values oscillate around a value of about $-27$, corresponding to an expected number of $27$ turns until checkout. Clearly, this player has trouble hitting a double to check out, so takes the about the same number of throws regardless. There is a difference between odd and even states, due to the player needing to finish on an even score, which can be seen by zooming in on this region:
 
     
-![png](20241120_output_19_0.png)
+![png](/assets/images/20241120/20241120_output_19_0.png)
     
 
 
 With the optimal policy for this player in hand, we can visualize the ideal aiming point on the dartboard for each starting score (here plotted for scores less than 70):
 
     
-![png](20241120_output_24_0.png)
+![png](/assets/images/20241120/20241120_output_24_0.png)
 
 
 This diagram reveals some strategies that any keen darts player might recognize:
@@ -143,25 +142,25 @@ This diagram reveals some strategies that any keen darts player might recognize:
 Let's repeat the analysis for a different player, with a slightly better throwing ability - this time with a variance parameter of $\sigma=10$mm:
 
     
-![png](20241120_output_29_0.png)
+![png](/assets/images/20241120/20241120_output_29_0.png)
     
 
 
 We see that the linearity breaks down slightly for larger state values, implying that the player is not simply trying to maximise 1-dart score, but will take a more sophisticated approach (as we'll see). Zooming in on the region of low state scores:
 
     
-![png](20241120_output_31_0.png)
+![png](/assets/images/20241120/20241120_output_31_0.png)
     
 
 
 Note that states that are a power of two are all approximately equally valued, with states that are multiples of 8 and 4 coming close behind; even states are more valuable than odd states; and state values drop above the maximum 1-dart checkout score of 40. Let's see what is recommended for this player on the dartboard:
 
     
-![png](20241120_output_34_0.png)
+![png](/assets/images/20241120/20241120_output_34_0.png)
     
 
     
-![png](20241120_output_35_0.png)
+![png](/assets/images/20241120/20241120_output_35_0.png)
     
 
 
@@ -175,28 +174,28 @@ For this more skilled player:
 This analysis can be repeated for the Quadro board, which now includes the inticing quadruple-score regions (see this post for background). Here are the aiming points in the action space, covering the board and the region around it:
 
     
-![png](20241120_output_40_1.png)
+![png](/assets/images/20241120/20241120_output_40_1.png)
     
 ### Unskilled player
 
 For our first, unskilled player ($\sigma=40$mm), here is the plot of the state values found by the same optimal Bellman value iteration algorithm, along with the state function found for the standard dartboard: 
 
     
-![png](20241120_output_43_0.png)
+![png](/assets/images/20241120/20241120_output_43_0.png)
     
 
 
 We see that the values are close for small states values, but diverge as the states increase; this is further confirmed by zooming in on small-score section of the graph, showing very small differences between the two value functions: 
 
     
-![png](20241120_output_45_0.png)
+![png](/assets/images/20241120/20241120_output_45_0.png)
     
 
 
 So for small scores, the strategy of the unskilled player is approximately the same on either dartboard; for large scores (i.e. near the start of the game), the player is clearly making use of the quadruple scoring regions to get higher average 1-dart scores. Let's take a look at the players recommendations on the dartboard itself:
 
     
-![png](20241120_output_48_0.png)
+![png](/assets/images/20241120/20241120_output_48_0.png)
     
 
 
@@ -207,20 +206,20 @@ There is a cluster around the triple 19 as before, but for larger scores the rec
 Finally, let's repeat this for the skilled player to see how the value function differs for the quadro board:
 
     
-![png](20241120_output_54_0.png)
+![png](/assets/images/20241120/20241120_output_54_0.png)
     
     
-![png](20241120_output_55_0.png)
+![png](/assets/images/20241120/20241120_output_55_0.png)
 
     
-![png](20241120_output_56_0.png)
+![png](/assets/images/20241120/20241120_output_56_0.png)
     
 
 
 As the value functions are identical for states less than 100, the strategies are identical here (so the quadruple regions are irrelevant!). For higher values, there are small differences in state values, which do lead to some differences in strategy (mainly for scores slightly above 100). This can be seen on the recommendation diagram:
 
     
-![png](20241120_output_58_0.png)
+![png](/assets/images/20241120/20241120_output_58_0.png)
     
 
 
