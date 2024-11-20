@@ -54,9 +54,11 @@ Once the set of actions is defined, it becomes possible to compute the transitio
 So how can we decide where to aim when in a particular state (i.e. on a specific score)? This challenge lends itself well to a classic reinforcement learning approach known as value iteration. Each state is assigned a value, which, based on our choice of reward function, represents the expected number of turns required to check out from that state. For each action, the expected value of the resulting state is computed, accounting for the probabilities of different outcomes. The action that maximizes the reward — reducing the expected number of remaining turns the most — is the one selected.
 
 For each state, the state-value function $v(s)$ satisfies the optimal Bellman equation:
+
 $$
 v(s) = -1 + \max_{a\in\mathcal{A}}\left(\sum_{t\in\Omega}u_a(s, t)\right),
 $$
+
 $$
 \begin{equation}
 u_a(s, t) =
@@ -67,6 +69,7 @@ p^{a}_t v(s), & \text{otherwise}
 \end{cases}
 \end{equation}
 $$
+
 The definitions of the various variables in this expression are as follows:
 - $p^{a}_{t}$ is the probability of hitting a region with score $t$ when aiming at point $a$,
 - $dp^{a}_{t}$ is the probability of hitting a double region of score $t$ when aiming at point $a$,
