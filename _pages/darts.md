@@ -21,3 +21,5 @@ A collection of posts, using a statistical approach to analyse the game of darts
 🎯[How do I throw high scoring darts?](../_posts/2024-02-18-maximising-single-dart.md) - where should I aim on the board, to maximise my score?
 
 🎯[How can I reach checkout before my opponent?](../_posts/2024-02-24-dart-sharpe-ratio.md) - maximising the probability of reaching checkout in N moves
+
+🎯[How do I play on-player continuous 501 optimally?](../_posts/2024-11-20-continuous-dart-rl.md) - where to aim to minimise the number of turns until checkout
