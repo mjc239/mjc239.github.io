@@ -6,7 +6,7 @@ author_profile: true
 ---
 
 I am a Senior Machine Learning Engineer at [PhysicsX](https://www.physicsx.ai/), 
-based in London. Previously, I was a Data Science Manager at [C3 AI](https://c3.ai/), 
+based in London, where I work on deploying ML models and engineering surrogates — including deep learning on CAE/CFD/FEA data, time-series forecasting, and optimisation & control — to customer production environments, spanning cloud and on-prem infrastructure. Previously, I was a Data Science Manager at [C3 AI](https://c3.ai/), 
 developing data science solutions for customers in a variety of industries, and before 
 that a Data Scientist in the Alpha Strategies team at [Nomura](https://www.nomura.com/), 
 where I was also a Quantitative Researcher in the Fixed Income division (Credit). I 
