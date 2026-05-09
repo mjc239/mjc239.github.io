@@ -15,7 +15,7 @@ tags:
 
 ## Maximising the probability of reaching checkout in N moves
 
-The analysis up until now has concerned the maximisation of the expected value of the score from a single dart. For simplicity, let's define the random variable $X_i = s(Z_i)$ as the score obtained from the dart throw, with expected value $\mathbf{E}(X_i) = \mu$ and variance $\text{Var}(X_i) = \omega^2$. Also define the total score after $N$ throws as $S_N = \sum_{i=1}^{N}X_i$. The values of $\mu$ and $\omega$ will depend on the point at which Alice is aiming $p$, and Alice's skill level parameterised by $\sigma$ (which is for now assumed to be fixed).  Due to linearity of expectation, the expected score from $N$ darts thrown consecutively is $N$ multiplied by the single dart expected score:
+The analysis up until now has concerned the maximisation of the expected value of the score from a single dart. For simplicity, let's define the random variable $X_i = s(Z_i)$ as the score obtained from the dart throw, with expected value $\mathbf{E}(X_i) = \mu$ and variance $\text{Var}(X_i) = \omega^2$. Also define the total score after $N$ throws as $S_N = \sum_{i=1}^{N}X_i$. The values of $\mu$ and $\omega$ will depend on the point $p$ at which Alice is aiming, and Alice's skill level parameterised by $\sigma$ (which is for now assumed to be fixed).  Due to linearity of expectation, the expected score from $N$ darts thrown consecutively is $N$ multiplied by the single dart expected score:
 
 $$
 \mathbf{E}\left(\sum_{i=1}^{N}X_i\right)=\sum_{i=1}^{N}E\left(X_i\right)=N\mathbf{E}\left(X_1\right)
@@ -28,7 +28,7 @@ F(N, K)\equiv\mathbf{P}\left(\sum_{i=1}^{N}X_i > K\right)
 $$
 
 
-Why consider this alternative optimization function $F(N, K)$? Suppose Alice is playing against an opponent (Bob) with a known skill level, and so is expected to reach the checkout stage after $N$ darts. Alice wants to make sure that she is also in checkout range at the same time that Bob is, in order to apply pressure to him. As well as trying to maximise the score of each dart, Alice will need to take account of the variance of the score of each dart - throwing at a high scoring region with a large variance comes with a significant probability of getting unlucky, allowing Bob to get ahead and have several chances at checking out.
+Why consider this alternative optimization function $F(N, K)$? Suppose Alice is playing against an opponent (Bob) with a known skill level, and so is expected to reach the checkout stage after $N$ darts. Alice wants to make sure that she is also in checkout range at the same time that Bob is, in order to apply pressure to him. As well as trying to maximise the score of each dart, Alice will need to account for the variance in each dart's score - throwing at a high scoring region with a large variance comes with a significant probability of getting unlucky, allowing Bob to get ahead and have several chances at checking out.
 
 #### Hoeffding inequality
 
@@ -73,7 +73,7 @@ $$
 \lim_{N\rightarrow\infty}\mathbf{P}\left[\frac{S_N - N\mu}{\omega\sqrt{N}}\leq z\right] = \Phi(z)
 $$
 
-Rearranging to but this in a more familiar form:
+Rearranging to put this in a more familiar form:
 
 $$
 \begin{align}
@@ -91,7 +91,7 @@ In this section, we investigate some methods for improving the approximation giv
 
 The method for testing the validity of the approximation is as follows:
 1. Choose a range of $\sigma$ values, parametrising Alice's skill level.
-2. For each choice of $\sigma$, compute the optimal aim point on the dartboard Find the expected $1$-dart distribution when aiming at this point, including the expected $1$-dart score $\mu$.
+2. For each choice of $\sigma$, compute the optimal aim point on the dartboard. Find the expected $1$-dart distribution when aiming at this point, including the expected $1$-dart score $\mu$.
 3. Choose the number of darts $N$ such that $N\mu\approx 501$, i.e. the expected number of darts needed to reach 0 (ignoring checkout rules for now).
 4. Compute the distribution of the total score with $N$ throws, from the $1$-dart distribution.
 5. Compare the observed distribution against the theoretical distribution, given by the CLT.
@@ -103,7 +103,7 @@ The method for testing the validity of the approximation is as follows:
     
 
 
-We see here that, as expected from the CLT, the distribution of $S_N$ approaches a Gaussian distribution as $N$ increases. In fact, the difference between the observed CDF and the theoretical Gaussian CDF differ by less than 3% almost everywhere. The main differences appear to be due to the positive skewness in the underlying $1$-dart distributions, which are significant particularly when $\omega$ increases in value:
+We see here that, as expected from the CLT, the distribution of $S_N$ approaches a Gaussian distribution as $N$ increases. In fact, the observed CDF and the theoretical Gaussian CDF differ by less than 3% almost everywhere. The main differences appear to be due to the positive skewness in the underlying $1$-dart distributions, which are significant particularly when $\omega$ increases in value:
 
     
 | ![Demonstrating the skewness of the $1$-dart scores](/assets/images/2024-02-24-skewness.png) |
@@ -139,7 +139,7 @@ $$
 \frac{2\sqrt{\mu}}{\omega}\left(\sqrt{S_N} - \sqrt{N\mu}\right)\rightarrow \mathcal{N}(0, 1)
 $$
 
-Can we improve this estimate? The form of this expression suggests that as $N$ grows, the mean of $\sqrt{S_N}$ behaves asymptotically like $\sqrt{N\mu}$, and the standard deviation like $\frac{\omega}{2\sqrt{\mu}}$ (i.e. constant in $N$). In fact we can find an expression for the mean with the same asymptotics, but with a greater accuracy for small values of $N$, by considering:
+Can we improve this estimate? The form of this expression suggests that as $N$ grows, the mean of $\sqrt{S_N}$ behaves asymptotically like $\sqrt{N\mu}$, and the standard deviation like $\frac{\omega}{2\sqrt{\mu}}$ (i.e. constant in $N$). In fact, we can find an expression for the mean with the same asymptotics, but with a greater accuracy for small values of $N$, by considering:
 
 $$
 \begin{align}
@@ -225,7 +225,7 @@ This transformation provides a good fit, particularly for $\sigma>20$mm, resulti
 
 #### Choosing $f(S_N)=S_N^k$
 
-A generalization of the $f(S_N)=\sqrt{S_N}$ example is considering $f(S_N)=S_N^k$ for a general $k\in\mathbb{R}$. The analysis for the $k=\frac{1}{2}$ case is similar so I will not repeat the computations here - the result is that the limiting distribution looks like:
+A generalization of the $f(S_N)=\sqrt{S_N}$ example is considering $f(S_N)=S_N^k$ for a general $k\in\mathbb{R}$. The analysis for the $k=\frac{1}{2}$ case is similar, so I will not repeat the computations here - the result is that the limiting distribution looks like:
 
 |Limiting distribution for ${S}_N^{k}$|
 |:--:|
@@ -242,7 +242,7 @@ To see which transformations are best for different values of $\sigma$, we can f
 | Comparing the fit (as measured by the max difference between the empirical and theoretical limiting CDFs) for each of the transformed sums. |    
 
 
-This plot shows that for a large range of $\sigma$ (between $20$ and $80$mm), the $\log$ transformation provides the best fit. for smaller/larger than this, a polynomial transformation performs better. Both the polynomial and $\log$ transformations perform better than the standard sum, at all $\sigma$ ranges.
+This plot shows that for a large range of $\sigma$ (between $20$ and $80$mm), the $\log$ transformation provides the best fit. for $\sigma$ outside this range, a polynomial transformation performs better. Both the polynomial and $\log$ transformations perform better than the standard sum, across all values of $\sigma$.
 
 #### Comparing PPFs
 
@@ -270,7 +270,7 @@ $$
 \mathbf{P}\left(S_N>kN\right) \approx \Phi\left[\sqrt{N}\,\frac{\mu - k}{\omega}\right]
 $$
 
-where $N$ is the number of darts thrown, and $\mu, \omega$ are the mean and standard deviation of a single dart throw (recall that $\sigma$ is fixed here). $k$ can be interpreted as a target average score from a single dart throw, that Alice is hoping to exceed. If the Alice's aim is to maximise this probability, she needs to aim at the following point on the board:
+where $N$ is the number of darts thrown, and $\mu, \omega$ are the mean and standard deviation of a single dart throw (recall that $\sigma$ is fixed here). $k$ can be interpreted as a target average score from a single dart throw, that Alice is hoping to exceed. If Alice's aim is to maximise this probability, she needs to aim at the following point on the board:
 
 $$
 p_{max}(k) = \underset{p}{\mathrm{argmax}}\left[\frac{\mu(p) - k}{\omega(p)}\right]
@@ -283,7 +283,7 @@ The formula is intriguingly reminiscent of the __Sharpe ratio__, a statistic use
 - $\omega \longleftrightarrow$ volatility of portfolio/strategy,
 - $k \longleftrightarrow$ available risk-free rate of return.
 
-The maximisation of this quantity therefore has the interpretation of ensuring a high rate of return (i.e. single dart score) against a target rate of return (i.e. target average dart score), after controlling for volatility (the variance in the single dart score).
+The maximisation of this quantity can therefore be interpreted as ensuring a high rate of return (i.e. single dart score) against a target rate of return (i.e. target average dart score), after controlling for volatility (the variance in the single dart score).
 
 Also made explicit in the formula above is the dependence of the optimal aim point on the target value $k$. Varying the value of $k$ corresponds to selecting opponents with various skill levels. We can find how the optimal aim point $p$ varies, as the value of $k$ varies, in a similar way to earlier - this time, using the Sharpe ratio as the target function.
 
@@ -300,22 +300,22 @@ We can also visualise the specific points on the board that Alice should aim for
 | Visualising the aim points on the board, which maximise the Sharpe ratio as the throwing distribution parameter $\sigma$ increases. |
     
 
-To explain how to interpret these plots, and describe how they might help when playing an actual game against an opponent:
+Here's how to interpret these plots, and how they might apply in an actual game:
 
 - Each panel corresponds to a different choice of $k$, the average score that the opponent (Bob) scores with a single dart. So by estimating Bob's skill level (e.g. by observing average scores from previous games), Alice can work out which of these panels to refer to.
 
 
-- The solid/dotted lines on the graphs give the expected score/standard deviation when aiming at the point which maximises the Sharpe ratio. Notice that for small $k$ (i.e. when Bob isn't very skillful), Alice is recommended to aim at points on the board with smaller expected value, and a smaller standard deviation; for small $k$, Alice does not need to try to maximise her raw score, but rather can focus on scoring smaller scores with higher certainties. 
+- The solid/dotted lines on the graphs give the expected score/standard deviation when aiming at the point which maximises the Sharpe ratio. Notice that for small $k$ (i.e. when Bob isn't very skillful), Alice is recommended to aim at points on the board with smaller expected value, and a smaller standard deviation; for small $k$, Alice does not need to try to maximise her raw score, but rather can focus on scoring more consistently. 
 
 
 - In the case that Alice has close to perfect aim, she can still reach checkout before Bob when aiming at these lower values. For $k<20$, Alice is recommended to aim for the $20$; for $20<k<45$, she is recommended to aim for the bullseye.
 
 
-- For large $k$ (i.e. when Bob is very skillful), Alice needs to pursue a more risky strategy in order to reach checkout at a similar time to Bob. For example, for $k>30$, Alice is recommended to always aim at (or near) the triple $20$; in the analysis focussing on just maximising expected score, Alice is recommended to switch to the triple $19$ when her throwing distribution gets too broad. This shows how the Sharpe ratio approach allows Alice to take into account her opponents skill when determining her strategy.
+- For large $k$ (i.e. when Bob is very skillful), Alice needs to pursue a riskier strategy in order to reach checkout at a similar time to Bob. For example, for $k>30$, Alice is recommended to always aim at (or near) the triple $20$; in the analysis focusing on just maximising expected score, Alice is recommended to switch to the triple $19$ when her throwing distribution gets too broad. This shows how the Sharpe ratio approach allows Alice to take into account her opponent's skill when determining her strategy.
 
 ### Repeating for the Quadro board
 
-How does the results of this analysis change when applied to the Quadro board, instead of the standard board? First, it is worth noting that the Central Limit Theorem approximation that allows us to use the Sharpe ratio as a sensible optimisation function is less accurate than for the standard board. This is because the $1$-dart probability distribution for score is even more positively skewed, due to the presence of higher number scores from the quadruple ring adding weight to the upper tail:
+How do the results of this analysis change when applied to the Quadro board, instead of the standard board? First, it is worth noting that the Central Limit Theorem approximation that allows us to use the Sharpe ratio as a sensible optimisation function is less accurate than for the standard board. This is because the $1$-dart probability distribution for score is even more positively skewed, due to the presence of higher scores from the quadruple ring adding weight to the upper tail:
 
 
 | ![Skewness for the Quadro board](/assets/images/2024-02-24-quadro-skewness.png) |
@@ -330,7 +330,7 @@ Regardless, the theoretical limiting distribution still does a reasonable job at
 | Comparing the observed distribution of $S_N$ to the theoretical distribution from the central limit theorem, this time for the Quadro board. Each plot chooses a value of $\sigma$ for the throwing distribution, then throws $N$ darts such that the expected score after $N$ darts is $\approx 501$. |
     
 
-We can visualize the optimal aim points for each value of the opponent's average $1$-dart score $k$, as the throwing distribution parameter $\sigma$ ranges from $0$ up to $70$mm:
+We can visualise the optimal aim points for each value of the opponent's average $1$-dart score $k$, as the throwing distribution parameter $\sigma$ ranges from $0$ up to $70$mm:
 
 
 | ![Quadro board Sharpe maximising aim points](/assets/images/2024-02-24-quadro-paths.png) |
@@ -340,11 +340,11 @@ We can visualize the optimal aim points for each value of the opponent's average
 
 The conclusions here:
 - For small $k$, like for the standard board, Alice is recommended to aim for more certain areas of the board (the large single $20$ or single $19$ regions), in order to guarantee reaching the checkout stage before Bob.
-- For large $k>35$ (i.e. Bob is a strong player), Alice is recommended to to aim for the quadruple $20$. This is markedly different from the expectation maximisation strategy, which quickly switches away from the quadruple $20$ to the triple $20$ for quite a small value of $\sigma$. This suggests that Alice's strategy for the Quadro board is sensitive to the estimated skill of her opponent - if she suspects Bob is at least a reasonable player, she may decide that she needs to aim for the quadruple $20$ even though the large variance in score brings down the average expected score.
+- For large $k>35$ (i.e. Bob is a strong player), Alice is recommended to aim for the quadruple $20$. This is markedly different from the expectation maximisation strategy, which quickly switches away from the quadruple $20$ to the triple $20$ for quite a small value of $\sigma$. This suggests that Alice's strategy for the Quadro board is sensitive to the estimated skill of her opponent - if she suspects Bob is at least a reasonable player, she may decide that she needs to aim for the quadruple $20$ even though the large variance in score brings down the average expected score.
 - For large values of $\sigma$, the strategy is broadly similar across all opponent skill levels - aim towards the lower left part of the board, similar to the recommended location from the expectation maximisation strategy (see the previous post for details about this).
 
 ### How valuable is this analysis?
 
 This approach has been a fun analysis that links the problem of maximizing the probability of reaching checkout within a certain number of throws to the Sharpe ratio from quant finance. It allows a slightly more advanced analysis than the simple expectation maximisation approach from the previous post, as it takes into account information about the skill level of the opponent.
 
-However, the analysis does not yet take into account the mechanism for 'checking out' - i.e. by scoring a double. At best, this approach is useful at the start of the game when the player is looking to run down their score as quickly as possible, and reach a check-out score before their opponent does. In order to provide recommendations for the player once in checkout range, a more sophisticated approach is needed - one which doesn't treat each dart as an independent throw looking to maximise some function, but rather as part of a sequence of throws trying to checkout as quickly as possible The next post in this series looks to do exactly this.
+However, the analysis does not yet take into account the mechanism for 'checking out' - i.e. by scoring a double. At best, this approach is useful at the start of the game when the player is looking to run down their score as quickly as possible, and reach a check-out score before their opponent does. In order to provide recommendations for the player once in checkout range, a more sophisticated approach is needed - one which doesn't treat each dart as an independent throw looking to maximise some function, but rather as part of a sequence of throws trying to checkout as quickly as possible. The next post in this series looks to do exactly this.
