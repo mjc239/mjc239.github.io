@@ -218,7 +218,7 @@ only those arms which are yet to be picked with a large $Q$ value. This ensures 
 
 In order to eliminate the idiosyncrasies of the individual experiments, we can average 
 the performance (i.e. the reward obtained) of this strategy at each time step over many
- runs. This help to compare strategies against each other.
+ runs. This helps to compare strategies against each other.
 
 
 ```python
@@ -270,7 +270,7 @@ In order to achieve this, we can add an additional term to the action selection 
 $$A_{t}^{UCB}=argmax_{a\in\{1,2,...,N\}}\left(Q_{t}(a) + c\sqrt{\frac{\log(t)}{N_{t}(a)}}\right)$$
 
 The choice of additional term is motivated by the Hoeffding inequality (see e.g. 
-[here](https://courses.cs.washington.edu/courses/cse599i/18wi/resources/lecture3/lecture3.pdf) for how this bound is derived). The presence of the $N_{t}$ in the demominator allows arms which have not been pulled many times to be prioritised over other, currently more promising arms, in order to aid exploration. We can perform a similar anaysis to before:
+[here](https://courses.cs.washington.edu/courses/cse599i/18wi/resources/lecture3/lecture3.pdf) for how this bound is derived). The presence of the $N_{t}$ in the denominator allows arms which have not been pulled many times to be prioritised over other, currently more promising arms, in order to aid exploration. We can perform a similar analysis to before:
 
 
 ```python
@@ -462,7 +462,7 @@ plt.legend()
 
 In this case, choosing $\alpha=0.5$ seems to lead to an average reward of around 8, 
 significantly higher than the expected arm values of 5. The gradient bandit algorithm 
-also relies on a parameter $\alpha$, so should be able handle a non-stationary arm bed too:
+also relies on a parameter $\alpha$, so should be able to handle a non-stationary arm bed too:
 
 ```python
 for alpha in [0.005, 0.01, 0.05, 0.1]:

@@ -15,7 +15,7 @@ tags:
 
 ## Maximising the probability of reaching checkout in N moves
 
-The analysis up until now has concerned the maximisation of the expected value of the score from a single dart. For simplicity, let's define the random variable $X_i = s(Z_i)$ as the score obtained from the dart throw, with expected value $\mathbf{E}(X_i) = \mu$ and variance $\text{Var}(X_i) = \omega^2$. Also define the total score after $N$ throws as $S_N = \sum_{i=1}^{N}X_i$. The values of $\mu$ and $\omega$ will depend on the point at which Alice is aiming $p$, and Alice's skill level parameterised by $\sigma$ (which is for now assumed to be fixed).  Due to linearity of expectation, the expected score from $N$ darts thrown consecutively is $N$ multipled by the single dart expected score:
+The analysis up until now has concerned the maximisation of the expected value of the score from a single dart. For simplicity, let's define the random variable $X_i = s(Z_i)$ as the score obtained from the dart throw, with expected value $\mathbf{E}(X_i) = \mu$ and variance $\text{Var}(X_i) = \omega^2$. Also define the total score after $N$ throws as $S_N = \sum_{i=1}^{N}X_i$. The values of $\mu$ and $\omega$ will depend on the point at which Alice is aiming $p$, and Alice's skill level parameterised by $\sigma$ (which is for now assumed to be fixed).  Due to linearity of expectation, the expected score from $N$ darts thrown consecutively is $N$ multiplied by the single dart expected score:
 
 $$
 \mathbf{E}\left(\sum_{i=1}^{N}X_i\right)=\sum_{i=1}^{N}E\left(X_i\right)=N\mathbf{E}\left(X_1\right)
@@ -28,7 +28,7 @@ F(N, K)\equiv\mathbf{P}\left(\sum_{i=1}^{N}X_i > K\right)
 $$
 
 
-Why consider this alternative optimization function $F(N, K)$? Suppose Alice is playing against an opponent (Bob) with a known skill level, and so is expected to reach the checkout stage after $N$ darts. Alice wants to make sure that she is also in checkout range at the same time that Bob is, in order to apply pressure him. As well as trying to maximise the score of each dart, Alice will need to take account of the variance of the score of each dart - throwing at a high scoring region with a large variance comes with a significant probability of getting unlucky, allowing Bob to get ahead and have several chances at checking out.
+Why consider this alternative optimization function $F(N, K)$? Suppose Alice is playing against an opponent (Bob) with a known skill level, and so is expected to reach the checkout stage after $N$ darts. Alice wants to make sure that she is also in checkout range at the same time that Bob is, in order to apply pressure to him. As well as trying to maximise the score of each dart, Alice will need to take account of the variance of the score of each dart - throwing at a high scoring region with a large variance comes with a significant probability of getting unlucky, allowing Bob to get ahead and have several chances at checking out.
 
 #### Hoeffding inequality
 
@@ -63,7 +63,7 @@ hoeffding_bound(461, 16, 15)
 
 
 
-Unfortunately, this bound is only useful when considering players of vastly different skill levels (Bob is much better than Alice), so this does not give any great insight into strategies for players with comparable abilites. 
+Unfortunately, this bound is only useful when considering players of vastly different skill levels (Bob is much better than Alice), so this does not give any great insight into strategies for players with comparable abilities. 
 
 #### Central Limit Theorem
 
@@ -176,7 +176,7 @@ $$
 \end{align}
 $$
 
-The second line follows, as in the limit $N\rightarrow\infty$ the In other words, as $N\rightarrow\infty$:
+The second line follows, as in the limit $N\rightarrow\infty$. In other words, as $N\rightarrow\infty$:
 
 $$
 \frac{\mu\sqrt{N}}{\omega}\left(\log{S_N} - \log{N\mu}\right)\rightarrow \mathcal{N}(0, 1)
@@ -311,7 +311,7 @@ To explain how to interpret these plots, and describe how they might help when p
 - In the case that Alice has close to perfect aim, she can still reach checkout before Bob when aiming at these lower values. For $k<20$, Alice is recommended to aim for the $20$; for $20<k<45$, she is recommended to aim for the bullseye.
 
 
-- For large $k$ (i.e. when Bob is very skillful), Alice needs to persue a more risky strategy in order to reach checkout at a similar time to Bob. For example, for $k>30$, Alice is recommended to always aim at (or near) the triple $20$; in the analysis focussing on just maximising expected score, Alice is recommended to switch to the triple $19$ when her throwing distribution gets too broad. This shows how the Sharpe ratio approach allows Alice to take into account her opponents skill when determining her strategy.
+- For large $k$ (i.e. when Bob is very skillful), Alice needs to pursue a more risky strategy in order to reach checkout at a similar time to Bob. For example, for $k>30$, Alice is recommended to always aim at (or near) the triple $20$; in the analysis focussing on just maximising expected score, Alice is recommended to switch to the triple $19$ when her throwing distribution gets too broad. This shows how the Sharpe ratio approach allows Alice to take into account her opponents skill when determining her strategy.
 
 ### Repeating for the Quadro board
 

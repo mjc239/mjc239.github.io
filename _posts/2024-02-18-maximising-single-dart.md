@@ -53,7 +53,7 @@ $$
 
 where $\mathcal{F}(f)$ is the Fourier transform of the function $f$. This can be efficiently computed for all positions $p$ on the board, using the fast Fourier transform (FFT), an algorithm available out of the box from many scientific programming libraries such as [numpy](https://numpy.org/doc/stable/index.html).
 
-Let's start be recreating some of the heat plots produced in ASPD, using a range of $\sigma$ values to represent players of different abilities. The temperature of the heat plot indicates the expected score obtained when aiming at that point; also marked is the maximum expected value, i.e. the point at which the player should aim to maximise the expected score.
+Let's start by recreating some of the heat plots produced in ASPD, using a range of $\sigma$ values to represent players of different abilities. The temperature of the heat plot indicates the expected score obtained when aiming at that point; also marked is the maximum expected value, i.e. the point at which the player should aim to maximise the expected score.
 
 | ![Heatmaps for various sigmas](/assets/images/2024-02-18-dartboard-heatmaps.png) |
 |:--:|
@@ -108,7 +108,7 @@ $$
 
 This has been convenient, as it means that the player's skill is represented by the single parameter $\sigma$, making it easier to visualise performance as a function of skill. Of course, it is possible to model the player's throwing distribution using a more general set of throwing distributions, by allowing $\Sigma$ to be any symmetric positive semi-definite matrix. In fact, as pointed out in ASPD, this is likely to be observed in the throwing distributions of real players:
 
-- There is usually a larger variance in the vertical direction than the horizontal direction, as it is harder to account for the additional affect of gravity on the dart in this direction. So a more representative throwing distribution can be modelled using a diagonal covariance matrix with distinct horizontal and vertical variances:
+- There is usually a larger variance in the vertical direction than the horizontal direction, as it is harder to account for the additional effect of gravity on the dart in this direction. So a more representative throwing distribution can be modelled using a diagonal covariance matrix with distinct horizontal and vertical variances:
 
 $$
 \Sigma = \begin{pmatrix}
@@ -132,7 +132,7 @@ In the case of a general positive-definite symmetric covariance matrix $\Sigma$,
 Sigma = np.array([[400, 500], [500, 900]]) # note: units here are pixels, not mm
 ```
 
-As mentioned earlier, this has a larger variance in the vertical direction, and has a slight leftwards tilt corresponding to a right-handed player. We see that the triple $15$ is recommended now, due to the smaller variance in the direction in the direction perpendicular to the $15$ segment.
+As mentioned earlier, this has a larger variance in the vertical direction, and has a slight leftwards tilt corresponding to a right-handed player. We see that the triple $15$ is recommended now, due to the smaller variance in the direction perpendicular to the $15$ segment.
 
 | ![Heatmap for a general Gaussian](/assets/images/2024-02-18-general-gaussian.png) |
 |:--:|

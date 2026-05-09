@@ -174,7 +174,7 @@ For this more skilled player:
 
 ## Quadro board
 
-This analysis can be repeated for the Quadro board, which now includes the inticing quadruple-score regions (see this post for background). Here are the aiming points in the action space, covering the board and the region around it:
+This analysis can be repeated for the Quadro board, which now includes the enticing quadruple-score regions (see this post for background). Here are the aiming points in the action space, covering the board and the region around it:
 
     
 ![png](/assets/images/20241120/20241120_output_40_1.png)

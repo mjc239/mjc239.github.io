@@ -123,7 +123,7 @@ the expected price we get for our turnips.
 
 #### Keeping it simple
 
-In the spirit of keeping things as simple as we can for as long as we can will first calculate this expectation in a fairly direct way. We will split the expectation up depending upon the day that the turnips are sold (using the [law of total expectation](https://en.wikipedia.org/wiki/Law_of_total_expectation)).
+In the spirit of keeping things as simple as we can, we will first calculate this expectation in a fairly direct way. We will split the expectation up depending upon the day that the turnips are sold (using the [law of total expectation](https://en.wikipedia.org/wiki/Law_of_total_expectation)).
 
 The probability that the turnips are sold on the first day is simply the probability that $P_1\geq s_1$, that is $1-s_1$. Then, if the price is at least $s_1$, it is consequently uniformly distributed from $s_1$ to $1$, and as such its expectation is simply their average: $\frac{1}{2}(1+s_1)$. The contribution to the overall expectation is then simply the product of $1-s_1$ and $\frac{1}{2}(1+s_1)$, that is $\frac{1}{2}(1-s_1^2)$.
 
@@ -364,7 +364,7 @@ $$
 
 ### The recursion relation for $\tilde{s}_{i}$
 
-At first glance, this recurrence relation is not particular familiar; however, by performing 
+At first glance, this recurrence relation is not particularly familiar; however, by performing 
 the substitution $t\_{k}=\frac{1}{2}(1-\tilde{s}\_{n-k})$, we obtain
 
 $$
@@ -527,7 +527,7 @@ We will revisit this a little more formally in a later post.
 
 ![Isabelle thinking](/assets/images/isabellethinking.jpg)
 
-After a bit of playing around with the uniform case we've managed to find first order recurrence describing the optimal 
+After a bit of playing around with the uniform case we've managed to find a first order recurrence describing the optimal 
 threshold values for a strategy of this sort. This begs a few natural questions.
 
 ### Seize the day!
@@ -559,7 +559,7 @@ asymptotics?
 
 Now that we've cut our teeth on this simple case, we would like to say something about other distributions. In 
 particular, can we find a simple recurrence governing the thresholds of an optimal strategy? Can we show that it is 
-always the case the these optimal thresholds are the expected returns if we choose to play on, as discussed earlier?
+always the case that these optimal thresholds are the expected returns if we choose to play on, as discussed earlier?
 
 ## Next time: Non-uniform Turnips
 

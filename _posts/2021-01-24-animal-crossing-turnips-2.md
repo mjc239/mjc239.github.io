@@ -265,13 +265,13 @@ $$
 \end{align}
 $$
 
-#### The Euler-Mascharoni constant
+#### The Euler-Mascheroni constant
 
 Of course, we actually have $H\_i = \log(i + 1) + \gamma + o(1)$, where $\gamma$ is the 
-[Euler-Mascharoni constant](https://en.wikipedia.org/wiki/Euler%E2%80%93Mascheroni_constant), but since the additive 
+[Euler-Mascheroni constant](https://en.wikipedia.org/wiki/Euler%E2%80%93Mascheroni_constant), but since the additive 
 error in our estimate for $r_i$ is otherwise $O(1)$ this named constant is eaten up by the error. As it happens, 
 we can push our argument a bit further and, in a sense, obtain an analogous result for the $r_i$ themselves. Here there 
-will be a fixed constant cropping up, but it will not be the Euler-Mascharoni constant.
+will be a fixed constant cropping up, but it will not be the Euler-Mascheroni constant.
 
 ### Overoverdoing just one last time: The "Uniform Turnips" constant
 
@@ -616,7 +616,7 @@ not give the discrete case any further attention.
 ## Carpe rāpa!: optimality and sticking to your guns
 
 It is high time we address one small technical question: must the optimal strategy actually be of the form we have 
-been considering? Recall that we have thus for only considered strategies of the form:
+been considering? Recall that we have thus far only considered strategies of the form:
 
 <p align="center">
 Sell at time $i$ if $P_{i}\geq s_{i}$
