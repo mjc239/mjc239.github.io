@@ -167,7 +167,7 @@ $$
 
 ### Putnam Exam, 2012: B4
 
-It's worth nothing that this shows that $a\_n = (1 + O(\frac{1}{n}))\log{n}$ and so $a\_n - \log n\to 0$ as $n$ goes to infinity.
+It's worth noting that this shows that $a\_n = (1 + O(\frac{1}{n}))\log{n}$ and so $a\_n - \log n\to 0$ as $n$ goes to infinity.
 
 ### Amplification
 
@@ -183,7 +183,7 @@ $$
 t_{i+1} \leq t_{i} + 1 + 1/2t_{i} + 1/t_i^2.
 $$
 
-Then, exactly as with it is possible to show
+Then, exactly as before, it is possible to show
 
 $$
 t_i = i + 1 + \frac{1}{2}\log(i+1) + \tau' + o(1),

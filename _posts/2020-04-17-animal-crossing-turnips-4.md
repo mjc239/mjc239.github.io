@@ -102,7 +102,7 @@ E(X_{(n)}) &= \int_0^1 1 - x^n dx \\
 \end{align}
 $$
 
-It is interesting to compare this to the estimates were obtained earlier on the expected return of our strategy
+It is interesting to compare this to the estimates we obtained earlier on the expected return of our strategy
 
 $$
 s_{0} = 1 - \frac{2}{n + O(\log{n})}.
