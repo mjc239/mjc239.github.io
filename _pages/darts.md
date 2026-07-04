@@ -1,9 +1,7 @@
 ---
 title: A Data Scientist Plays Darts
-layout: collection
+layout: archive
 permalink: /darts/
-collection: darts
-entries_layout: grid
 classes: wide
 ---
 
@@ -16,10 +14,9 @@ A collection of posts, using a statistical approach to analyse the game of darts
 
 ## Posts
 
-🎯[Introduction + motivation](../_posts/2024-02-07-darts-frontpage.md) - why did the Quadro board flop?
-
-🎯[How do I throw high scoring darts?](../_posts/2024-02-18-maximising-single-dart.md) - where should I aim on the board, to maximise my score?
-
-🎯[How can I reach checkout before my opponent?](../_posts/2024-02-24-dart-sharpe-ratio.md) - maximising the probability of reaching checkout in N moves
-
-🎯[How do I play on-player continuous 501 optimally?](../_posts/2024-11-20-continuous-dart-rl.md) - where to aim to minimise the number of turns until checkout
+<div class="entries-grid">
+  {% assign darts_posts = site.tags.darts | reverse %}
+  {% for post in darts_posts %}
+    {% include archive-single.html type="grid" %}
+  {% endfor %}
+</div>

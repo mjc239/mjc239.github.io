@@ -11,7 +11,7 @@
 # https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/#installing-the-theme
 
 # theme                  : "minimal-mistakes-jekyll"
-remote_theme             : "mmistakes/minimal-mistakes"
+remote_theme             : "mmistakes/minimal-mistakes@4.26.2"
 minimal_mistakes_skin    : "air" # "default", "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
 
 # Site Settings
@@ -20,8 +20,8 @@ title                    : "Michael Cole"
 title_separator          : "|"
 subtitle                 : # site tagline that appears below site title in masthead
 name                     : "Michael Cole"
-description              : "My personal website/blog."
-url                      : # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
+description              : "Machine learning engineer in London, writing about statistics, reinforcement learning and puzzles."
+url                      : "https://mjc239.github.io" # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
 baseurl                  : # the subpath of your site, e.g. "/blog"
 repository               : "mjc239/mjc239.github.io" # GitHub username/repo-name e.g. "mmistakes/minimal-mistakes"
 teaser                   : # path of fallback teaser image, e.g. "/assets/images/500x300.png"
@@ -75,7 +75,7 @@ facebook:
   username               :
   app_id                 :
   publisher              :
-og_image                 : # Open Graph/Twitter default site image
+og_image                 : "/assets/images/freyr_green.png" # Open Graph/Twitter default site image
 # For specifying social profiles
 # - https://developers.google.com/structured-data/customize/social-profiles
 social:
@@ -84,10 +84,13 @@ social:
   links: # An array of links to social media profiles
 
 # Analytics
+# The old Universal Analytics property (UA-163902591-1) stopped collecting data
+# on 1 July 2023. To re-enable analytics, create a GA4 property and set
+# provider to "google-gtag" with the new G-XXXXXXXXXX measurement ID.
 analytics:
-  provider               : google # false (default), "google", "google-universal", "custom"
+  provider               : false # false (default), "google-gtag", "custom"
   google:
-    tracking_id          : UA-163902591-1
+    tracking_id          : # G-XXXXXXXXXX
     anonymize_ip         : # true, false (default)
 
 
@@ -95,28 +98,16 @@ analytics:
 author:
   name             : "Michael Cole"
   avatar           : "/assets/images/my_face.jpg" # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
-  bio              : "My personal website/blog."
+  bio              : "Machine learning engineer in London, writing about statistics, reinforcement learning and puzzles."
   location         : "London, UK"
   email            :
   links:
-    - label: "Email"
-      icon: "fas fa-fw fa-envelope-square"
-      # url: mailto:your.name@email.com
-    - label: "Website"
-      icon: "fas fa-fw fa-link"
-      # url: "https://your-website.com"
     - label: "Twitter"
       icon: "fab fa-fw fa-twitter-square"
       url: "https://twitter.com/mikeyjcole"
-    - label: "Facebook"
-      icon: "fab fa-fw fa-facebook-square"
-      # url: "https://facebook.com/"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/mjc239"
-    - label: "Instagram"
-      icon: "fab fa-fw fa-instagram"
-      # url: "https://instagram.com/"
     - label: "LinkedIn"
       icon: "fab fa-fw fa-linkedin"
       url: "https://www.linkedin.com/in/michaeljcole1/"
@@ -126,22 +117,13 @@ footer:
   links:
     - label: "Twitter"
       icon: "fab fa-fw fa-twitter-square"
-      # url:
-    - label: "Facebook"
-      icon: "fab fa-fw fa-facebook-square"
-      # url:
+      url: "https://twitter.com/mikeyjcole"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
-      # url:
-    - label: "GitLab"
-      icon: "fab fa-fw fa-gitlab"
-      # url:
-    - label: "Bitbucket"
-      icon: "fab fa-fw fa-bitbucket"
-      # url:
-    - label: "Instagram"
-      icon: "fab fa-fw fa-instagram"
-      # url:
+      url: "https://github.com/mjc239"
+    - label: "LinkedIn"
+      icon: "fab fa-fw fa-linkedin"
+      url: "https://www.linkedin.com/in/michaeljcole1/"
 
 # Reading Files
 include:
@@ -211,7 +193,7 @@ sass:
 permalink: /:categories/:title/
 paginate: 5 # amount of posts to show
 paginate_path: /page:num/
-timezone: # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+timezone: Europe/London # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
 
 # Plugins (previously gems:)
@@ -282,6 +264,65 @@ defaults:
       comments: true
       share: true
       related: true
+  # Animal Crossing turnip posts: shared custom sidebar showing both authors
+  # (written in collaboration with Jack Bartley), instead of the usual
+  # single-author profile.
+  - scope:
+      path: "_posts/*animal-crossing-turnips*"
+      type: posts
+    values:
+      author_profile: false
+      sidebar:
+        - text: |
+            <div class="author__avatar">
+            <img src="/assets/images/my_face.jpg" alt="Michael Cole" itemprop="image">
+            </div>
+            <h3 class="author__name" itemprop="name">Michael Cole</h3>
+            <div class="author__urls-wrapper">
+            <button class="btn btn--inverse">Follow</button>
+            <ul class="author__urls social-icons">
+            <li itemprop="homeLocation" itemscope="" itemtype="https://schema.org/Place">
+            <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">London, UK</span>
+            </li>
+            <li><a href="https://github.com/mjc239" rel="nofollow noopener noreferrer">
+            <i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span>
+            </a>
+            </li>
+            <li>
+            <a href="https://twitter.com/mikeyjcole" rel="nofollow noopener noreferrer">
+            <i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i><span class="label">Twitter</span>
+            </a>
+            </li>
+            <li><a href="https://www.linkedin.com/in/michaeljcole1/" rel="nofollow noopener noreferrer">
+            <i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span class="label">LinkedIn</span>
+            </a>
+            </li>
+            </ul>
+            </div>
+            <hr style="width:50%">
+        - text: |
+            <div class="author__avatar">
+            <img src="/assets/images/bartley.jpg" alt="Jack Bartley" itemprop="image">
+            </div>
+            <h3 class="author__name" itemprop="name">Jack Bartley</h3>
+            <div class="author__urls-wrapper">
+            <button class="btn btn--inverse">Follow</button>
+            <ul class="author__urls social-icons">
+            <li itemprop="homeLocation" itemscope="" itemtype="https://schema.org/Place">
+            <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">London, UK</span>
+            </li>
+            <li>
+            <a href="http://jackbartley.com/" rel="nofollow noopener noreferrer">
+            <i class="fas fa-fw fa-chalkboard-teacher" aria-hidden="true" style="color: #d34737"></i><span class="label">Teaching</span>
+            </a>
+            </li>
+            <li>
+            <a href="https://twitter.com/dr_bartley" rel="nofollow noopener noreferrer">
+            <i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i><span class="label">Twitter</span>
+            </a>
+            </li>
+            </ul>
+            </div>
 
 lunr:
   search_within_pages: true

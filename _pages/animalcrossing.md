@@ -1,9 +1,7 @@
 ---
 title: Animal Crossing Stalk Market
-layout: collection
+layout: archive
 permalink: /animalcrossing/
-collection: animalcrossing
-entries_layout: grid
 classes: wide
 ---
 
@@ -11,6 +9,11 @@ Analysing the Animal Crossing Stalk Market, to work out when it is best to buy t
 
 ![Daisy Mae](/assets/images/daisymae.jpeg)
 
-🐱 [Post 1 - Uniformly distributed prices](../_posts/2020-12-30-animal-crossing-turnips-1.md)
+## Posts
 
-🐻 [Post 2 - Asymptotics and arbitrary distributions](../_posts/2021-01-24-animal-crossing-turnips-2.md)
+<div class="entries-grid">
+  {% assign ac_posts = site.tags['animal-crossing'] | reverse %}
+  {% for post in ac_posts %}
+    {% include archive-single.html type="grid" %}
+  {% endfor %}
+</div>

@@ -1,5 +1,11 @@
 main:
   - title: "Home"
     url: /
+  - title: "Darts"
+    url: /darts/
+  - title: "Advent of Code 2023"
+    url: /aoc23/
+  - title: "Animal Crossing"
+    url: /animalcrossing/
   - title: "About"
-    url: /about
+    url: /about/

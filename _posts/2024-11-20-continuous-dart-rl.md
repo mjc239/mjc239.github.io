@@ -13,9 +13,8 @@ tags:
 
 {% include mathjax.html %}
 
-# How to play one player 501
-
-This post is still a work in progress...
+**Note:** this post is still a work in progress — some sections may be incomplete.
+{: .notice--info}
 
 ## Triple is funny, but double makes money
 
