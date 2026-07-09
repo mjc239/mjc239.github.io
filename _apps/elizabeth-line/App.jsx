@@ -69,23 +69,21 @@ export default function App() {
   //   • path-style:  proxyBase + /<path><query>          (your own proxy)
   // A proxy entry ending in "/" (no "?") is treated as path-style.
   const PROXIES = [
-    { label: "My proxy", url: "https://YOURPROJECT.supabase.co/functions/v1/tfl-proxy/" },
+    { label: "My proxy", url: "https://rogsybzffnvpcapycjch.supabase.co/functions/v1/tfl-proxy/" },
     { label: "CodeTabs", url: "https://api.codetabs.com/v1/proxy/?quest=" },
     { label: "AllOrigins", url: "https://api.allorigins.win/raw?url=" },
     { label: "corsproxy.io", url: "https://corsproxy.io/?url=" },
     { label: "None (direct)", url: "" },
   ];
-  // Default to CodeTabs until you paste your deployed proxy URL — the
-  // "YOURPROJECT" placeholder won't resolve, so shipping it as default would
-  // just fail. Once your Supabase function is live, put its real URL in the
-  // preset above and make it the default here.
-  // The choice persists across visits; API keys deliberately don't.
+  // Default to the deployed Supabase proxy; the public proxies are fallbacks
+  // if it's ever down. The choice persists across visits; API keys
+  // deliberately don't.
   const [proxy, setProxyState] = useState(() => {
     try {
       const saved = localStorage.getItem("el-departures-proxy");
       if (saved !== null) return saved;
     } catch {}
-    return PROXIES[1].url;
+    return PROXIES[0].url;
   });
   const setProxy = (url) => {
     setProxyState(url);
