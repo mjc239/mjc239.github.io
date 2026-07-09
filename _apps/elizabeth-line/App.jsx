@@ -120,7 +120,9 @@ export default function App() {
     return () => clearInterval(t);
   }, []);
 
-  // Resolve a station name to its Naptan id, caching the result.
+  // Resolve a station name to its Naptan id, caching the result. Prefer a
+  // rail-style 910G… id: search can also return hub ids (HUBPAD etc.), which
+  // make the Journey API answer 300 "disambiguate" instead of journeys.
   const resolveId = useCallback(async (name) => {
     if (idCache.current[name]) return idCache.current[name];
     const url =
@@ -129,7 +131,8 @@ export default function App() {
     const res = await fetch(proxied(url));
     if (!res.ok) throw new Error(`search-${res.status}`);
     const data = await res.json();
-    const match = (data.matches || [])[0];
+    const matches = data.matches || [];
+    const match = matches.find((m) => /^910G/.test(m.id)) || matches[0];
     if (!match) throw new Error("no-match");
     idCache.current[name] = match.id;
     return match.id;
@@ -143,14 +146,35 @@ export default function App() {
         resolveId(fromName),
         resolveId(toName),
       ]);
-      const params = new URLSearchParams({
-        mode: "elizabeth-line",
-        journeyPreference: "leastTime",
-        timeIs: "departing",
-        alternativeWalking: "false",
-      });
-      const url = `${TFL}/Journey/JourneyResults/${fromId}/to/${toId}?${params}${auth()}`;
-      const res = await fetch(proxied(url));
+      const requestJourneys = (a, b) => {
+        const params = new URLSearchParams({
+          mode: "elizabeth-line",
+          journeyPreference: "leastTime",
+          timeIs: "departing",
+          alternativeWalking: "false",
+        });
+        const url = `${TFL}/Journey/JourneyResults/${a}/to/${b}?${params}${auth()}`;
+        return fetch(proxied(url));
+      };
+      let res = await requestJourneys(fromId, toId);
+      if (res.status === 300) {
+        // Ambiguous endpoint (usually a hub id): TfL answers 300 with its
+        // suggested precise ids instead of journeys. Adopt them & retry once.
+        const d = await res.json().catch(() => null);
+        const pick = (disamb, fallback) => {
+          const vals = (disamb?.disambiguationOptions || [])
+            .map((o) => o.parameterValue)
+            .filter(Boolean);
+          return vals.find((v) => /^910G/.test(v)) || vals[0] || fallback;
+        };
+        const newFrom = pick(d?.fromLocationDisambiguation, fromId);
+        const newTo = pick(d?.toLocationDisambiguation, toId);
+        if (newFrom !== fromId || newTo !== toId) {
+          idCache.current[fromName] = newFrom;
+          idCache.current[toName] = newTo;
+          res = await requestJourneys(newFrom, newTo);
+        }
+      }
       if (!res.ok) {
         if (res.status === 429) throw new Error("rate");
         throw new Error(`http-${res.status}`);
