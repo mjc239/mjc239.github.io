@@ -62,6 +62,9 @@ export default function App() {
   const [errMsg, setErrMsg] = useState("");
   const [lastUpdated, setLastUpdated] = useState(null);
   const [fetching, setFetching] = useState(false);
+  // How many trains the board should show. "Show later trains" raises it;
+  // changing station resets it. Refreshes keep the extended size.
+  const [targetCount, setTargetCount] = useState(6);
   const [, tick] = useState(0);
 
   // TfL's API sends no CORS headers, so browser requests must go via a proxy
@@ -249,31 +252,47 @@ export default function App() {
       const data = await res.json();
       let list = parseDirect(data);
 
-      // TfL returns only ~3 options per call. To fill the board to 6, ask
-      // once more from the minute of the last returned departure (the time
-      // param is inclusive, so nothing in that minute can slip through) and
-      // merge, deduplicating re-returned trains by departure + arrival.
-      const allStarts = (data.journeys || [])
-        .map((j) => j.startDateTime)
-        .filter(Boolean);
-      if (list.length > 0 && list.length < 6 && allStarts.length) {
-        const latest = new Date(allStarts.reduce((a, b) => (a > b ? a : b)));
+      // TfL returns only ~3 options per call. To fill the board to
+      // targetCount, keep asking from the minute of the last returned
+      // departure (the time param is inclusive, so nothing in that minute
+      // can slip through) and merge, deduplicating re-returned trains by
+      // departure + arrival.
+      const key = (j) => `${j.start}|${j.arrive}`;
+      const latestStart = (d) => {
+        const starts = (d.journeys || []).map((j) => j.startDateTime).filter(Boolean);
+        return starts.length ? starts.reduce((a, b) => (a > b ? a : b)) : null;
+      };
+      let raw = data;
+      let guard = 0;
+      while (list.length > 0 && list.length < targetCount && guard < 10) {
+        guard += 1;
+        const latestIso = latestStart(raw);
+        if (!latestIso) break;
+        const latest = new Date(latestIso);
         const pad = (n) => String(n).padStart(2, "0");
         const res2 = await requestJourneys(effFrom, effTo, {
           date: `${latest.getFullYear()}${pad(latest.getMonth() + 1)}${pad(latest.getDate())}`,
           time: `${pad(latest.getHours())}${pad(latest.getMinutes())}`,
         });
-        if (res2.ok) {
-          const more = parseDirect(await res2.json().catch(() => ({})));
-          const key = (j) => `${j.start}|${j.arrive}`;
-          const seen = new Set(list.map(key));
-          for (const j of more) if (!seen.has(key(j))) list.push(j);
+        if (!res2.ok) break;
+        raw = await res2.json().catch(() => ({}));
+        const seen = new Set(list.map(key));
+        let added = 0;
+        for (const j of parseDirect(raw)) {
+          if (!seen.has(key(j))) {
+            list.push(j);
+            added += 1;
+          }
         }
+        // If nothing new arrived and the window didn't advance, stop —
+        // TfL has run out of journeys (e.g. end of service).
+        const newLatest = latestStart(raw);
+        if (!added && (!newLatest || newLatest <= latestIso)) break;
       }
 
       list = list
         .sort((a, b) => new Date(a.start) - new Date(b.start))
-        .slice(0, 6);
+        .slice(0, targetCount);
 
       setJourneys(list);
       setStatus(list.length ? "ok" : "empty");
@@ -293,7 +312,7 @@ export default function App() {
     } finally {
       setFetching(false);
     }
-  }, [fromName, toName, resolveId, journeys.length]);
+  }, [fromName, toName, resolveId, journeys.length, targetCount]);
 
   useEffect(() => {
     fetchJourneys();
@@ -301,10 +320,22 @@ export default function App() {
     return () => clearInterval(poll);
   }, [fetchJourneys]);
 
+  // Station changes reset the board to its default size (batched with the
+  // name change so the fetch effect fires once).
+  const changeFrom = (n) => {
+    setFromName(n);
+    setTargetCount(6);
+  };
+  const changeTo = (n) => {
+    setToName(n);
+    setTargetCount(6);
+  };
   const swap = () => {
     setFromName(toName);
     setToName(fromName);
+    setTargetCount(6);
   };
+  const showMore = () => setTargetCount(journeys.length + 3);
 
   return (
     <div className="wrap">
@@ -317,9 +348,9 @@ export default function App() {
       </header>
 
       <section className="controls">
-        <StationPicker label="From" value={fromName} onChange={setFromName} exclude={toName} stations={stations} />
+        <StationPicker label="From" value={fromName} onChange={changeFrom} exclude={toName} stations={stations} />
         <button className="swap" onClick={swap} aria-label="Swap stations" title="Swap">⇅</button>
-        <StationPicker label="To" value={toName} onChange={setToName} exclude={fromName} stations={stations} />
+        <StationPicker label="To" value={toName} onChange={changeTo} exclude={fromName} stations={stations} />
       </section>
 
       <div className="route-line">
@@ -367,6 +398,11 @@ export default function App() {
             </div>
           );
         })}
+        {status === "ok" && journeys.length > 0 && (
+          <button className="more" onClick={showMore} disabled={fetching}>
+            {fetching ? <span className="spin small" aria-hidden="true" /> : "Show later trains"}
+          </button>
+        )}
       </section>
 
       <footer className="foot">
@@ -436,6 +472,15 @@ const css = `
   .arrow { color: #b3ad9f; }
   .board { display: flex; flex-direction: column; gap: 8px; min-height: 120px; }
   .board.fetching .row { opacity: 0.55; transition: opacity 0.2s; }
+  .more {
+    display: flex; align-items: center; justify-content: center;
+    padding: 11px 16px; background: none; border: 1px dashed var(--line);
+    border-radius: 10px; color: var(--purple); font-size: 13px;
+    font-weight: 600; cursor: pointer; font-family: inherit; min-height: 42px;
+  }
+  .more:hover:not(:disabled) { border-color: var(--purple); background: var(--purple-soft); }
+  .more:disabled { cursor: default; }
+  .more:focus-visible { outline: 2px solid var(--purple); outline-offset: 1px; }
   .spin {
     display: inline-block; width: 16px; height: 16px; flex: none;
     border: 2px solid var(--line); border-top-color: var(--purple);
