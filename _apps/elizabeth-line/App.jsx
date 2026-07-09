@@ -179,17 +179,20 @@ export default function App() {
         resolveId(fromName),
         resolveId(toName),
       ]);
-      const requestJourneys = (a, b) => {
+      const requestJourneys = (a, b, extra = {}) => {
         const params = new URLSearchParams({
           mode: "elizabeth-line",
           journeyPreference: "leastTime",
           timeIs: "departing",
           alternativeWalking: "false",
+          ...extra,
         });
         const url = `${TFL}/Journey/JourneyResults/${a}/to/${b}?${params}`;
         return tflFetch(url);
       };
-      let res = await requestJourneys(fromId, toId);
+      let effFrom = fromId;
+      let effTo = toId;
+      let res = await requestJourneys(effFrom, effTo);
       if (res.status === 300) {
         // Ambiguous endpoint (usually a hub id): TfL answers 300 with its
         // suggested precise ids instead of journeys. Adopt them & retry once.
@@ -205,7 +208,9 @@ export default function App() {
         if (newFrom !== fromId || newTo !== toId) {
           idCache.current[fromName] = newFrom;
           idCache.current[toName] = newTo;
-          res = await requestJourneys(newFrom, newTo);
+          effFrom = newFrom;
+          effTo = newTo;
+          res = await requestJourneys(effFrom, effTo);
         }
       }
       if (res.status === 404) {
@@ -220,26 +225,52 @@ export default function App() {
         if (res.status === 429) throw new Error("rate");
         throw new Error(`http-${res.status}`);
       }
+      const parseDirect = (data) =>
+        (data.journeys || [])
+          .map((j) => {
+            const railLegs = (j.legs || []).filter(
+              (l) => l.mode?.id === "elizabeth-line"
+            );
+            const first = railLegs[0];
+            return {
+              start: j.startDateTime,
+              arrive: j.arrivalDateTime,
+              duration: j.duration,
+              platform:
+                first?.departurePoint?.platformName &&
+                first.departurePoint.platformName !== "null"
+                  ? first.departurePoint.platformName
+                  : null,
+              direct: railLegs.length === 1 && (j.legs || []).length === 1,
+            };
+          })
+          .filter((j) => j.direct);
+
       const data = await res.json();
-      const list = (data.journeys || [])
-        .map((j) => {
-          const railLegs = (j.legs || []).filter(
-            (l) => l.mode?.id === "elizabeth-line"
-          );
-          const first = railLegs[0];
-          return {
-            start: j.startDateTime,
-            arrive: j.arrivalDateTime,
-            duration: j.duration,
-            platform:
-              first?.departurePoint?.platformName &&
-              first.departurePoint.platformName !== "null"
-                ? first.departurePoint.platformName
-                : null,
-            direct: railLegs.length === 1 && (j.legs || []).length === 1,
-          };
-        })
-        .filter((j) => j.direct)
+      let list = parseDirect(data);
+
+      // TfL returns only ~3 options per call. To fill the board to 6, ask
+      // once more for the window just after the last returned departure and
+      // merge the batches.
+      const allStarts = (data.journeys || [])
+        .map((j) => j.startDateTime)
+        .filter(Boolean);
+      if (list.length > 0 && list.length < 6 && allStarts.length) {
+        const latest = allStarts.reduce((a, b) => (a > b ? a : b));
+        const next = new Date(new Date(latest).getTime() + 60000);
+        const pad = (n) => String(n).padStart(2, "0");
+        const res2 = await requestJourneys(effFrom, effTo, {
+          date: `${next.getFullYear()}${pad(next.getMonth() + 1)}${pad(next.getDate())}`,
+          time: `${pad(next.getHours())}${pad(next.getMinutes())}`,
+        });
+        if (res2.ok) {
+          const more = parseDirect(await res2.json().catch(() => ({})));
+          const seen = new Set(list.map((j) => j.start));
+          for (const j of more) if (!seen.has(j.start)) list.push(j);
+        }
+      }
+
+      list = list
         .sort((a, b) => new Date(a.start) - new Date(b.start))
         .slice(0, 6);
 
