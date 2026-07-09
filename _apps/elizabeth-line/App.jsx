@@ -62,6 +62,18 @@ export default function App() {
   const [errMsg, setErrMsg] = useState("");
   const [lastUpdated, setLastUpdated] = useState(null);
   const [fetching, setFetching] = useState(false);
+  // True only while the rows on screen are from the previous query (dim
+  // them); cleared the moment fresh data paints, even mid-fetch.
+  const [stale, setStale] = useState(false);
+  // Monotonic id of the latest fetch cycle: with progressive painting, a
+  // superseded cycle (station changed mid-fetch) must not touch state.
+  const fetchSeq = useRef(0);
+  // Row count as a ref so fetchJourneys doesn't depend on (and re-fire on)
+  // every progressive paint.
+  const journeysLen = useRef(0);
+  useEffect(() => {
+    journeysLen.current = journeys.length;
+  }, [journeys]);
   // How many trains the board should show. "Show later trains" raises it;
   // changing station resets it. Refreshes keep the extended size.
   const [targetCount, setTargetCount] = useState(6);
@@ -174,9 +186,12 @@ export default function App() {
   }, [loadLineMap]);
 
   const fetchJourneys = useCallback(async () => {
-    setStatus((s) => (journeys.length ? s : "loading"));
+    const cycle = ++fetchSeq.current;
+    const current = () => fetchSeq.current === cycle;
+    setStatus((s) => (journeysLen.current ? s : "loading"));
     setErrMsg("");
     setFetching(true);
+    setStale(journeysLen.current > 0);
     try {
       const [fromId, toId] = await Promise.all([
         resolveId(fromName),
@@ -216,6 +231,7 @@ export default function App() {
           res = await requestJourneys(effFrom, effTo);
         }
       }
+      if (!current()) return;
       if (res.status === 404) {
         // TfL's "no journey found for your inputs" — a real answer (e.g.
         // outside service hours), not a failure. Show the empty state.
@@ -251,6 +267,19 @@ export default function App() {
 
       const data = await res.json();
       let list = parseDirect(data);
+      const sortSlice = (l) =>
+        [...l].sort((a, b) => new Date(a.start) - new Date(b.start))
+          .slice(0, targetCount);
+
+      // Paint the first batch straight away — the Journey API is slow, so
+      // waiting for the follow-up calls too made every load feel sluggish.
+      // The later trains stream in below as they arrive.
+      if (list.length > 0 && current()) {
+        setJourneys(sortSlice(list));
+        setStatus("ok");
+        setLastUpdated(new Date());
+        setStale(false);
+      }
 
       // TfL returns only ~3 options per call. To fill the board to
       // targetCount, keep asking from the minute of the last returned
@@ -264,7 +293,7 @@ export default function App() {
       };
       let raw = data;
       let guard = 0;
-      while (list.length > 0 && list.length < targetCount && guard < 10) {
+      while (current() && list.length > 0 && list.length < targetCount && guard < 10) {
         guard += 1;
         const latestIso = latestStart(raw);
         if (!latestIso) break;
@@ -284,20 +313,19 @@ export default function App() {
             added += 1;
           }
         }
+        if (added && current()) setJourneys(sortSlice(list));
         // If nothing new arrived and the window didn't advance, stop —
         // TfL has run out of journeys (e.g. end of service).
         const newLatest = latestStart(raw);
         if (!added && (!newLatest || newLatest <= latestIso)) break;
       }
 
-      list = list
-        .sort((a, b) => new Date(a.start) - new Date(b.start))
-        .slice(0, targetCount);
-
-      setJourneys(list);
+      if (!current()) return;
+      setJourneys(sortSlice(list));
       setStatus(list.length ? "ok" : "empty");
       setLastUpdated(new Date());
     } catch (e) {
+      if (!current()) return;
       const msg = e.message || "";
       if (msg === "rate") {
         setErrMsg("TfL is rate-limiting requests right now. Try again in a minute.");
@@ -310,9 +338,12 @@ export default function App() {
       }
       setStatus("error");
     } finally {
-      setFetching(false);
+      if (current()) {
+        setFetching(false);
+        setStale(false);
+      }
     }
-  }, [fromName, toName, resolveId, journeys.length, targetCount]);
+  }, [fromName, toName, resolveId, targetCount]);
 
   useEffect(() => {
     fetchJourneys();
@@ -359,7 +390,7 @@ export default function App() {
         {toName} <span className="dot end" />
       </div>
 
-      <section className={`board${fetching ? " fetching" : ""}`}>
+      <section className={`board${stale ? " fetching" : ""}`}>
         {status === "loading" && journeys.length === 0 && (
           <div className="msg wait">
             <span className="spin" aria-hidden="true" /> Checking the line…
