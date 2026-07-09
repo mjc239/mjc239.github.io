@@ -90,25 +90,22 @@ page source.
 secrets (`wrangler secret put TFL_APP_ID` / `TFL_APP_KEY`, or
 **Settings → Variables** in the dashboard).
 
-## Pointing the app at your proxy
+## How the app picks a proxy
 
-In the app's **Settings** panel, paste your proxy URL **with a trailing
-slash** into the custom proxy field:
+The proxy chain is baked into `App.jsx` (`PROXY_CHAIN`): the Supabase
+function first, then public CORS proxies as automatic fallbacks if it's
+unreachable. There is no in-app settings UI. To change the primary proxy,
+edit `PROXY_CHAIN` and rebuild. An entry ending in `/` with no `?` is
+treated as path-style (TfL's paths map straight onto it); anything else is
+query-style (`prefix + encodeURIComponent(fullUrl)`).
 
-```
-https://<project-ref>.supabase.co/functions/v1/tfl-proxy/
-```
-
-(or `https://tfl-proxy.<you>.workers.dev/` for the Cloudflare flavour.)
-
-A URL ending in `/` with no `?` is treated as path-style — the app maps
-TfL's paths straight onto your proxy. The choice is saved in the browser's
-localStorage, so it sticks across visits. To make it the shipped default
-for everyone, put the real URL in the `PROXIES` list in `App.jsx` and
-rebuild.
+For debugging, a `?proxy=` URL parameter overrides the whole chain, e.g.
+`/apps/elizabeth-line/?proxy=http://localhost:9000/`.
 
 ## Notes
 
+- **API keys** live server-side only (the function secrets above) — the
+  app never sends or stores them client-side.
 - **Rate limits:** anonymous TfL is ~50 req/min. The app polls once a
   minute per open tab, so it's fine; the optional keys give headroom.
 - **Cost:** both free tiers dwarf this app's needs — Supabase allows 500K

@@ -61,58 +61,55 @@ export default function App() {
   const [status, setStatus] = useState("loading");
   const [errMsg, setErrMsg] = useState("");
   const [lastUpdated, setLastUpdated] = useState(null);
-  const [appId, setAppId] = useState("");
-  const [appKey, setAppKey] = useState("");
-  const [showKeys, setShowKeys] = useState(false);
-  // TfL's API sends no CORS headers, so browser requests must go via a proxy
-  // that adds them. Two proxy styles are supported:
-  //   • query-style: prefix + encodeURIComponent(fullTflUrl)   (public proxies)
-  //   • path-style:  proxyBase + /<path><query>          (your own proxy)
-  // A proxy entry ending in "/" (no "?") is treated as path-style.
-  const PROXIES = [
-    { label: "My proxy", url: "https://rogsybzffnvpcapycjch.supabase.co/functions/v1/tfl-proxy/" },
-    { label: "CodeTabs", url: "https://api.codetabs.com/v1/proxy/?quest=" },
-    { label: "AllOrigins", url: "https://api.allorigins.win/raw?url=" },
-    { label: "corsproxy.io", url: "https://corsproxy.io/?url=" },
-    { label: "None (direct)", url: "" },
-  ];
-  // Default to the deployed Supabase proxy; the public proxies are fallbacks
-  // if it's ever down. The choice persists across visits; API keys
-  // deliberately don't.
-  const [proxy, setProxyState] = useState(() => {
-    try {
-      const saved = localStorage.getItem("el-departures-proxy");
-      if (saved !== null) return saved;
-    } catch {}
-    return PROXIES[0].url;
-  });
-  const setProxy = (url) => {
-    setProxyState(url);
-    try {
-      localStorage.setItem("el-departures-proxy", url);
-    } catch {}
-  };
+  const [fetching, setFetching] = useState(false);
   const [, tick] = useState(0);
 
-  const auth = () => {
-    const p = new URLSearchParams();
-    if (appId) p.set("app_id", appId);
-    if (appKey) p.set("app_key", appKey);
-    const s = p.toString();
-    return s ? `&${s}` : "";
-  };
+  // TfL's API sends no CORS headers, so browser requests must go via a proxy
+  // that adds them: our own Supabase function first, public proxies as
+  // automatic fallbacks if it's ever down. Two proxy styles are supported:
+  //   • path-style:  proxyBase + /<path><query>          (our own proxy)
+  //   • query-style: prefix + encodeURIComponent(fullTflUrl)   (public proxies)
+  // An entry ending in "/" (no "?") is treated as path-style. A ?proxy= URL
+  // parameter overrides the whole chain (dev/testing hook).
+  const PROXY_CHAIN = (() => {
+    try {
+      const override = new URLSearchParams(window.location.search).get("proxy");
+      if (override) return [override];
+    } catch {}
+    return [
+      "https://rogsybzffnvpcapycjch.supabase.co/functions/v1/tfl-proxy/",
+      "https://api.codetabs.com/v1/proxy/?quest=",
+      "https://api.allorigins.win/raw?url=",
+    ];
+  })();
 
-  // Wrap a TfL URL for the chosen proxy. Path-style proxies (ending in "/"
-  // with no query marker) mirror TfL's paths; query-style proxies take the
-  // whole URL as an encoded parameter.
-  const proxied = (url) => {
-    if (!proxy) return url;
+  const proxied = (proxy, url) => {
     const pathStyle = proxy.endsWith("/") && !proxy.includes("?");
     if (pathStyle) {
       // Strip the TfL base so path + query sit directly after the proxy base.
       return proxy.replace(/\/$/, "") + url.slice(TFL.length);
     }
     return `${proxy}${encodeURIComponent(url)}`;
+  };
+
+  // Fetch a TfL URL through the proxy chain: on network failure or a
+  // proxy-side 5xx, quietly move to the next proxy. Any real TfL response
+  // (including 300/404/429) is returned as-is.
+  const tflFetch = async (url) => {
+    let lastErr = null;
+    for (const proxy of PROXY_CHAIN) {
+      try {
+        const res = await fetch(proxied(proxy, url));
+        if (res.status >= 500) {
+          lastErr = new Error(`http-${res.status}`);
+          continue;
+        }
+        return res;
+      } catch (e) {
+        lastErr = e;
+      }
+    }
+    throw lastErr || new Error("network");
   };
 
   // Live "X min" counters between fetches.
@@ -127,9 +124,7 @@ export default function App() {
   const loadLineMap = useCallback(() => {
     if (!lineMap.current) {
       lineMap.current = (async () => {
-        const a = auth();
-        const url = `${TFL}/Line/elizabeth/StopPoints${a ? `?${a.slice(1)}` : ""}`;
-        const res = await fetch(proxied(url));
+        const res = await tflFetch(`${TFL}/Line/elizabeth/StopPoints`);
         if (!res.ok) throw new Error(`line-${res.status}`);
         const stops = await res.json();
         const norm = (s) =>
@@ -150,7 +145,7 @@ export default function App() {
       });
     }
     return lineMap.current;
-  }, [appId, appKey, proxy]);
+  }, []);
 
   // Resolve a station name to its Naptan id: line stop list first, then a
   // per-name search as fallback. In the search results prefer a rail-style
@@ -164,8 +159,8 @@ export default function App() {
     if (idCache.current[name]) return idCache.current[name];
     const url =
       `${TFL}/StopPoint/Search/${encodeURIComponent(name)}` +
-      `?modes=elizabeth-line${auth()}`;
-    const res = await fetch(proxied(url));
+      `?modes=elizabeth-line`;
+    const res = await tflFetch(url);
     if (!res.ok) throw new Error(`search-${res.status}`);
     const data = await res.json();
     const matches = data.matches || [];
@@ -173,11 +168,12 @@ export default function App() {
     if (!match) throw new Error("no-match");
     idCache.current[name] = match.id;
     return match.id;
-  }, [appId, appKey, proxy, loadLineMap]);
+  }, [loadLineMap]);
 
   const fetchJourneys = useCallback(async () => {
     setStatus((s) => (journeys.length ? s : "loading"));
     setErrMsg("");
+    setFetching(true);
     try {
       const [fromId, toId] = await Promise.all([
         resolveId(fromName),
@@ -190,8 +186,8 @@ export default function App() {
           timeIs: "departing",
           alternativeWalking: "false",
         });
-        const url = `${TFL}/Journey/JourneyResults/${a}/to/${b}?${params}${auth()}`;
-        return fetch(proxied(url));
+        const url = `${TFL}/Journey/JourneyResults/${a}/to/${b}?${params}`;
+        return tflFetch(url);
       };
       let res = await requestJourneys(fromId, toId);
       if (res.status === 300) {
@@ -253,16 +249,17 @@ export default function App() {
     } catch (e) {
       const msg = e.message || "";
       if (msg === "rate") {
-        setErrMsg("TfL is rate-limiting anonymous requests. Add a free app ID and key below.");
+        setErrMsg("TfL is rate-limiting requests right now. Try again in a minute.");
       } else if (msg === "no-match" || msg.startsWith("search-")) {
         setErrMsg("Couldn't look up one of the stations. Try again shortly.");
       } else if (msg.startsWith("http-")) {
         setErrMsg(`TfL returned an error (${msg.replace("http-", "")}). Try again shortly.`);
       } else {
-        setErrMsg("Couldn't reach TfL — usually the CORS proxy. Open Settings and try a different proxy.");
+        setErrMsg("Couldn't reach TfL. Check your connection and try again.");
       }
       setStatus("error");
-      setShowKeys(true);
+    } finally {
+      setFetching(false);
     }
   }, [fromName, toName, resolveId, journeys.length]);
 
@@ -299,9 +296,11 @@ export default function App() {
         {toName} <span className="dot end" />
       </div>
 
-      <section className="board">
+      <section className={`board${fetching ? " fetching" : ""}`}>
         {status === "loading" && journeys.length === 0 && (
-          <div className="msg">Checking the line…</div>
+          <div className="msg wait">
+            <span className="spin" aria-hidden="true" /> Checking the line…
+          </div>
         )}
         {status === "error" && (
           <div className="msg err">
@@ -339,49 +338,15 @@ export default function App() {
       </section>
 
       <footer className="foot">
-        <span>
+        <span className="updated">
+          {fetching && <span className="spin small" aria-label="Updating" />}
           {lastUpdated
             ? `Updated ${lastUpdated.toLocaleTimeString("en-GB", {
                 hour: "2-digit", minute: "2-digit", second: "2-digit",
               })}`
             : ""}
         </span>
-        <button className="keys-toggle" onClick={() => setShowKeys((v) => !v)}>
-          {showKeys ? "Hide settings" : "Settings"}
-        </button>
       </footer>
-
-      {showKeys && (
-        <section className="keys">
-          <p className="keys-note">
-            <strong>CORS proxy.</strong> TfL's API can't be called directly from a
-            browser, so requests are routed through a proxy that adds the missing
-            headers. If departures won't load, switch proxy here.
-          </p>
-          <div className="proxy-presets">
-            {PROXIES.map((p) => (
-              <button
-                key={p.label}
-                className={`preset${proxy === p.url ? " active" : ""}`}
-                onClick={() => setProxy(p.url)}
-              >
-                {p.label}
-              </button>
-            ))}
-          </div>
-          <input placeholder="Custom proxy URL prefix" value={proxy}
-            onChange={(e) => setProxy(e.target.value.trim())} />
-          <p className="keys-note" style={{ marginTop: "4px" }}>
-            <strong>API keys (optional).</strong> If you hit rate limits, register
-            free at the TfL API portal and paste your credentials — they stay in
-            this tab only.
-          </p>
-          <input placeholder="app_id" value={appId}
-            onChange={(e) => setAppId(e.target.value.trim())} />
-          <input placeholder="app_key" value={appKey}
-            onChange={(e) => setAppKey(e.target.value.trim())} />
-        </section>
-      )}
     </div>
   );
 }
@@ -438,6 +403,19 @@ const css = `
   .dot.end { background: var(--amber); }
   .arrow { color: #b3ad9f; }
   .board { display: flex; flex-direction: column; gap: 8px; min-height: 120px; }
+  .board.fetching .row { opacity: 0.55; transition: opacity 0.2s; }
+  .spin {
+    display: inline-block; width: 16px; height: 16px; flex: none;
+    border: 2px solid var(--line); border-top-color: var(--purple);
+    border-radius: 50%; animation: elspin 0.8s linear infinite;
+    vertical-align: -2px;
+  }
+  .spin.small { width: 12px; height: 12px; }
+  @keyframes elspin { to { transform: rotate(360deg); } }
+  .msg.wait {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+  }
+  .updated { display: inline-flex; align-items: center; gap: 7px; }
   .row {
     display: flex; align-items: center; justify-content: space-between;
     background: #fff; border: 1px solid var(--line); border-radius: 10px;
@@ -474,32 +452,9 @@ const css = `
     display: flex; align-items: center; justify-content: space-between;
     margin-top: 18px; font-size: 12px; color: #9a958a;
   }
-  .keys-toggle {
-    background: none; color: var(--purple); border: none; padding: 4px 0;
-    font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit;
-  }
-  .keys-toggle:hover { text-decoration: underline; }
-  .keys {
-    margin-top: 14px; padding: 16px; background: var(--purple-soft);
-    border-radius: 10px; display: flex; flex-direction: column; gap: 10px;
-  }
-  .keys-note { margin: 0; font-size: 12px; color: #5a5a52; line-height: 1.4; }
-  .proxy-presets { display: flex; flex-wrap: wrap; gap: 6px; }
-  .preset {
-    font-family: inherit; font-size: 12px; font-weight: 600;
-    padding: 6px 12px; border-radius: 999px; cursor: pointer;
-    background: #fff; color: var(--ink); border: 1px solid var(--line);
-  }
-  .preset:hover { border-color: var(--purple); }
-  .preset.active { background: var(--purple); color: #fff; border-color: var(--purple); }
-  .preset:focus-visible { outline: 2px solid var(--purple); outline-offset: 1px; }
-  .keys input {
-    padding: 9px 11px; font-size: 14px; font-family: inherit;
-    border: 1px solid var(--line); border-radius: 7px; background: #fff;
-  }
-  .keys input:focus-visible { outline: 2px solid var(--purple); outline-offset: 1px; }
   @media (prefers-reduced-motion: reduce) {
     .swap { transition: none; }
     .swap:hover { transform: none; }
+    .spin { animation-duration: 2.4s; }
   }
 `;
