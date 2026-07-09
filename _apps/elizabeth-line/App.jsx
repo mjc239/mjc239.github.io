@@ -414,6 +414,9 @@ export default function App() {
               })}`
             : ""}
         </span>
+        <button className="refresh" onClick={fetchJourneys} disabled={fetching}>
+          ↻ Refresh
+        </button>
       </footer>
     </div>
   );
@@ -529,6 +532,13 @@ const css = `
     display: flex; align-items: center; justify-content: space-between;
     margin-top: 18px; font-size: 12px; color: #9a958a;
   }
+  .refresh {
+    background: none; color: var(--purple); border: none; padding: 4px 0;
+    font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit;
+  }
+  .refresh:hover:not(:disabled) { text-decoration: underline; }
+  .refresh:disabled { opacity: 0.5; cursor: default; }
+  .refresh:focus-visible { outline: 2px solid var(--purple); outline-offset: 1px; }
   @media (prefers-reduced-motion: reduce) {
     .swap { transition: none; }
     .swap:hover { transform: none; }
