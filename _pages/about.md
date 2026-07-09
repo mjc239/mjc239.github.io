@@ -19,6 +19,6 @@ Here are some of my personal highlights:
 
 🦝[Animal Crossing Stalk Market](https://mjc239.github.io/animalcrossing/) - analysing when to buy turnips
 
-🚆[Elizabeth line departures](https://mjc239.github.io/apps/elizabeth-line/) - live board of direct trains between two stations
+📱[Apps](https://mjc239.github.io/apps/) - small web apps I've built
 
 
