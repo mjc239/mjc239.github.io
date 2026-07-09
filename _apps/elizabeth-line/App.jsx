@@ -53,6 +53,7 @@ export default function App() {
     STATION_NAMES.map((name) => ({ name, id: SEED[name] || null }))
   );
   const idCache = useRef({ ...SEED }); // name → resolved Naptan id
+  const lineMap = useRef(null); // in-flight/done promise for the line stop list
 
   const [fromName, setFromName] = useState("Liverpool Street");
   const [toName, setToName] = useState("West Ealing");
@@ -120,10 +121,46 @@ export default function App() {
     return () => clearInterval(t);
   }, []);
 
-  // Resolve a station name to its Naptan id, caching the result. Prefer a
-  // rail-style 910G… id: search can also return hub ids (HUBPAD etc.), which
-  // make the Journey API answer 300 "disambiguate" instead of journeys.
+  // Primary id source: the line's own stop list, fetched once. These are the
+  // canonical Elizabeth line ids, so journey requests can't hit hub
+  // ambiguity (which surfaces as 300 disambiguation or 404 no-journey).
+  const loadLineMap = useCallback(() => {
+    if (!lineMap.current) {
+      lineMap.current = (async () => {
+        const a = auth();
+        const url = `${TFL}/Line/elizabeth/StopPoints${a ? `?${a.slice(1)}` : ""}`;
+        const res = await fetch(proxied(url));
+        if (!res.ok) throw new Error(`line-${res.status}`);
+        const stops = await res.json();
+        const norm = (s) =>
+          s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9 ]/g, " ")
+            .replace(/\s+/g, " ").trim();
+        for (const name of STATION_NAMES) {
+          const n = norm(name);
+          const hits = (stops || [])
+            .filter((s) => /^910G/.test(s.id) && norm(s.commonName || "").includes(n))
+            // Shortest common name = tightest match (avoids e.g. a longer
+            // "X via Y" style name shadowing the station itself).
+            .sort((x, y) => (x.commonName || "").length - (y.commonName || "").length);
+          if (hits[0]) idCache.current[name] = hits[0].id;
+        }
+      })().catch((e) => {
+        lineMap.current = null; // allow a retry on the next poll
+        throw e;
+      });
+    }
+    return lineMap.current;
+  }, [appId, appKey, proxy]);
+
+  // Resolve a station name to its Naptan id: line stop list first, then a
+  // per-name search as fallback. In the search results prefer a rail-style
+  // 910G… id — search can also return hub ids (HUBPAD etc.), which make the
+  // Journey API answer 300 "disambiguate" instead of journeys.
   const resolveId = useCallback(async (name) => {
+    if (idCache.current[name]) return idCache.current[name];
+    try {
+      await loadLineMap();
+    } catch {}
     if (idCache.current[name]) return idCache.current[name];
     const url =
       `${TFL}/StopPoint/Search/${encodeURIComponent(name)}` +
@@ -136,7 +173,7 @@ export default function App() {
     if (!match) throw new Error("no-match");
     idCache.current[name] = match.id;
     return match.id;
-  }, [appId, appKey, proxy]);
+  }, [appId, appKey, proxy, loadLineMap]);
 
   const fetchJourneys = useCallback(async () => {
     setStatus((s) => (journeys.length ? s : "loading"));
@@ -174,6 +211,14 @@ export default function App() {
           idCache.current[toName] = newTo;
           res = await requestJourneys(newFrom, newTo);
         }
+      }
+      if (res.status === 404) {
+        // TfL's "no journey found for your inputs" — a real answer (e.g.
+        // outside service hours), not a failure. Show the empty state.
+        setJourneys([]);
+        setStatus("empty");
+        setLastUpdated(new Date());
+        return;
       }
       if (!res.ok) {
         if (res.status === 429) throw new Error("rate");
