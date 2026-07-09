@@ -32,6 +32,13 @@ function minsUntil(iso) {
   if (!iso) return null;
   return Math.round((new Date(iso).getTime() - Date.now()) / 60000);
 }
+// "45 min", "1 h", "1 h 30 min" — hours read better past the hour mark.
+function fmtMins(m) {
+  if (m < 60) return `${m} min`;
+  const h = Math.floor(m / 60);
+  const r = m % 60;
+  return r ? `${h} h ${r} min` : `${h} h`;
+}
 
 function StationPicker({ label, value, onChange, exclude, stations }) {
   return (
@@ -418,13 +425,13 @@ export default function App() {
                 <div className="meta">
                   <div className="leg">
                     arrives {fmtTime(j.arrive)}
-                    <span className="dur"> · {j.duration} min</span>
+                    <span className="dur"> · {fmtMins(j.duration)}</span>
                   </div>
                   {j.platform && <div className="plat">Platform {j.platform}</div>}
                 </div>
               </div>
               <div className={`count${soon ? " soon" : ""}`}>
-                {m === null ? "—" : m <= 0 ? "due" : `${m} min`}
+                {m === null ? "—" : m <= 0 ? "due" : fmtMins(m)}
               </div>
             </div>
           );
