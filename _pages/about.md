@@ -19,4 +19,6 @@ Here are some of my personal highlights:
 
 🦝[Animal Crossing Stalk Market](https://mjc239.github.io/animalcrossing/) - analysing when to buy turnips
 
+📱[Apps](https://mjc239.github.io/apps/) - small web apps I've built
+
 
