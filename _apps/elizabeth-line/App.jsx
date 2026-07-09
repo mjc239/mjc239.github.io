@@ -250,23 +250,24 @@ export default function App() {
       let list = parseDirect(data);
 
       // TfL returns only ~3 options per call. To fill the board to 6, ask
-      // once more for the window just after the last returned departure and
-      // merge the batches.
+      // once more from the minute of the last returned departure (the time
+      // param is inclusive, so nothing in that minute can slip through) and
+      // merge, deduplicating re-returned trains by departure + arrival.
       const allStarts = (data.journeys || [])
         .map((j) => j.startDateTime)
         .filter(Boolean);
       if (list.length > 0 && list.length < 6 && allStarts.length) {
-        const latest = allStarts.reduce((a, b) => (a > b ? a : b));
-        const next = new Date(new Date(latest).getTime() + 60000);
+        const latest = new Date(allStarts.reduce((a, b) => (a > b ? a : b)));
         const pad = (n) => String(n).padStart(2, "0");
         const res2 = await requestJourneys(effFrom, effTo, {
-          date: `${next.getFullYear()}${pad(next.getMonth() + 1)}${pad(next.getDate())}`,
-          time: `${pad(next.getHours())}${pad(next.getMinutes())}`,
+          date: `${latest.getFullYear()}${pad(latest.getMonth() + 1)}${pad(latest.getDate())}`,
+          time: `${pad(latest.getHours())}${pad(latest.getMinutes())}`,
         });
         if (res2.ok) {
           const more = parseDirect(await res2.json().catch(() => ({})));
-          const seen = new Set(list.map((j) => j.start));
-          for (const j of more) if (!seen.has(j.start)) list.push(j);
+          const key = (j) => `${j.start}|${j.arrive}`;
+          const seen = new Set(list.map(key));
+          for (const j of more) if (!seen.has(key(j))) list.push(j);
         }
       }
 
