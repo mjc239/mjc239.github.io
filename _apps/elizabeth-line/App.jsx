@@ -66,17 +66,19 @@ export default function App() {
   // TfL's API sends no CORS headers, so browser requests must go via a proxy
   // that adds them. Two proxy styles are supported:
   //   • query-style: prefix + encodeURIComponent(fullTflUrl)   (public proxies)
-  //   • path-style:  workerBase + /<path><query>                (your Worker)
+  //   • path-style:  proxyBase + /<path><query>          (your own proxy)
   // A proxy entry ending in "/" (no "?") is treated as path-style.
   const PROXIES = [
-    { label: "My Worker", url: "https://YOURNAME.workers.dev/" },
+    { label: "My proxy", url: "https://YOURPROJECT.supabase.co/functions/v1/tfl-proxy/" },
     { label: "CodeTabs", url: "https://api.codetabs.com/v1/proxy/?quest=" },
     { label: "AllOrigins", url: "https://api.allorigins.win/raw?url=" },
     { label: "corsproxy.io", url: "https://corsproxy.io/?url=" },
     { label: "None (direct)", url: "" },
   ];
-  // Default to CodeTabs until you paste your Worker URL — the placeholder
-  // "YOURNAME" won't resolve, so shipping it as default would just fail.
+  // Default to CodeTabs until you paste your deployed proxy URL — the
+  // "YOURPROJECT" placeholder won't resolve, so shipping it as default would
+  // just fail. Once your Supabase function is live, put its real URL in the
+  // preset above and make it the default here.
   // The choice persists across visits; API keys deliberately don't.
   const [proxy, setProxyState] = useState(() => {
     try {
@@ -108,7 +110,7 @@ export default function App() {
     if (!proxy) return url;
     const pathStyle = proxy.endsWith("/") && !proxy.includes("?");
     if (pathStyle) {
-      // Strip the TfL base so path + query sit directly after the worker host.
+      // Strip the TfL base so path + query sit directly after the proxy base.
       return proxy.replace(/\/$/, "") + url.slice(TFL.length);
     }
     return `${proxy}${encodeURIComponent(url)}`;
