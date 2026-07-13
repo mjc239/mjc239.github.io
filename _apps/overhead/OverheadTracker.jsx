@@ -10,8 +10,8 @@ const POLL_MS = 12000; // 1 req/sec limit on airplanes.live — 12s is very safe
 // ---- Endpoints ----
 const POINT_URL = (lat, lon, r) =>
   `https://api.airplanes.live/v2/point/${lat}/${lon}/${r}`;
-const CALLSIGN_URL = (cs) => `https://api.adsbdb.com/v1/callsign/${cs}`;
-const AIRCRAFT_URL = (hex) => `https://api.adsbdb.com/v1/aircraft/${hex}`;
+const CALLSIGN_URL = (cs) => `https://api.adsbdb.com/v0/callsign/${cs}`;
+const AIRCRAFT_URL = (hex) => `https://api.adsbdb.com/v0/aircraft/${hex}`;
 
 // ---- CORS proxy chain ----
 // airplanes.live (and sometimes adsbdb) don't send browser-friendly CORS
