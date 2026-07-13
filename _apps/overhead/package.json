@@ -1,0 +1,19 @@
+{
+  "name": "overhead-tracker",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Overhead — live tracker for the aircraft passing over West Ealing",
+  "type": "module",
+  "scripts": {
+    "build": "esbuild main.jsx --bundle --minify --jsx=automatic --define:process.env.NODE_ENV='\"production\"' --outfile=../../apps/overhead/app.js",
+    "watch": "esbuild main.jsx --bundle --jsx=automatic --define:process.env.NODE_ENV='\"development\"' --outfile=../../apps/overhead/app.js --watch",
+    "serve": "python3 -m http.server 8000 --directory ../.."
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0"
+  }
+}
