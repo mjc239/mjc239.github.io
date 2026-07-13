@@ -27,14 +27,14 @@ const PROXY_CHAIN = (() => {
     if (override) return [override];
   } catch {}
   return [
-    // Your own proxy (recommended — airplanes.live rate-limits the shared IPs
-    // that the public proxies below run on). Deploy the Supabase Edge Function
-    // in supabase/functions/overhead-proxy/, then uncomment and set your
-    // project ref to make it the primary proxy (keep the trailing slash — it's
-    // what marks the entry as path-style):
-    // "https://YOUR-PROJECT-REF.supabase.co/functions/v1/overhead-proxy/",
+    // Your own proxy (primary — airplanes.live rate-limits the shared IPs that
+    // the public proxies below run on). Supabase Edge Function; source in
+    // supabase/functions/overhead-proxy/. The trailing slash marks it as
+    // path-style.
+    "https://rogsybzffnvpcapycjch.supabase.co/functions/v1/overhead-proxy/",
     // (Cloudflare Worker alternative, if you deploy overhead-proxy-worker.js:)
     // "https://overhead-proxy.YOUR-SUBDOMAIN.workers.dev/",
+    // Public CORS proxies as automatic fallbacks if the function is unreachable.
     "https://api.codetabs.com/v1/proxy/?quest=",
     "https://api.allorigins.win/raw?url=",
   ];
