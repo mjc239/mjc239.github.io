@@ -1,0 +1,9 @@
+# Minimal Supabase CLI config — only what the overhead-proxy function needs.
+# project_id is just a local name for the CLI; the remote project is chosen
+# with `supabase link` or `--project-ref` on deploy.
+project_id = "overhead-tracker"
+
+[functions.overhead-proxy]
+# The browser calls this anonymously; access is gated by the origin
+# allow-list in the function itself, not by a Supabase JWT.
+verify_jwt = false

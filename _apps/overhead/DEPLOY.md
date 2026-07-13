@@ -12,8 +12,11 @@ Same layout and tooling as the Elizabeth line app in `_apps/elizabeth-line/`.
   - `OverheadTracker.jsx` — the app, a single self-contained React component
     (all CSS lives in a `<style>` block inside it).
   - `main.jsx` — entry point that mounts it.
-  - `overhead-proxy-worker.js` — the CORS proxy as a Cloudflare Worker
-    (deployed to Cloudflare, not to Pages; kept here for versioning).
+  - `supabase/functions/overhead-proxy/index.ts` — the CORS proxy as a
+    Supabase Edge Function (deployed to Supabase, not to Pages; kept here for
+    versioning). This is the recommended proxy.
+  - `overhead-proxy-worker.js` — the same proxy as a Cloudflare Worker, if you
+    ever prefer that instead.
 - `apps/overhead/` — what actually gets served, at
   <https://mjc239.github.io/apps/overhead/>.
   - `index.html` — static shell (committed, hand-written).
@@ -60,40 +63,67 @@ Pushing to `master` is the deploy — GitHub Pages runs Jekyll, which copies
 ## CORS — the proxy
 
 The APIs are called from the browser. `adsbdb.com` usually sends permissive
-CORS headers, but `airplanes.live` may block browser requests. To handle that
-the app routes every request through a **proxy chain** (`PROXY_CHAIN` near the
-top of `OverheadTracker.jsx`) — exactly the pattern the Elizabeth line app
-uses. Two proxy styles are supported:
+CORS headers, but `airplanes.live` both omits them **and** rate-limits/times
+out the shared IPs that public CORS proxies run on (so the public fallbacks
+below are unreliable for it — you'll see `airplanes.live 408`). The fix is your
+own proxy, which gets a dedicated IP and only carries your traffic.
 
-- **path-style** (`proxyBase + "/" + host + path`) — our own Worker. The
-  upstream host is the first path segment, so one worker fronts both APIs.
+The app routes every request through a **proxy chain** (`PROXY_CHAIN` near the
+top of `OverheadTracker.jsx`) — exactly the pattern the Elizabeth line app
+uses: your own proxy first, public proxies as automatic fallbacks. Two proxy
+styles are supported:
+
+- **path-style** (`proxyBase + "/" + host + path`) — our own proxy. The
+  upstream host is the first path segment, so one function fronts both APIs.
 - **query-style** (`prefix + encodeURIComponent(fullUrl)`) — public CORS
   proxies. An entry ending in `/` with no `?` is treated as path-style.
-
-Out of the box the chain uses public CORS proxies (CodeTabs, then AllOrigins)
-so the app works with no extra setup. For a reliable, locked-down primary,
-deploy the Worker below and uncomment its line at the top of `PROXY_CHAIN`.
 
 A `?proxy=` URL parameter overrides the whole chain, e.g.
 `/apps/overhead/?proxy=http://localhost:9000/` for local proxy debugging.
 
-### Deploying the Cloudflare Worker
+### Deploying the proxy (Supabase Edge Function — recommended)
 
-`overhead-proxy-worker.js` is locked to `api.airplanes.live` and
-`api.adsbdb.com`, GET-only, and only answers the origins in its
+`supabase/functions/overhead-proxy/index.ts` is locked to `api.airplanes.live`
+and `api.adsbdb.com`, GET-only, and only answers the origins in its
 `ALLOWED_ORIGINS` (already `mjc239.github.io` + localhost).
 
-1. Cloudflare dashboard → **Workers & Pages** → **Create Worker** → paste the
-   contents of `overhead-proxy-worker.js` → **Deploy**. This gives you
-   `https://overhead-proxy.<you>.workers.dev`.
-2. In `OverheadTracker.jsx`, uncomment the first `PROXY_CHAIN` entry and set it
-   to your worker URL (keep the trailing `/` — that's what marks it
-   path-style), then rebuild and commit `app.js`.
+**Important:** deploy it with **JWT verification off** — the browser calls it
+anonymously and the origin allow-list is what gates access. `supabase/config.toml`
+already sets this for CLI deploys; in the dashboard it's the "Verify JWT" toggle.
+
+#### Option A — dashboard (no tooling)
+1. Supabase dashboard → your project → **Edge Functions** → **Deploy a new
+   function** → **Via Editor**.
+2. Name it exactly `overhead-proxy` (the code strips this prefix from incoming
+   paths), paste the contents of `supabase/functions/overhead-proxy/index.ts`,
+   and deploy.
+3. In the function's **Details**, turn **Verify JWT** off.
+4. Your function URL is
+   `https://<project-ref>.supabase.co/functions/v1/overhead-proxy`.
+
+#### Option B — Supabase CLI
+```bash
+npm install -g supabase
+supabase login
+cd _apps/overhead
+supabase functions deploy overhead-proxy --project-ref <your-project-ref> --no-verify-jwt
+```
+
+Then in `OverheadTracker.jsx`, uncomment the first `PROXY_CHAIN` entry and set
+it to `https://<project-ref>.supabase.co/functions/v1/overhead-proxy/` (keep
+the trailing `/` — that's what marks it path-style), then rebuild and commit
+`app.js`.
+
+### Cloudflare Worker (alternative)
+
+`overhead-proxy-worker.js` is the same proxy for Cloudflare: dashboard →
+**Workers & Pages** → **Create Worker** → paste the file → deploy, giving
+`https://overhead-proxy.<you>.workers.dev`. Point the first `PROXY_CHAIN` entry
+at that instead.
 
 ## Notes
 
 - **Rate limits:** airplanes.live is ~1 req/sec; the app polls once per 12s
-  per open tab, well inside that. The Worker also briefly caches identical
-  requests.
-- **Cost:** Cloudflare's free tier (100K Worker requests/day) dwarfs this
-  app's needs.
+  per open tab, well inside that.
+- **Cost:** both free tiers dwarf this app's needs — Supabase allows 500K
+  function invocations/month, Cloudflare 100K Worker requests/day.

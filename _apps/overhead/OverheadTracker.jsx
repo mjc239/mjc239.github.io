@@ -27,8 +27,13 @@ const PROXY_CHAIN = (() => {
     if (override) return [override];
   } catch {}
   return [
-    // Your own Cloudflare Worker (see overhead-proxy-worker.js). Deploy it,
-    // then uncomment and set your subdomain to make it the primary proxy:
+    // Your own proxy (recommended — airplanes.live rate-limits the shared IPs
+    // that the public proxies below run on). Deploy the Supabase Edge Function
+    // in supabase/functions/overhead-proxy/, then uncomment and set your
+    // project ref to make it the primary proxy (keep the trailing slash — it's
+    // what marks the entry as path-style):
+    // "https://YOUR-PROJECT-REF.supabase.co/functions/v1/overhead-proxy/",
+    // (Cloudflare Worker alternative, if you deploy overhead-proxy-worker.js:)
     // "https://overhead-proxy.YOUR-SUBDOMAIN.workers.dev/",
     "https://api.codetabs.com/v1/proxy/?quest=",
     "https://api.allorigins.win/raw?url=",
