@@ -18,6 +18,8 @@ Error generating stack: `+o.message+`
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
+  min-height: 100dvh; /* track the visible viewport on mobile (100vh counts the
+                         area behind the browser toolbar, forcing dead scroll) */
   display: flex;
   flex-direction: column;
   max-width: 460px;
