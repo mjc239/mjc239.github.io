@@ -45,6 +45,24 @@ function corsHeaders(origin: string): Record<string, string> {
   };
 }
 
+// ---- Response cache ----
+// Everyone watches the same point, so without caching each viewer's poll is a
+// separate upstream request and airplanes.live's ~1 req/sec limit (shared,
+// since all traffic exits this one function) is hit at ~12 concurrent viewers.
+// A short in-memory cache (kept in the warm instance, keyed by upstream URL)
+// collapses concurrent identical requests into ~1 upstream fetch per TTL
+// window, so upstream load barely rises with audience size. CORS headers are
+// NOT cached — they're re-applied per request from the caller's origin.
+interface Cached { body: string; status: number; contentType: string; expires: number }
+const CACHE = new Map<string, Cached>();
+const CACHE_MAX = 500;
+
+// Positions change constantly; aircraft/route reference data is effectively
+// static, so it can be held much longer.
+function ttlMs(host: string): number {
+  return host === "api.airplanes.live" ? 10_000 : 3_600_000;
+}
+
 Deno.serve(async (request) => {
   const origin = request.headers.get("Origin") ?? "";
   const cors = corsHeaders(origin);
@@ -80,6 +98,17 @@ Deno.serve(async (request) => {
   }
 
   const target = new URL(`https://${host}${rest}${incoming.search}`);
+  const cacheKey = target.toString();
+  const now = Date.now();
+
+  // Serve from cache if fresh.
+  const hit = CACHE.get(cacheKey);
+  if (hit && hit.expires > now) {
+    return new Response(hit.body, {
+      status: hit.status,
+      headers: { ...cors, "Content-Type": hit.contentType, "X-Overhead-Cache": "hit" },
+    });
+  }
 
   let upstream: Response;
   try {
@@ -98,12 +127,19 @@ Deno.serve(async (request) => {
   }
 
   const body = await upstream.text();
+  const contentType = upstream.headers.get("Content-Type") ?? "application/json";
+
+  // Cache successful responses only, so errors/"unknown callsign" still retry.
+  if (upstream.status >= 200 && upstream.status < 300) {
+    if (CACHE.size >= CACHE_MAX) {
+      for (const [k, v] of CACHE) if (v.expires <= now) CACHE.delete(k);
+      if (CACHE.size >= CACHE_MAX) CACHE.delete(CACHE.keys().next().value as string);
+    }
+    CACHE.set(cacheKey, { body, status: upstream.status, contentType, expires: now + ttlMs(host) });
+  }
+
   return new Response(body, {
     status: upstream.status,
-    headers: {
-      ...cors,
-      "Content-Type":
-        upstream.headers.get("Content-Type") ?? "application/json",
-    },
+    headers: { ...cors, "Content-Type": contentType, "X-Overhead-Cache": "miss" },
   });
 });

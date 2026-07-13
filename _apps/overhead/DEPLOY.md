@@ -130,6 +130,11 @@ at that instead.
 ## Notes
 
 - **Rate limits:** airplanes.live is ~1 req/sec; the app polls once per 12s
-  per open tab, well inside that.
+  per open tab, well inside that for a single viewer. All traffic exits the one
+  proxy IP, though, so that limit is *shared* across concurrent viewers. To keep
+  load flat with audience size, the Supabase function caches upstream responses
+  in-memory (positions ~10s, static aircraft/route data ~1h), collapsing many
+  viewers polling the same URL into ~1 upstream fetch per window. The Cloudflare
+  Worker does the equivalent via Cloudflare's edge cache (`cf.cacheTtl`).
 - **Cost:** both free tiers dwarf this app's needs — Supabase allows 500K
   function invocations/month, Cloudflare 100K Worker requests/day.
