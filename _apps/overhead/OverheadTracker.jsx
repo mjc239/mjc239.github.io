@@ -45,21 +45,31 @@ const proxied = (proxy, url) => {
   return `${proxy}${encodeURIComponent(url)}`;
 };
 
-// Fetch a URL through the proxy chain: on a network error or proxy-side 5xx,
-// quietly fall through to the next proxy. Any real upstream response
-// (including 404) is returned as-is.
-async function proxyFetch(url, init) {
+// Per-proxy attempt timeout: a public proxy that stalls on airplanes.live
+// shouldn't hold up the whole poll — abort it and try the next one.
+const ATTEMPT_TIMEOUT_MS = 8000;
+
+// Fetch a URL through the proxy chain. A network error, an aborted (timed-out)
+// attempt, or a proxy-side transient failure (408 request timeout, 429 rate
+// limit, or any 5xx) quietly falls through to the next proxy. Genuine upstream
+// responses — including 404 (e.g. adsbdb "not in database") — are returned
+// as-is so the caller can handle them.
+async function proxyFetch(url) {
   let lastErr = null;
   for (const proxy of PROXY_CHAIN) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), ATTEMPT_TIMEOUT_MS);
     try {
-      const res = await fetch(proxied(proxy, url), init);
-      if (res.status >= 500) {
+      const res = await fetch(proxied(proxy, url), { signal: controller.signal });
+      if (res.status >= 500 || res.status === 408 || res.status === 429) {
         lastErr = new Error(`http-${res.status}`);
         continue;
       }
       return res;
     } catch (e) {
       lastErr = e;
+    } finally {
+      clearTimeout(timer);
     }
   }
   throw lastErr || new Error("network");
