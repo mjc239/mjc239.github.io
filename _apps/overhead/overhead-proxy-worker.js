@@ -76,7 +76,11 @@ export default {
     let upstream;
     try {
       upstream = await fetch(target.toString(), {
-        headers: { Accept: "application/json" },
+        headers: {
+          Accept: "application/json",
+          // airplanes.live can reject requests with no/blocked User-Agent.
+          "User-Agent": "overhead-tracker (+https://mjc239.github.io/apps/overhead/)",
+        },
         // Cache identical requests briefly to ease upstream rate limits
         // (airplanes.live allows ~1 req/sec).
         cf: { cacheTtl: 10, cacheEverything: true },
