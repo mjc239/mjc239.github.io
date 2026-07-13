@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
 // ---- Your location: West Ealing, W13 ----
-// TODO: update to the actual Kingsley Avenue (W13) coordinates. The values
-// below are only an approximate West Ealing centre used as a placeholder.
-const HOME_LAT = 51.5126;
-const HOME_LON = -0.3239;
+// Plus code GMCG+GP8 (9C3XGMCG+GP8), near Kingsley Avenue.
+const HOME_LAT = 51.521287;
+const HOME_LON = -0.323172;
 const SEARCH_RADIUS_NM = 1.5; // airplanes.live takes nautical miles, max 250
 const POLL_MS = 12000; // 1 req/sec limit on airplanes.live — 12s is very safe
 

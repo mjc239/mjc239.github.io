@@ -42,9 +42,8 @@ Pushing to `master` is the deploy — GitHub Pages runs Jekyll, which copies
 
 ## Configuration (top of `OverheadTracker.jsx`)
 
-- `HOME_LAT` / `HOME_LON` — **still a placeholder** (approx West Ealing centre).
-  There's a `// TODO` marker to update these to the actual Kingsley Avenue
-  (W13) coordinates. Rebuild after changing.
+- `HOME_LAT` / `HOME_LON` — set from plus code `GMCG+GP8` (near Kingsley
+  Avenue, W13). Rebuild after changing.
 - `SEARCH_RADIUS_NM` — search radius in nautical miles (currently 1.5).
 - `POLL_MS` — poll interval (currently 12s; airplanes.live allows ~1 req/sec).
 
