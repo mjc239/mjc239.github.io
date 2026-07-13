@@ -54,11 +54,15 @@ Pushing to `master` is the deploy — GitHub Pages runs Jekyll, which copies
 
 - **Positions:** `airplanes.live` — `GET /v2/point/{lat}/{lon}/{radius_nm}`
   (1 req/sec, non-commercial).
-- **Enrichment:** `adsbdb.com` (free, no key) — `/v1/aircraft/{hex}` for
-  type/operator/photo and `/v1/callsign/{callsign}` for the route. Route
+- **Enrichment:** `adsbdb.com` (free, no key) — `/v0/aircraft/{hex}` for
+  type/operator/photo and `/v0/callsign/{callsign}` for the route. Route
   lookups only resolve for callsigns in their database, so private/military
   flights often show "destination unknown" — that's expected, not a bug; the
   UI handles the nulls.
+- **BA Shuttle routes:** BA's Heathrow shuttle callsigns (`SHT…`) aren't in
+  adsbdb's route DB, but the callsign encodes the route (`SHT<NN><letter>`, even
+  `NN` outbound from Heathrow, odd inbound). These are decoded from a small
+  hardcoded table in `OverheadTracker.jsx` (`SHUTTLE_DESTS`) — offline, no API.
 
 ## CORS — the proxy
 
@@ -83,9 +87,11 @@ A `?proxy=` URL parameter overrides the whole chain, e.g.
 
 ### Deploying the proxy (Supabase Edge Function — recommended)
 
-`supabase/functions/overhead-proxy/index.ts` is locked to `api.airplanes.live`
-and `api.adsbdb.com`, GET-only, and only answers the origins in its
-`ALLOWED_ORIGINS` (already `mjc239.github.io` + localhost).
+`supabase/functions/overhead-proxy/index.ts` is locked to the hosts in its
+`ALLOWED_HOSTS` (`api.airplanes.live`, `api.adsbdb.com`), GET-only, and only
+answers the origins in its `ALLOWED_ORIGINS` (`mjc239.github.io` + localhost).
+If you ever change `ALLOWED_HOSTS`, redeploy the function — the running copy
+keeps its old allow-list until you do.
 
 **Important:** deploy it with **JWT verification off** — the browser calls it
 anonymously and the origin allow-list is what gates access. `supabase/config.toml`

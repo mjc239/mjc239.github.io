@@ -123,6 +123,35 @@ function scoreOverhead(ac) {
 const fmt = (v, suffix = "") =>
   v === null || v === undefined || v === "" ? "—" : `${v}${suffix}`;
 
+// ---- BA Shuttle (SHT) route decode ----
+// adsbdb often doesn't hold routes for BA's Heathrow shuttle callsigns, but the
+// callsign itself encodes the route: SHT<NN><letter>, where NN is the
+// route number and the trailing letter is a daily rotation id. Even NN is
+// outbound from Heathrow, odd is inbound; the other end is always Heathrow.
+// (Aircraft over West Ealing are on the Heathrow approach/departure, so the
+// Heathrow assumption holds.) Sources: FlyerTalk / PPRuNe / airlinecodes.info.
+const LHR = { icao_code: "EGLL", iata_code: "LHR", name: "London Heathrow" };
+const SHUTTLE_DESTS = {
+  2: { icao_code: "EGCC", iata_code: "MAN", name: "Manchester" },
+  4: { icao_code: "EGAC", iata_code: "BHD", name: "Belfast City" },
+  6: { icao_code: "EGPF", iata_code: "GLA", name: "Glasgow" },
+  8: { icao_code: "EGPH", iata_code: "EDI", name: "Edinburgh" },
+  12: { icao_code: "EGNT", iata_code: "NCL", name: "Newcastle" },
+  18: { icao_code: "EGPD", iata_code: "ABZ", name: "Aberdeen" },
+};
+
+function shuttleRoute(callsign) {
+  const m = /^SHT(\d+)/.exec(callsign);
+  if (!m) return null;
+  const num = parseInt(m[1], 10);
+  const outbound = num % 2 === 0; // even = away from Heathrow, odd = toward it
+  const dest = SHUTTLE_DESTS[outbound ? num : num - 1];
+  if (!dest) return null; // known prefix but unmapped number → let other sources try
+  return outbound
+    ? { origin: LHR, destination: dest }
+    : { origin: dest, destination: LHR };
+}
+
 export default function OverheadTracker() {
   const [plane, setPlane] = useState(null); // enriched aircraft
   const [status, setStatus] = useState("starting");
@@ -153,6 +182,7 @@ export default function OverheadTracker() {
     // route (origin/destination) by callsign
     let route = callsign ? routeCache.current.get(callsign) ?? null : null;
     if (callsign && route === null && !routeCache.current.has(callsign)) {
+      // Primary: adsbdb — full route incl. airline + airport details.
       try {
         const r = await proxyFetch(CALLSIGN_URL(callsign));
         if (r.ok) {
@@ -162,6 +192,12 @@ export default function OverheadTracker() {
       } catch {
         route = null;
       }
+
+      // Fallback: decode BA Shuttle "SHT…" callsigns directly (offline, exact).
+      if (route === null) {
+        route = shuttleRoute(callsign);
+      }
+
       routeCache.current.set(callsign, route);
     }
 
