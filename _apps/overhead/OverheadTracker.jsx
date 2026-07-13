@@ -245,7 +245,7 @@ export default function OverheadTracker() {
       track: raw.track != null ? Math.round(raw.track) : null,
       distKm,
       compass: compass(brg),
-      photo: details?.url_photo_thumbnail || null,
+      photo: details?.url_photo || details?.url_photo_thumbnail || null,
       hex: raw.hex,
     };
   })();
