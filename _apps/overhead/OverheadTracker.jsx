@@ -246,6 +246,7 @@ export default function OverheadTracker() {
       distKm,
       compass: compass(brg),
       photo: details?.url_photo || details?.url_photo_thumbnail || null,
+      photoThumb: details?.url_photo_thumbnail || null,
       hex: raw.hex,
     };
   })();
@@ -272,7 +273,25 @@ export default function OverheadTracker() {
           <div className="ovh-airline">{view.airline}</div>
 
           {view.photo && (
-            <img className="ovh-photo" src={view.photo} alt={view.model} />
+            <img
+              className="ovh-photo"
+              src={view.photo}
+              alt={view.model}
+              // Photo CDNs (Planespotters) can hotlink-block by Referer,
+              // returning an empty image; send no Referer to avoid that.
+              referrerPolicy="no-referrer"
+              // If the full image fails, drop to the smaller thumbnail; if that
+              // fails too, hide the box rather than show a broken image.
+              onError={(e) => {
+                const img = e.currentTarget;
+                if (!img.dataset.thumbTried && view.photoThumb && view.photoThumb !== view.photo) {
+                  img.dataset.thumbTried = "1";
+                  img.src = view.photoThumb;
+                } else {
+                  img.style.display = "none";
+                }
+              }}
+            />
           )}
 
           <div className="ovh-route">
