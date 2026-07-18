@@ -1,9 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
-// ---- Your location: West Ealing, W13 ----
-// Plus code GMCG+GP8 (9C3XGMCG+GP8), near Kingsley Avenue.
+// ---- Default centre: West Ealing, W13 ----
+// Plus code GMCG+GP8 (9C3XGMCG+GP8), near Kingsley Avenue. Used until (and
+// unless) the browser's Geolocation API returns the viewer's own position, so
+// friends can run the same page from anywhere.
 const HOME_LAT = 51.521287;
 const HOME_LON = -0.323172;
+const DEFAULT_LABEL = "W13 · WEST EALING";
 const SEARCH_RADIUS_NM = 1.5; // airplanes.live takes nautical miles, max 250
 const POLL_MS = 12000; // 1 req/sec limit on airplanes.live — 12s is very safe
 
@@ -111,13 +114,33 @@ const compass = (deg) => COMPASS[Math.round(deg / 45) % 8];
 
 // Pick the most "overhead" aircraft: closest, weighted so lower planes win.
 // score = horizontal distance (km) + altitude penalty. Lower = more overhead.
-function scoreOverhead(ac) {
+function scoreOverhead(ac, lat, lon) {
   if (typeof ac.lat !== "number" || typeof ac.lon !== "number") return Infinity;
-  const distKm = haversineKm(HOME_LAT, HOME_LON, ac.lat, ac.lon);
+  const distKm = haversineKm(lat, lon, ac.lat, ac.lon);
   const altFt =
     ac.alt_baro === "ground" ? 0 : typeof ac.alt_baro === "number" ? ac.alt_baro : 40000;
   // 10,000 ft of altitude ≈ 3 km of horizontal distance in "overhead-ness"
   return distKm + (altFt / 10000) * 3;
+}
+
+// Turn coordinates into a short "AREA · CITY" label for the header, via
+// BigDataCloud's free, no-key, CORS-friendly reverse geocoder (called directly,
+// not through the proxy). Returns null on any failure — the caller keeps the
+// previous label.
+async function reverseGeocode(lat, lon) {
+  try {
+    const r = await fetch(
+      `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`
+    );
+    if (!r.ok) return null;
+    const j = await r.json();
+    const area = j.locality || j.city || j.principalSubdivision;
+    const region = j.city && j.city !== area ? j.city : j.principalSubdivision;
+    const label = [...new Set([area, region].filter(Boolean))].slice(0, 2).join(" · ");
+    return label ? label.toUpperCase() : null;
+  } catch {
+    return null;
+  }
 }
 
 const fmt = (v, suffix = "") =>
@@ -127,9 +150,9 @@ const fmt = (v, suffix = "") =>
 // adsbdb often doesn't hold routes for BA's Heathrow shuttle callsigns, but the
 // callsign itself encodes the route: SHT<NN><letter>, where NN is the
 // route number and the trailing letter is a daily rotation id. Even NN is
-// outbound from Heathrow, odd is inbound; the other end is always Heathrow.
-// (Aircraft over West Ealing are on the Heathrow approach/departure, so the
-// Heathrow assumption holds.) Sources: FlyerTalk / PPRuNe / airlinecodes.info.
+// outbound from Heathrow, odd is inbound; the other end is always Heathrow
+// (true wherever the flight is observed — SHT is exclusively a Heathrow
+// shuttle). Sources: FlyerTalk / PPRuNe / airlinecodes.info.
 const LHR = { icao_code: "EGLL", iata_code: "LHR", name: "London Heathrow" };
 const SHUTTLE_DESTS = {
   2: { icao_code: "EGCC", iata_code: "MAN", name: "Manchester" },
@@ -157,8 +180,25 @@ export default function OverheadTracker() {
   const [status, setStatus] = useState("starting");
   const [lastUpdate, setLastUpdate] = useState(null);
   const [nearbyCount, setNearbyCount] = useState(0);
+  const [center, setCenter] = useState({ lat: HOME_LAT, lon: HOME_LON });
+  const [label, setLabel] = useState(DEFAULT_LABEL);
   const enrichCache = useRef(new Map()); // hex -> aircraft details
   const routeCache = useRef(new Map()); // callsign -> route
+
+  // Auto-detect the viewer's location so friends can run the same page from
+  // anywhere; fall back to the West Ealing default if denied or unavailable.
+  useEffect(() => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        setCenter({ lat: latitude, lon: longitude });
+        reverseGeocode(latitude, longitude).then((l) => l && setLabel(l));
+      },
+      () => {}, // denied / unavailable → keep the default centre + label
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 600000 }
+    );
+  }, []);
 
   const enrich = useCallback(async (ac) => {
     const hex = ac.hex;
@@ -206,7 +246,7 @@ export default function OverheadTracker() {
 
   const poll = useCallback(async () => {
     try {
-      const res = await proxyFetch(POINT_URL(HOME_LAT, HOME_LON, SEARCH_RADIUS_NM));
+      const res = await proxyFetch(POINT_URL(center.lat, center.lon, SEARCH_RADIUS_NM));
       if (!res.ok) throw new Error(`airplanes.live ${res.status}`);
       const data = await res.json();
       const list = (data.ac || []).filter(
@@ -222,7 +262,9 @@ export default function OverheadTracker() {
       }
 
       const best = list.reduce((a, b) =>
-        scoreOverhead(a) <= scoreOverhead(b) ? a : b
+        scoreOverhead(a, center.lat, center.lon) <= scoreOverhead(b, center.lat, center.lon)
+          ? a
+          : b
       );
       const enriched = await enrich(best);
       setPlane(enriched);
@@ -231,7 +273,7 @@ export default function OverheadTracker() {
     } catch (e) {
       setStatus(`error: ${e.message}`);
     }
-  }, [enrich]);
+  }, [enrich, center.lat, center.lon]);
 
   useEffect(() => {
     poll();
@@ -243,8 +285,8 @@ export default function OverheadTracker() {
   const view = (() => {
     if (!plane) return null;
     const { raw, details, route } = plane;
-    const distKm = haversineKm(HOME_LAT, HOME_LON, raw.lat, raw.lon);
-    const brg = bearing(HOME_LAT, HOME_LON, raw.lat, raw.lon);
+    const distKm = haversineKm(center.lat, center.lon, raw.lat, raw.lon);
+    const brg = bearing(center.lat, center.lon, raw.lat, raw.lon);
     const altFt = raw.alt_baro === "ground" ? 0 : raw.alt_baro;
     const rate = raw.baro_rate ?? 0;
     const trend = rate > 100 ? "climbing" : rate < -100 ? "descending" : "level";
@@ -296,7 +338,7 @@ export default function OverheadTracker() {
           <span className="ovh-dot" data-live={status === "tracking"} />
           OVERHEAD
         </div>
-        <div className="ovh-loc">W13 · WEST EALING · {SEARCH_RADIUS_NM} NM</div>
+        <div className="ovh-loc">{label} · {SEARCH_RADIUS_NM} NM</div>
       </header>
 
       {view ? (
