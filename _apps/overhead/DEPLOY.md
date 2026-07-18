@@ -45,8 +45,15 @@ Pushing to `master` is the deploy — GitHub Pages runs Jekyll, which copies
 
 ## Configuration (top of `OverheadTracker.jsx`)
 
-- `HOME_LAT` / `HOME_LON` — set from plus code `GMCG+GP8` (near Kingsley
-  Avenue, W13). Rebuild after changing.
+- `HOME_LAT` / `HOME_LON` — **default** centre (plus code `GMCG+GP8`, near
+  Kingsley Avenue, W13). On load the app asks the browser for the viewer's own
+  location and re-centres on it, so anyone can use the page from anywhere; this
+  default is the fallback when location is denied or unavailable. Rebuild after
+  changing.
+- `DEFAULT_LABEL` — header text for the default centre. When geolocation
+  succeeds, the header is set from a reverse-geocode of the viewer's position
+  (BigDataCloud's free, no-key, browser-side API — called directly, not via the
+  proxy, so no allow-list/redeploy needed).
 - `SEARCH_RADIUS_NM` — search radius in nautical miles (currently 1.5).
 - `POLL_MS` — poll interval (currently 12s; airplanes.live allows ~1 req/sec).
 
