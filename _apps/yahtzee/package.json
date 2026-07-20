@@ -1,0 +1,20 @@
+{
+  "name": "yahtzee-advisor",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Yahtzee Advisor — optimal-play recommendations for a real game of Yahtzee",
+  "type": "module",
+  "scripts": {
+    "build": "esbuild main.jsx --bundle --minify --jsx=automatic --define:process.env.NODE_ENV='\"production\"' --outfile=../../apps/yahtzee/app.js",
+    "watch": "esbuild main.jsx --bundle --jsx=automatic --define:process.env.NODE_ENV='\"development\"' --outfile=../../apps/yahtzee/app.js --watch",
+    "serve": "python3 -m http.server 8000 --directory ../..",
+    "values": "python3 solver/generate_values.py"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0"
+  }
+}
