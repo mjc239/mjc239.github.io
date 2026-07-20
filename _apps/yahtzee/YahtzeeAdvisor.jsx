@@ -39,6 +39,17 @@ function facesLabel(faces) {
   if (!faces.length) return "nothing";
   return faces.join(", ");
 }
+// Given the current dice (values by slot) and a keep count-vector (per face
+// 1..6), return which dice slots to hold to realise that keep.
+function heldPatternFromKeep(dice, keepVec) {
+  const empty = [false, false, false, false, false];
+  if (!keepVec) return empty;
+  const remaining = keepVec.slice();
+  return dice.map((v) => {
+    if (v != null && remaining[v - 1] > 0) { remaining[v - 1]--; return true; }
+    return false;
+  });
+}
 
 export function App() {
   const [engine, setEngine] = useState(null);
@@ -71,6 +82,7 @@ function Game({ engine }) {
   const [roll, setRoll] = useState(1);
   const [dice, setDice] = useState([null, null, null, null, null]);
   const [picking, setPicking] = useState(false);  // showing the score-a-box list
+  const [heldOverride, setHeldOverride] = useState(null);  // manual keep (null = follow advice)
 
   const upperCapped = Math.min(upperActualFromCard(card), engine.UPPER_THRESHOLD);
   const upperActual = upperActualFromCard(card);
@@ -78,6 +90,7 @@ function Game({ engine }) {
 
   const diceComplete = dice.every((d) => d != null);
   const diceValues = diceComplete ? dice.map(Number) : null;
+  const diceKey = dice.join(",");
 
   const advice = useMemo(() => {
     if (!diceValues || gameOver) return null;
@@ -90,11 +103,38 @@ function Game({ engine }) {
     : gameOver ? 0 : engine.V(mask, upperCapped, elig);
   const expectedFinal = banked + stateEV;
 
+  // Which dice are being kept. Pre-seeded from the recommended keep when a
+  // reroll is advised; the player can tap dice to override. Rerolling keeps
+  // exactly these in place and empties the rest for the next roll's entry.
+  const recommendedHeld = useMemo(() => {
+    if (!diceComplete || !advice || advice.recommendation.action !== "reroll")
+      return [false, false, false, false, false];
+    return heldPatternFromKeep(dice, advice.recommendation.keep);
+  }, [diceComplete, advice, diceKey]);
+  const effectiveHeld = heldOverride ?? recommendedHeld;
+  const heldCount = effectiveHeld.filter(Boolean).length;
+
+  // Any manual keep-override is cleared whenever the dice change.
+  useEffect(() => { setHeldOverride(null); }, [diceKey]);
+
   const setDie = (i, v) => setDice((prev) => { const n = prev.slice(); n[i] = v; return n; });
   const cycleDie = (i) => setDie(i, dice[i] == null ? 1 : (dice[i] % 6) + 1);
   const clearDice = () => setDice([null, null, null, null, null]);
+  const toggleHeld = (i) => setHeldOverride((prev) => {
+    const base = (prev ?? recommendedHeld).slice();
+    base[i] = !base[i];
+    return base;
+  });
+  const canPickHeld = diceComplete && roll < 3 && !!advice;
+  const onDieTap = (i) => (canPickHeld ? toggleHeld(i) : cycleDie(i));
 
-  const doReroll = () => { setRoll((r) => r + 1); clearDice(); setPicking(false); };
+  // Reroll: keep the held dice in place, empty the rest for re-entry.
+  const doReroll = () => {
+    setDice((prev) => prev.map((v, i) => (effectiveHeld[i] ? v : null)));
+    setRoll((r) => r + 1);
+    setHeldOverride(null);
+    setPicking(false);
+  };
 
   const commitScore = useCallback((cat) => {
     if (!advice) return;
@@ -163,12 +203,19 @@ function Game({ engine }) {
 
             <div className="diceentry">
               <div className="dicerow">
-                {dice.map((v, i) => <Die key={i} value={v} onClick={() => cycleDie(i)} />)}
+                {dice.map((v, i) => (
+                  <Die key={i} value={v} held={effectiveHeld[i]} onClick={() => onDieTap(i)} />
+                ))}
               </div>
               <div className="dicehint">
-                {diceComplete
-                  ? <button className="ghost" onClick={clearDice}>Clear</button>
-                  : <span className="muted">Tap each die to set what you actually rolled.</span>}
+                {!diceComplete
+                  ? <span className="muted">Tap each die to set what you actually rolled.</span>
+                  : canPickHeld
+                    ? <>
+                        <span className="muted">Green = keeping. Tap a die to change what you keep.</span>
+                        <button className="ghost small" onClick={clearDice}>Re-enter</button>
+                      </>
+                    : <button className="ghost" onClick={clearDice}>Clear</button>}
               </div>
             </div>
 
@@ -177,6 +224,7 @@ function Game({ engine }) {
                 advice={advice}
                 roll={roll}
                 expectedFinal={expectedFinal}
+                heldCount={heldCount}
                 onReroll={doReroll}
                 onScore={() => setPicking(true)}
               />
@@ -214,7 +262,7 @@ function Stat({ label, value, big }) {
   );
 }
 
-function RecCard({ advice, roll, expectedFinal, onReroll, onScore }) {
+function RecCard({ advice, roll, expectedFinal, heldCount, onReroll, onScore }) {
   const rec = advice.recommendation;
   return (
     <div className="rec">
@@ -233,19 +281,17 @@ function RecCard({ advice, roll, expectedFinal, onReroll, onScore }) {
         )}
         <div className="recev">Expected final score if you follow this: <b>{expectedFinal.toFixed(1)}</b></div>
       </div>
-      <div className="recactions">
-        {!advice.mustScore && rec.action === "reroll" && (
-          <button className="primary" onClick={onReroll}>I rerolled →</button>
-        )}
-        {!advice.mustScore && (
+      {!advice.mustScore && (
+        <div className="recactions">
+          <button className={rec.action === "reroll" ? "primary" : "ghost"} onClick={onReroll}>
+            {heldCount === 5 ? "Reroll — keep all 5 →" : heldCount === 0
+              ? "Reroll all 5 →" : `Reroll — keep ${heldCount} →`}
+          </button>
           <button className={rec.action === "score" ? "primary" : "ghost"} onClick={onScore}>
             {rec.action === "score" ? "Choose box…" : "Score a box instead…"}
           </button>
-        )}
-        {!advice.mustScore && rec.action === "reroll" && (
-          <button className="ghost" onClick={onReroll}>Reroll (my own keep) →</button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -356,7 +402,7 @@ function Style() {
 
     .dicerow { display: flex; gap: 8px; justify-content: center; }
     .diceentry { margin-bottom: 6px; }
-    .dicehint { text-align: center; min-height: 24px; margin-top: 8px; }
+    .dicehint { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; min-height: 24px; margin-top: 10px; }
     .die { background: #f4f6f8; border: 2px solid #d3dae0; border-radius: 10px; padding: 0; cursor: default; }
     .die.tappable { cursor: pointer; }
     .die.tappable:hover { border-color: #57e2a5; }
