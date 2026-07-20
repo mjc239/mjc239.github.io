@@ -151,7 +151,7 @@ function Game({ engine }) {
           <h2>Game complete</h2>
           <p className="final">Final score: <b>{banked}</b></p>
           <button className="primary" onClick={newGame}>New game</button>
-          <Scorecard card={card} mask={mask} />
+          <Scorecard card={card} banked={banked} yahtzeeBonuses={yahtzeeBonuses} />
         </section>
       ) : (
         <>
@@ -193,7 +193,7 @@ function Game({ engine }) {
             )}
           </section>
 
-          <Scorecard card={card} mask={mask} />
+          <Scorecard card={card} banked={banked} yahtzeeBonuses={yahtzeeBonuses} />
         </>
       )}
 
@@ -277,21 +277,43 @@ function ScoreList({ options, recommendedCat, banked, onPick, onCancel }) {
   );
 }
 
-function Scorecard({ card, mask }) {
+function ScoreRow({ card, c }) {
+  const filled = card[c] != null;
+  return (
+    <div className={"scrow" + (filled ? " filled" : "")}>
+      <span className="scname">{CATEGORY_NAMES[c]}</span>
+      <span className="scval">{filled ? card[c] : "—"}</span>
+    </div>
+  );
+}
+
+function Scorecard({ card, banked, yahtzeeBonuses }) {
+  const upperActual = upperActualFromCard(card);
+  const gotBonus = upperActual >= 63;
   return (
     <section className="card">
       <h3>Scorecard</h3>
-      <div className="cardgrid">
-        {CATEGORY_NAMES.map((name, c) => {
-          const filled = card[c] != null;
-          return (
-            <div key={c} className={"cardcell" + (filled ? " filled" : "")}>
-              <span className="ccname">{CATEGORY_SHORT[c]}</span>
-              <span className="ccval">{filled ? card[c] : "—"}</span>
+      <div className="cardcols">
+        <div className="cardcol">
+          <div className="colhead">Upper section</div>
+          {[0, 1, 2, 3, 4, 5].map((c) => <ScoreRow key={c} card={card} c={c} />)}
+          <div className={"scrow subtotal" + (gotBonus ? " filled" : "")}>
+            <span className="scname">Bonus (≥63)</span>
+            <span className="scval">{gotBonus ? "+35" : `${upperActual}/63`}</span>
+          </div>
+        </div>
+        <div className="cardcol">
+          <div className="colhead">Lower section</div>
+          {[6, 7, 8, 9, 10, 11, 12].map((c) => <ScoreRow key={c} card={card} c={c} />)}
+          {yahtzeeBonuses > 0 && (
+            <div className="scrow subtotal filled">
+              <span className="scname">Yahtzee bonus ×{yahtzeeBonuses}</span>
+              <span className="scval">+{yahtzeeBonuses * 100}</span>
             </div>
-          );
-        })}
+          )}
+        </div>
       </div>
+      <div className="cardtotal"><span>Total</span><span>{banked}</span></div>
     </section>
   );
 }
@@ -372,12 +394,20 @@ function Style() {
 
     .card { background: #131a22; border: 1px solid #1f2a35; border-radius: 14px; padding: 12px 14px; margin-bottom: 14px; }
     .card h3 { margin: 2px 0 10px; font-size: .95rem; }
-    .cardgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: 6px; }
-    .cardcell { display: flex; justify-content: space-between; align-items: center; background: #0f1720;
-      border: 1px solid #1c2530; border-radius: 8px; padding: 6px 9px; }
-    .cardcell.filled { background: #12281f; border-color: #1c4a37; }
-    .ccname { font-size: .74rem; color: #9fb0be; }
-    .ccval { font-weight: 700; font-variant-numeric: tabular-nums; }
+    .cardcols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start; }
+    .cardcol { display: flex; flex-direction: column; gap: 5px; }
+    .colhead { font-size: .66rem; text-transform: uppercase; letter-spacing: .05em; color: #7b8896; margin-bottom: 2px; }
+    .scrow { display: flex; justify-content: space-between; align-items: center; gap: 6px; background: #0f1720;
+      border: 1px solid #1c2530; border-radius: 8px; padding: 6px 10px; min-height: 34px; }
+    .scrow.filled { background: #12281f; border-color: #1c4a37; }
+    .scrow.subtotal { background: transparent; border-style: dashed; border-color: #2a3a49; }
+    .scrow.subtotal.filled { background: #12281f; border-style: solid; border-color: #1c4a37; }
+    .scname { font-size: .76rem; color: #b9c6d2; line-height: 1.15; }
+    .scrow.subtotal .scname { color: #9fb0be; }
+    .scval { font-weight: 700; font-variant-numeric: tabular-nums; color: #e7edf3; }
+    .cardtotal { display: flex; justify-content: space-between; margin-top: 12px; padding-top: 10px;
+      border-top: 1px solid #1f2a35; font-weight: 700; font-size: 1.05rem; }
+    .cardtotal span:last-child { color: #57e2a5; font-variant-numeric: tabular-nums; }
 
     .gameover { text-align: center; background: #131a22; border: 1px solid #1f2a35; border-radius: 14px; padding: 20px; margin-bottom: 14px; }
     .gameover .final { font-size: 1.2rem; }
