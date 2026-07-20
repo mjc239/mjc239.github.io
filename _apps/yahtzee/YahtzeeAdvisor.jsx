@@ -126,7 +126,6 @@ function Game({ engine }) {
     return base;
   });
   const canPickHeld = diceComplete && roll < 3 && !!advice;
-  const onDieTap = (i) => (canPickHeld ? toggleHeld(i) : cycleDie(i));
 
   // Reroll: keep the held dice in place, empty the rest for re-entry.
   const doReroll = () => {
@@ -204,18 +203,32 @@ function Game({ engine }) {
             <div className="diceentry">
               <div className="dicerow">
                 {dice.map((v, i) => (
-                  <Die key={i} value={v} held={effectiveHeld[i]} onClick={() => onDieTap(i)} />
+                  <Die key={i} value={v} held={canPickHeld && effectiveHeld[i]} onClick={() => cycleDie(i)} />
                 ))}
               </div>
+              {canPickHeld && (
+                <div className="keeprow">
+                  {effectiveHeld.map((h, i) => (
+                    <button key={i} type="button"
+                      className={"keeptoggle" + (h ? " on" : "")}
+                      onClick={() => toggleHeld(i)}
+                      aria-pressed={h}>
+                      {h ? "keep" : "reroll"}
+                    </button>
+                  ))}
+                </div>
+              )}
               <div className="dicehint">
                 {!diceComplete
                   ? <span className="muted">Tap each die to set what you actually rolled.</span>
-                  : canPickHeld
-                    ? <>
-                        <span className="muted">Green = keeping. Tap a die to change what you keep.</span>
-                        <button className="ghost small" onClick={clearDice}>Re-enter</button>
-                      </>
-                    : <button className="ghost" onClick={clearDice}>Clear</button>}
+                  : <>
+                      <span className="muted">
+                        {canPickHeld
+                          ? "Tap a die to fix its value. Green = keeping — use the toggles to choose what to reroll."
+                          : "Tap a die to fix a mistyped value."}
+                      </span>
+                      <button className="ghost small" onClick={clearDice}>Clear all</button>
+                    </>}
               </div>
             </div>
 
@@ -402,6 +415,11 @@ function Style() {
 
     .dicerow { display: flex; gap: 8px; justify-content: center; }
     .diceentry { margin-bottom: 6px; }
+    .keeprow { display: flex; gap: 8px; justify-content: center; margin-top: 8px; }
+    .keeptoggle { width: 46px; padding: 5px 0; font-size: .58rem; text-transform: uppercase; letter-spacing: .04em;
+      border-radius: 8px; border: 1px solid #2a3a49; background: #131c26; color: #8b98a6; cursor: pointer; }
+    .keeptoggle:hover { border-color: #3a5163; }
+    .keeptoggle.on { background: #12351f; border-color: #23a06b; color: #7fe6a0; font-weight: 700; }
     .dicehint { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; min-height: 24px; margin-top: 10px; }
     .die { background: #f4f6f8; border: 2px solid #d3dae0; border-radius: 10px; padding: 0; cursor: default; }
     .die.tappable { cursor: pointer; }
