@@ -11,4 +11,6 @@ Small web apps I've built.
 
 ✈️[Overhead](/apps/overhead/) - a live departure-board-style panel showing details of the aircraft currently passing over West Ealing
 
+🎲[Yahtzee Advisor](/apps/yahtzee/) - optimal-play advice for a real game of Yahtzee: enter each roll and get the best move plus your expected final score
+
 🐦[Bird Quiz](https://birdquizapp.com/) - learn bird calls through audio quizzes: build custom quizzes from your choice of species, with recordings from Xeno-canto

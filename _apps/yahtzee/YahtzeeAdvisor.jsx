@@ -1,0 +1,389 @@
+import React, { useState, useEffect, useMemo, useCallback } from "react";
+import {
+  buildEngine, CATEGORY_NAMES, CATEGORY_SHORT, SIXES, YAHTZEE,
+} from "./engine.js";
+
+const ALL_MASK = (1 << 13) - 1;
+
+// ---------- dice face (pip layout) ----------
+const PIPS = {
+  1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0, 2, 6, 8],
+  5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8],
+};
+function Die({ value, onClick, held, small }) {
+  const size = small ? 30 : 46;
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={"die" + (held ? " held" : "") + (onClick ? " tappable" : "")}
+      style={{ width: size, height: size }}
+      aria-label={value ? `die showing ${value}` : "empty die"}
+    >
+      <span className="pipgrid">
+        {Array.from({ length: 9 }).map((_, i) => (
+          <span key={i} className={"pip" + (value && PIPS[value].includes(i) ? " on" : "")} />
+        ))}
+      </span>
+    </button>
+  );
+}
+
+// ---------- helpers ----------
+function upperActualFromCard(card) {
+  let s = 0;
+  for (let c = 0; c <= SIXES; c++) if (card[c] != null) s += card[c];
+  return s;
+}
+function facesLabel(faces) {
+  if (!faces.length) return "nothing";
+  return faces.join(", ");
+}
+
+export function App() {
+  const [engine, setEngine] = useState(null);
+  const [loadError, setLoadError] = useState(null);
+
+  useEffect(() => {
+    fetch("values.bin")
+      .then((r) => { if (!r.ok) throw new Error(`values.bin ${r.status}`); return r.arrayBuffer(); })
+      .then((buf) => setEngine(buildEngine(new Float32Array(buf))))
+      .catch((e) => setLoadError(String(e)));
+  }, []);
+
+  if (loadError) return <div className="wrap"><Style /><p className="err">Failed to load solver data: {loadError}</p></div>;
+  if (!engine) return <div className="wrap"><Style /><p className="loading">Loading solver…</p></div>;
+  return <Game engine={engine} />;
+}
+
+const emptyCard = () => Array(13).fill(null);
+
+function Game({ engine }) {
+  // reduced state
+  const [mask, setMask] = useState(0);
+  const [elig, setElig] = useState(false);
+  // display / bookkeeping
+  const [card, setCard] = useState(emptyCard);
+  const [banked, setBanked] = useState(0);        // sum of committed rewards (incl. bonuses)
+  const [yahtzeeBonuses, setYahtzeeBonuses] = useState(0);
+  const [turn, setTurn] = useState(1);
+  // per-turn
+  const [roll, setRoll] = useState(1);
+  const [dice, setDice] = useState([null, null, null, null, null]);
+  const [picking, setPicking] = useState(false);  // showing the score-a-box list
+
+  const upperCapped = Math.min(upperActualFromCard(card), engine.UPPER_THRESHOLD);
+  const upperActual = upperActualFromCard(card);
+  const gameOver = mask === ALL_MASK;
+
+  const diceComplete = dice.every((d) => d != null);
+  const diceValues = diceComplete ? dice.map(Number) : null;
+
+  const advice = useMemo(() => {
+    if (!diceValues || gameOver) return null;
+    return engine.recommend(mask, upperCapped, elig, diceValues, roll);
+  }, [engine, mask, upperCapped, elig, diceValues, roll, gameOver]);
+
+  // Before dice are entered, the expected final from the start of the turn is
+  // banked + V(state); once dice are in, it's banked + the roll-conditional EV.
+  const stateEV = advice ? advice.stateEV
+    : gameOver ? 0 : engine.V(mask, upperCapped, elig);
+  const expectedFinal = banked + stateEV;
+
+  const setDie = (i, v) => setDice((prev) => { const n = prev.slice(); n[i] = v; return n; });
+  const cycleDie = (i) => setDie(i, dice[i] == null ? 1 : (dice[i] % 6) + 1);
+  const clearDice = () => setDice([null, null, null, null, null]);
+
+  const doReroll = () => { setRoll((r) => r + 1); clearDice(); setPicking(false); };
+
+  const commitScore = useCallback((cat) => {
+    if (!advice) return;
+    const opt = advice.scoreOptions.find((o) => o.cat === cat);
+    if (!opt) return;
+    setCard((prev) => { const n = prev.slice(); n[cat] = opt.points; return n; });
+    setBanked((b) => b + opt.reward);
+    if (opt.yahtzeeBonus) setYahtzeeBonuses((y) => y + 1);
+    setMask(opt.newMask);
+    setElig(opt.newElig);
+    setTurn((t) => t + 1);
+    setRoll(1);
+    clearDice();
+    setPicking(false);
+  }, [advice]);
+
+  const newGame = () => {
+    setMask(0); setElig(false); setCard(emptyCard()); setBanked(0);
+    setYahtzeeBonuses(0); setTurn(1); setRoll(1); clearDice(); setPicking(false);
+  };
+
+  return (
+    <div className="wrap">
+      <Style />
+      <header>
+        <h1>🎲 Yahtzee Advisor</h1>
+        <p className="sub">Optimal play, full rules. Enter each roll; get the best move and your expected final score.</p>
+      </header>
+
+      <section className="statbar">
+        <Stat label="Score so far" value={banked} />
+        <Stat label={gameOver ? "Final score" : "Expected final"} value={gameOver ? banked : expectedFinal.toFixed(1)} big />
+        <Stat label="Turn" value={gameOver ? "—" : `${turn} / 13`} />
+      </section>
+
+      <section className="upperbar">
+        <div className="upperlabel">
+          Upper section: <b>{upperActual}</b> / 63
+          {upperActual >= 63
+            ? <span className="badge good">+35 bonus locked in</span>
+            : <span className="muted"> (need {63 - upperActual} more for +35)</span>}
+        </div>
+        <div className="track"><div className="fill" style={{ width: `${Math.min(100, upperActual / 63 * 100)}%` }} /></div>
+        <div className="eligrow">
+          {elig
+            ? <span className="badge good">Yahtzee bonus active — extra Yahtzees score +100</span>
+            : <span className="muted">Yahtzee box not yet scored for 50</span>}
+          {yahtzeeBonuses > 0 && <span className="badge">+{yahtzeeBonuses}× Yahtzee bonus earned</span>}
+        </div>
+      </section>
+
+      {gameOver ? (
+        <section className="gameover">
+          <h2>Game complete</h2>
+          <p className="final">Final score: <b>{banked}</b></p>
+          <button className="primary" onClick={newGame}>New game</button>
+          <Scorecard card={card} mask={mask} />
+        </section>
+      ) : (
+        <>
+          <section className="turnpanel">
+            <div className="rollhead">
+              <span className="rollno">Roll {roll} of 3</span>
+              {roll < 3 && <span className="muted">— reroll as many times as you like (up to 3 rolls)</span>}
+            </div>
+
+            <div className="diceentry">
+              <div className="dicerow">
+                {dice.map((v, i) => <Die key={i} value={v} onClick={() => cycleDie(i)} />)}
+              </div>
+              <div className="dicehint">
+                {diceComplete
+                  ? <button className="ghost" onClick={clearDice}>Clear</button>
+                  : <span className="muted">Tap each die to set what you actually rolled.</span>}
+              </div>
+            </div>
+
+            {advice && !picking && (
+              <RecCard
+                advice={advice}
+                roll={roll}
+                expectedFinal={expectedFinal}
+                onReroll={doReroll}
+                onScore={() => setPicking(true)}
+              />
+            )}
+
+            {advice && (picking || advice.mustScore) && (
+              <ScoreList
+                options={advice.scoreOptions}
+                recommendedCat={advice.recommendation.action === "score" ? advice.recommendation.cat : null}
+                banked={banked}
+                onPick={commitScore}
+                onCancel={advice.mustScore ? null : () => setPicking(false)}
+              />
+            )}
+          </section>
+
+          <Scorecard card={card} mask={mask} />
+        </>
+      )}
+
+      <footer>
+        <button className="ghost small" onClick={newGame}>Restart game</button>
+        <span className="muted small">Optimal-play value from the initial state: {engine.initialV.toFixed(2)}</span>
+      </footer>
+    </div>
+  );
+}
+
+function Stat({ label, value, big }) {
+  return (
+    <div className={"stat" + (big ? " big" : "")}>
+      <div className="statval">{value}</div>
+      <div className="statlabel">{label}</div>
+    </div>
+  );
+}
+
+function RecCard({ advice, roll, expectedFinal, onReroll, onScore }) {
+  const rec = advice.recommendation;
+  return (
+    <div className="rec">
+      <div className="recmain">
+        <span className="rectag">Recommended</span>
+        {rec.action === "reroll" ? (
+          <div className="rectext">
+            Keep <b>{facesLabel(rec.keepFaces)}</b>
+            {" — reroll the other "}<b>{rec.rerollCount}</b>.
+          </div>
+        ) : (
+          <div className="rectext">
+            Score <b>{advice.scoreOptions.find((o) => o.cat === rec.cat)?.points}</b> in{" "}
+            <b>{CATEGORY_NAMES[rec.cat]}</b>.
+          </div>
+        )}
+        <div className="recev">Expected final score if you follow this: <b>{expectedFinal.toFixed(1)}</b></div>
+      </div>
+      <div className="recactions">
+        {!advice.mustScore && rec.action === "reroll" && (
+          <button className="primary" onClick={onReroll}>I rerolled →</button>
+        )}
+        {!advice.mustScore && (
+          <button className={rec.action === "score" ? "primary" : "ghost"} onClick={onScore}>
+            {rec.action === "score" ? "Choose box…" : "Score a box instead…"}
+          </button>
+        )}
+        {!advice.mustScore && rec.action === "reroll" && (
+          <button className="ghost" onClick={onReroll}>Reroll (my own keep) →</button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ScoreList({ options, recommendedCat, banked, onPick, onCancel }) {
+  return (
+    <div className="scorelist">
+      <div className="slhead">
+        <span>Pick the box you're scoring{onCancel ? "" : " (must score now)"}:</span>
+        {onCancel && <button className="ghost small" onClick={onCancel}>← back</button>}
+      </div>
+      <ul>
+        {options.map((o) => (
+          <li key={o.cat}>
+            <button className={"scoreopt" + (o.cat === recommendedCat ? " rec" : "")} onClick={() => onPick(o.cat)}>
+              <span className="soname">
+                {CATEGORY_SHORT[o.cat]}
+                {o.cat === recommendedCat && <span className="minitag">best</span>}
+                {o.joker && <span className="minitag joker">joker</span>}
+              </span>
+              <span className="sopts">{o.points} pts{o.crossedBonus ? " +35" : ""}{o.yahtzeeBonus ? " +100" : ""}</span>
+              <span className="soev">→ {(banked + o.resultEV).toFixed(1)}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+      <div className="slfoot muted small">"→" shows your expected final score after taking that box.</div>
+    </div>
+  );
+}
+
+function Scorecard({ card, mask }) {
+  return (
+    <section className="card">
+      <h3>Scorecard</h3>
+      <div className="cardgrid">
+        {CATEGORY_NAMES.map((name, c) => {
+          const filled = card[c] != null;
+          return (
+            <div key={c} className={"cardcell" + (filled ? " filled" : "")}>
+              <span className="ccname">{CATEGORY_SHORT[c]}</span>
+              <span className="ccval">{filled ? card[c] : "—"}</span>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function Style() {
+  return (
+    <style>{`
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    .wrap { max-width: 560px; margin: 0 auto; padding: 16px 14px 40px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #e7edf3; background: #0b0f14; min-height: 100vh; }
+    header h1 { margin: 4px 0 2px; font-size: 1.5rem; }
+    .sub { margin: 0 0 14px; color: #93a1b0; font-size: .82rem; }
+    .loading, .err { padding: 40px 0; text-align: center; color: #93a1b0; }
+    .err { color: #ff8a8a; }
+
+    .statbar { display: flex; gap: 10px; margin-bottom: 12px; }
+    .stat { flex: 1; background: #131a22; border: 1px solid #1f2a35; border-radius: 12px;
+      padding: 10px 12px; text-align: center; }
+    .stat.big { flex: 1.3; background: #10241c; border-color: #1c4a37; }
+    .statval { font-size: 1.35rem; font-weight: 700; }
+    .stat.big .statval { color: #57e2a5; }
+    .statlabel { font-size: .68rem; color: #93a1b0; text-transform: uppercase; letter-spacing: .04em; margin-top: 2px; }
+
+    .upperbar { background: #131a22; border: 1px solid #1f2a35; border-radius: 12px; padding: 10px 12px; margin-bottom: 12px; }
+    .upperlabel { font-size: .84rem; }
+    .track { height: 7px; background: #1f2a35; border-radius: 6px; margin: 8px 0 6px; overflow: hidden; }
+    .fill { height: 100%; background: linear-gradient(90deg,#3a8,#57e2a5); border-radius: 6px; transition: width .3s; }
+    .eligrow { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .badge { font-size: .68rem; background: #1f2a35; color: #cfe; padding: 2px 8px; border-radius: 20px; }
+    .badge.good { background: #12351f; color: #7fe6a0; }
+    .muted { color: #7b8896; font-size: .78rem; }
+    .small { font-size: .74rem; }
+
+    .turnpanel { background: #131a22; border: 1px solid #1f2a35; border-radius: 14px; padding: 14px; margin-bottom: 14px; }
+    .rollhead { display: flex; align-items: baseline; gap: 8px; margin-bottom: 12px; }
+    .rollno { font-weight: 700; font-size: 1.05rem; }
+
+    .dicerow { display: flex; gap: 8px; justify-content: center; }
+    .diceentry { margin-bottom: 6px; }
+    .dicehint { text-align: center; min-height: 24px; margin-top: 8px; }
+    .die { background: #f4f6f8; border: 2px solid #d3dae0; border-radius: 10px; padding: 0; cursor: default; }
+    .die.tappable { cursor: pointer; }
+    .die.tappable:hover { border-color: #57e2a5; }
+    .die.held { border-color: #57e2a5; box-shadow: 0 0 0 2px #1c4a37; }
+    .pipgrid { display: grid; grid-template-columns: repeat(3,1fr); grid-template-rows: repeat(3,1fr);
+      width: 100%; height: 100%; padding: 6px; gap: 2px; }
+    .pip { border-radius: 50%; background: transparent; align-self: center; justify-self: center; width: 7px; height: 7px; }
+    .pip.on { background: #16202b; }
+
+    .rec { margin-top: 12px; background: #10241c; border: 1px solid #1c4a37; border-radius: 12px; padding: 12px; }
+    .rectag { font-size: .66rem; text-transform: uppercase; letter-spacing: .06em; color: #57e2a5; }
+    .rectext { font-size: 1.05rem; margin: 4px 0 6px; }
+    .recev { font-size: .82rem; color: #b9c6d2; }
+    .recactions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+
+    button { font: inherit; border-radius: 10px; padding: 9px 14px; border: 1px solid #2a3a49;
+      background: #1a2530; color: #e7edf3; cursor: pointer; }
+    button:hover { border-color: #3a5163; }
+    button.primary { background: #1c8a5a; border-color: #23a06b; color: #fff; font-weight: 600; }
+    button.primary:hover { background: #23a06b; }
+    button.ghost { background: transparent; }
+    .primary { }
+
+    .scorelist { margin-top: 12px; background: #0f1720; border: 1px solid #1f2a35; border-radius: 12px; padding: 10px; }
+    .slhead { display: flex; justify-content: space-between; align-items: center; font-size: .86rem; margin-bottom: 8px; }
+    .scorelist ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+    .scoreopt { width: 100%; display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center; text-align: left; }
+    .scoreopt.rec { border-color: #23a06b; background: #12281f; }
+    .soname { font-weight: 600; }
+    .sopts { color: #b9c6d2; font-size: .82rem; }
+    .soev { color: #57e2a5; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .minitag { font-size: .6rem; margin-left: 6px; padding: 1px 6px; border-radius: 10px; background: #23a06b; color: #fff; text-transform: uppercase; }
+    .minitag.joker { background: #7a5cc0; }
+    .slfoot { margin-top: 8px; }
+
+    .card { background: #131a22; border: 1px solid #1f2a35; border-radius: 14px; padding: 12px 14px; margin-bottom: 14px; }
+    .card h3 { margin: 2px 0 10px; font-size: .95rem; }
+    .cardgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: 6px; }
+    .cardcell { display: flex; justify-content: space-between; align-items: center; background: #0f1720;
+      border: 1px solid #1c2530; border-radius: 8px; padding: 6px 9px; }
+    .cardcell.filled { background: #12281f; border-color: #1c4a37; }
+    .ccname { font-size: .74rem; color: #9fb0be; }
+    .ccval { font-weight: 700; font-variant-numeric: tabular-nums; }
+
+    .gameover { text-align: center; background: #131a22; border: 1px solid #1f2a35; border-radius: 14px; padding: 20px; margin-bottom: 14px; }
+    .gameover .final { font-size: 1.2rem; }
+    .gameover .final b { color: #57e2a5; font-size: 1.6rem; }
+
+    footer { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 8px; }
+    `}</style>
+  );
+}
