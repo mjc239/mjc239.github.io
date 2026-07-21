@@ -325,43 +325,48 @@ function HowItWorks({ initialV }) {
   return (
     <section className="explainer">
       <h2>What this is</h2>
-      <p>An optimal-play advisor for solitaire Yahtzee. At every point in the game it tells you the
-        move that <b>maximises your expected final score</b> — and shows you what that expected score is.</p>
+      <p>This tool helps you play solitaire Yahtzee as well as possible. At every point in the game it
+        tells you the move that gives the highest expected final score, and it shows you what that score is.</p>
 
       <h2>Using it</h2>
       <ol>
-        <li>Roll your real dice, then enter them — tap the faces in the palette, or type the numbers.</li>
-        <li>You'll see the best move: which dice to <b>keep and reroll</b>, or which <b>box to score</b>,
-          along with your expected final score from here.</li>
-        <li>Green dice are the ones being kept — tap the <b>keep / reroll</b> toggles to change them. Then
-          <b> Reroll</b> and enter your next roll, or <b>Score a box</b>.</li>
-        <li>You never have to follow the advice: enter whatever you actually rolled and pick whichever box
-          you actually used — the advice re-computes for your real situation.</li>
+        <li>Roll your dice, then enter them. Tap the dice faces to add each one, or type the numbers.</li>
+        <li>The tool shows you the best move. It tells you which dice to keep and which to reroll, or which
+          box to score, and it shows your expected final score from that point.</li>
+        <li>The dice shown in green are the ones you are keeping. Tap the keep or reroll button under each
+          die to change what you keep. Then reroll and enter your next roll, or score a box.</li>
+        <li>You do not have to follow the advice. Enter whatever you actually rolled, and pick whichever box
+          you actually used. The tool then works out fresh advice for your real situation.</li>
       </ol>
 
-      <h2>“Expected final score”</h2>
-      <p>The average total you'd finish with, playing optimally from the current position, across all the
-        ways the dice could fall. From the opening roll, optimal play averages
-        about <b>{initialV.toFixed(1)}</b> points.</p>
+      <h2>What "expected final score" means</h2>
+      <p>It is your average final total if you always play the best move from the current point onward. The
+        average is taken over all the ways the dice could fall. At the start of a game, the best possible
+        average is about {initialV.toFixed(1)} points.</p>
 
-      <h2>Under the hood</h2>
-      <p>Yahtzee is a <a href="https://en.wikipedia.org/wiki/Markov_decision_process" target="_blank" rel="noreferrer">Markov
-        decision process</a>, so it can be solved <i>exactly</i> by dynamic programming. Working backwards
-        from the end of the game, the solver computes the <b>value</b> of every game state — the best
-        expected score achievable from that state onward. A state captures which boxes you've filled, your
-        upper-section total, and whether the Yahtzee bonus is live (about a million in all).</p>
-      <p>That whole value table is computed once, offline, and shipped with the page (~4&nbsp;MB). When you
-        enter a roll, the app runs a fast <b>one-turn lookahead</b>: it weighs every keep-and-reroll across
-        your remaining rolls and every box you could fill, scores each against the value table, and picks
-        the best. That's why advice is instant and works offline — there's no server.</p>
-      <p>It uses the full official rules: the upper-section bonus (+35 at 63), the Yahtzee bonus (+100 per
-        extra Yahtzee), and the Joker rule.</p>
-
-      <h2>Good to know</h2>
+      <h2>How the tool works out the advice</h2>
+      <p>Yahtzee has a limited number of game situations, so a computer can work out the best play in every
+        one of them. It starts at the end of the game and works backwards. For each situation it works out
+        the value, which is the highest average score you can still reach from that point. A situation is
+        made up of which boxes you have filled, your upper section total, and whether the Yahtzee bonus is
+        active. There are about a million situations in all.</p>
+      <p>The whole table of values is worked out once, ahead of time. Your browser downloads it when you
+        open the page, and it is about 4 megabytes.</p>
+      <p>When you enter a roll, the tool looks ahead through the rest of the current turn. It checks every
+        way you could keep and reroll your dice, and every box you could score. It looks up the value of
+        each result in the table, and it picks the move with the highest value. The advice appears straight
+        away and works without an internet connection, because there is no server to call.</p>
+      <p>The tool uses the full official rules:</p>
       <ul>
-        <li>It maximises <b>expected score</b> — not your odds of beating a specific target, and not low variance.</li>
-        <li>It assumes standard solitaire rules, with no opponents.</li>
+        <li>a bonus of 35 points for reaching 63 in the upper section,</li>
+        <li>a bonus of 100 points for each extra Yahtzee,</li>
+        <li>and the Joker rule.</li>
       </ul>
+
+      <h2>What the tool does not do</h2>
+      <p>The tool aims for the highest average score. It does not try to raise your chance of beating a set
+        target, and it does not try to keep your scores close together from one game to the next. It also
+        assumes you are playing alone, with no opponents.</p>
     </section>
   );
 }
