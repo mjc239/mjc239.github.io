@@ -10,21 +10,25 @@ const PIPS = {
   1: [4], 2: [0, 8], 3: [0, 4, 8], 4: [0, 2, 6, 8],
   5: [0, 2, 4, 6, 8], 6: [0, 2, 3, 5, 6, 8],
 };
-function Die({ value, onClick, held, small }) {
-  const size = small ? 30 : 46;
+function PipFace({ value }) {
+  return (
+    <span className="pipgrid">
+      {Array.from({ length: 9 }).map((_, i) => (
+        <span key={i} className={"pip" + (value && PIPS[value].includes(i) ? " on" : "")} />
+      ))}
+    </span>
+  );
+}
+function Die({ value, onClick, held }) {
   return (
     <button
       type="button"
       onClick={onClick}
       className={"die" + (held ? " held" : "") + (onClick ? " tappable" : "")}
-      style={{ width: size, height: size }}
-      aria-label={value ? `die showing ${value}` : "empty die"}
+      style={{ width: 46, height: 46 }}
+      aria-label={value ? `die showing ${value}, tap to remove` : "empty die slot"}
     >
-      <span className="pipgrid">
-        {Array.from({ length: 9 }).map((_, i) => (
-          <span key={i} className={"pip" + (value && PIPS[value].includes(i) ? " on" : "")} />
-        ))}
-      </span>
+      <PipFace value={value} />
     </button>
   );
 }
@@ -117,9 +121,29 @@ function Game({ engine }) {
   // Any manual keep-override is cleared whenever the dice change.
   useEffect(() => { setHeldOverride(null); }, [diceKey]);
 
-  const setDie = (i, v) => setDice((prev) => { const n = prev.slice(); n[i] = v; return n; });
-  const cycleDie = (i) => setDie(i, dice[i] == null ? 1 : (dice[i] % 6) + 1);
+  const filledCount = dice.filter((d) => d != null).length;
+  const typedValue = dice.filter((d) => d != null).join("");
+
+  const compact = (vals) => {
+    const n = [null, null, null, null, null];
+    vals.slice(0, 5).forEach((v, k) => { n[k] = v; });
+    return n;
+  };
   const clearDice = () => setDice([null, null, null, null, null]);
+  const addDie = (face) => setDice((prev) => {
+    const i = prev.indexOf(null);
+    if (i === -1) return prev;                      // already 5 dice
+    const n = prev.slice(); n[i] = face; return n;
+  });
+  const removeDie = (i) => setDice((prev) => compact(prev.filter((d, j) => j !== i && d != null)));
+  const backspace = () => setDice((prev) => {
+    const kept = prev.filter((d) => d != null); kept.pop();
+    return compact(kept);
+  });
+  const onType = (e) => {
+    const digits = e.target.value.replace(/[^1-6]/g, "").slice(0, 5).split("").map(Number);
+    setDice(compact(digits));
+  };
   const toggleHeld = (i) => setHeldOverride((prev) => {
     const base = (prev ?? recommendedHeld).slice();
     base[i] = !base[i];
@@ -127,9 +151,9 @@ function Game({ engine }) {
   });
   const canPickHeld = diceComplete && roll < 3 && !!advice;
 
-  // Reroll: keep the held dice in place, empty the rest for re-entry.
+  // Reroll: keep the held dice (compacted to the front) and empty the rest.
   const doReroll = () => {
-    setDice((prev) => prev.map((v, i) => (effectiveHeld[i] ? v : null)));
+    setDice(compact(dice.filter((v, i) => effectiveHeld[i] && v != null)));
     setRoll((r) => r + 1);
     setHeldOverride(null);
     setPicking(false);
@@ -203,9 +227,10 @@ function Game({ engine }) {
             <div className="diceentry">
               <div className="dicerow">
                 {dice.map((v, i) => (
-                  <Die key={i} value={v} held={canPickHeld && effectiveHeld[i]} onClick={() => cycleDie(i)} />
+                  <Die key={i} value={v} held={canPickHeld && effectiveHeld[i]} onClick={() => removeDie(i)} />
                 ))}
               </div>
+
               {canPickHeld && (
                 <div className="keeprow">
                   {effectiveHeld.map((h, i) => (
@@ -218,14 +243,35 @@ function Game({ engine }) {
                   ))}
                 </div>
               )}
+
+              {!diceComplete && (
+                <>
+                  <div className="palette">
+                    {[1, 2, 3, 4, 5, 6].map((f) => (
+                      <button key={f} type="button" className="palettedie"
+                        onClick={() => addDie(f)} aria-label={`add a ${f}`}>
+                        <PipFace value={f} />
+                      </button>
+                    ))}
+                  </div>
+                  <div className="entrytools">
+                    <input className="typefield" inputMode="numeric" pattern="[1-6]*" maxLength={5}
+                      placeholder="or type 66666" value={typedValue} onChange={onType}
+                      aria-label="type your five dice" />
+                    <button className="ghost small" onClick={backspace} disabled={filledCount === 0}>⌫ undo</button>
+                    <button className="ghost small" onClick={clearDice} disabled={filledCount === 0}>clear</button>
+                  </div>
+                </>
+              )}
+
               <div className="dicehint">
                 {!diceComplete
-                  ? <span className="muted">Tap each die to set what you actually rolled.</span>
+                  ? <span className="muted">Tap a face to add a die (or type the numbers). Tap a placed die to remove it.</span>
                   : <>
                       <span className="muted">
                         {canPickHeld
-                          ? "Tap a die to fix its value. Green = keeping — use the toggles to choose what to reroll."
-                          : "Tap a die to fix a mistyped value."}
+                          ? "Green = keeping — use the toggles to choose what to reroll. Tap a die to re-enter it."
+                          : "Tap a die to re-enter it if needed."}
                       </span>
                       <button className="ghost small" onClick={clearDice}>Clear all</button>
                     </>}
@@ -415,6 +461,16 @@ function Style() {
 
     .dicerow { display: flex; gap: 8px; justify-content: center; }
     .diceentry { margin-bottom: 6px; }
+    .palette { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
+    .palettedie { width: 44px; height: 44px; padding: 0; background: #f4f6f8; border: 2px solid #d3dae0;
+      border-radius: 10px; cursor: pointer; }
+    .palettedie:hover { border-color: #57e2a5; }
+    .palettedie:active { transform: scale(0.94); }
+    .entrytools { display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+    .typefield { width: 140px; padding: 8px 10px; border-radius: 8px; border: 1px solid #2a3a49;
+      background: #0f1720; color: #e7edf3; font: inherit; text-align: center; letter-spacing: .28em; }
+    .typefield:focus { outline: none; border-color: #23a06b; }
+    .typefield::placeholder { letter-spacing: normal; color: #6b7885; font-size: .82rem; }
     .keeprow { display: flex; gap: 8px; justify-content: center; margin-top: 8px; }
     .keeptoggle { width: 46px; padding: 5px 0; font-size: .58rem; text-transform: uppercase; letter-spacing: .04em;
       border-radius: 8px; border: 1px solid #2a3a49; background: #131c26; color: #8b98a6; cursor: pointer; }
