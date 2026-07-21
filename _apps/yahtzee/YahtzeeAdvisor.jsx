@@ -86,6 +86,7 @@ function Game({ engine }) {
   const [dice, setDice] = useState([null, null, null, null, null]);
   const [picking, setPicking] = useState(false);  // showing the score-a-box list
   const [heldOverride, setHeldOverride] = useState(null);  // manual keep (null = follow advice)
+  const [tab, setTab] = useState("play");
 
   const upperCapped = Math.min(upperActualFromCard(card), engine.UPPER_THRESHOLD);
   const upperActual = upperActualFromCard(card);
@@ -186,6 +187,14 @@ function Game({ engine }) {
         <p className="sub">Optimal play, full rules. Enter each roll; get the best move and your expected final score.</p>
       </header>
 
+      <nav className="tabs">
+        <button type="button" className={"tab" + (tab === "play" ? " active" : "")} onClick={() => setTab("play")}>Play</button>
+        <button type="button" className={"tab" + (tab === "how" ? " active" : "")} onClick={() => setTab("how")}>How it works</button>
+      </nav>
+
+      {tab === "how" && <HowItWorks initialV={engine.initialV} />}
+
+      {tab === "play" && (<>
       <section className="statbar">
         <Stat label="Score so far" value={banked} />
         <Stat label={gameOver ? "Final score" : "Expected final"} value={gameOver ? banked : expectedFinal.toFixed(1)} big />
@@ -307,7 +316,53 @@ function Game({ engine }) {
         <button className="ghost small" onClick={newGame}>Restart game</button>
         <span className="muted small">Optimal-play value from the initial state: {engine.initialV.toFixed(2)}</span>
       </footer>
+      </>)}
     </div>
+  );
+}
+
+function HowItWorks({ initialV }) {
+  return (
+    <section className="explainer">
+      <h2>What this is</h2>
+      <p>An optimal-play advisor for solitaire Yahtzee. At every point in the game it tells you the
+        move that <b>maximises your expected final score</b> — and shows you what that expected score is.</p>
+
+      <h2>Using it</h2>
+      <ol>
+        <li>Roll your real dice, then enter them — tap the faces in the palette, or type the numbers.</li>
+        <li>You'll see the best move: which dice to <b>keep and reroll</b>, or which <b>box to score</b>,
+          along with your expected final score from here.</li>
+        <li>Green dice are the ones being kept — tap the <b>keep / reroll</b> toggles to change them. Then
+          <b> Reroll</b> and enter your next roll, or <b>Score a box</b>.</li>
+        <li>You never have to follow the advice: enter whatever you actually rolled and pick whichever box
+          you actually used — the advice re-computes for your real situation.</li>
+      </ol>
+
+      <h2>“Expected final score”</h2>
+      <p>The average total you'd finish with, playing optimally from the current position, across all the
+        ways the dice could fall. From the opening roll, optimal play averages
+        about <b>{initialV.toFixed(1)}</b> points.</p>
+
+      <h2>Under the hood</h2>
+      <p>Yahtzee is a <a href="https://en.wikipedia.org/wiki/Markov_decision_process" target="_blank" rel="noreferrer">Markov
+        decision process</a>, so it can be solved <i>exactly</i> by dynamic programming. Working backwards
+        from the end of the game, the solver computes the <b>value</b> of every game state — the best
+        expected score achievable from that state onward. A state captures which boxes you've filled, your
+        upper-section total, and whether the Yahtzee bonus is live (about a million in all).</p>
+      <p>That whole value table is computed once, offline, and shipped with the page (~4&nbsp;MB). When you
+        enter a roll, the app runs a fast <b>one-turn lookahead</b>: it weighs every keep-and-reroll across
+        your remaining rolls and every box you could fill, scores each against the value table, and picks
+        the best. That's why advice is instant and works offline — there's no server.</p>
+      <p>It uses the full official rules: the upper-section bonus (+35 at 63), the Yahtzee bonus (+100 per
+        extra Yahtzee), and the Joker rule.</p>
+
+      <h2>Good to know</h2>
+      <ul>
+        <li>It maximises <b>expected score</b> — not your odds of beating a specific target, and not low variance.</li>
+        <li>It assumes standard solitaire rules, with no opponents.</li>
+      </ul>
+    </section>
   );
 }
 
@@ -435,6 +490,21 @@ function Style() {
     .sub { margin: 0 0 14px; color: #93a1b0; font-size: .82rem; }
     .loading, .err { padding: 40px 0; text-align: center; color: #93a1b0; }
     .err { color: #ff8a8a; }
+
+    .tabs { display: flex; gap: 4px; margin-bottom: 14px; border-bottom: 1px solid #1f2a35; }
+    .tab { background: transparent; border: none; border-bottom: 2px solid transparent; border-radius: 0;
+      padding: 8px 14px; margin-bottom: -1px; color: #93a1b0; cursor: pointer; font-size: .92rem; }
+    .tab:hover { color: #cdd8e2; border-color: transparent; }
+    .tab.active { color: #57e2a5; border-bottom-color: #57e2a5; font-weight: 600; }
+
+    .explainer { background: #131a22; border: 1px solid #1f2a35; border-radius: 14px; padding: 14px 18px 18px; margin-bottom: 14px; }
+    .explainer h2 { font-size: 1rem; margin: 20px 0 6px; color: #e7edf3; }
+    .explainer h2:first-child { margin-top: 4px; }
+    .explainer p { margin: 0 0 10px; color: #b9c6d2; font-size: .9rem; line-height: 1.55; }
+    .explainer ol, .explainer ul { margin: 0 0 10px; padding-left: 20px; color: #b9c6d2; font-size: .9rem; line-height: 1.55; }
+    .explainer li { margin-bottom: 5px; }
+    .explainer a { color: #57e2a5; }
+    .explainer b { color: #dfe8ef; }
 
     .statbar { display: flex; gap: 10px; margin-bottom: 12px; }
     .stat { flex: 1; background: #131a22; border: 1px solid #1f2a35; border-radius: 12px;
