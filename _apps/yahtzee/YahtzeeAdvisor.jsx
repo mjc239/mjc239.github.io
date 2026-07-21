@@ -25,7 +25,6 @@ function Die({ value, onClick, held }) {
       type="button"
       onClick={onClick}
       className={"die" + (held ? " held" : "") + (onClick ? " tappable" : "")}
-      style={{ width: 46, height: 46 }}
       aria-label={value ? `die showing ${value}, tap to remove` : "empty die slot"}
     >
       <PipFace value={value} />
@@ -472,12 +471,13 @@ function Style() {
     .typefield:focus { outline: none; border-color: #23a06b; }
     .typefield::placeholder { letter-spacing: normal; color: #6b7885; font-size: .82rem; }
     .keeprow { display: flex; gap: 8px; justify-content: center; margin-top: 8px; }
-    .keeptoggle { width: 46px; padding: 5px 0; font-size: .58rem; text-transform: uppercase; letter-spacing: .04em;
+    .keeptoggle { width: 54px; padding: 5px 0; font-size: .58rem; text-transform: uppercase; letter-spacing: .04em;
       border-radius: 8px; border: 1px solid #2a3a49; background: #131c26; color: #8b98a6; cursor: pointer; }
     .keeptoggle:hover { border-color: #3a5163; }
     .keeptoggle.on { background: #12351f; border-color: #23a06b; color: #7fe6a0; font-weight: 700; }
     .dicehint { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; min-height: 24px; margin-top: 10px; }
-    .die { background: #f4f6f8; border: 2px solid #d3dae0; border-radius: 10px; padding: 0; cursor: default; }
+    .die { width: 54px; height: 54px; background: #f4f6f8; border: 2px solid #d3dae0; border-radius: 11px; padding: 0; cursor: default; }
+    .die .pip { width: 8px; height: 8px; }
     .die.tappable { cursor: pointer; }
     .die.tappable:hover { border-color: #57e2a5; }
     .die.held { border-color: #57e2a5; box-shadow: 0 0 0 2px #1c4a37; }
