@@ -32,12 +32,12 @@ function minsUntil(iso) {
   if (!iso) return null;
   return Math.round((new Date(iso).getTime() - Date.now()) / 60000);
 }
-// "45 min", "1 h", "1 h 30 min" — hours read better past the hour mark.
+// "45 min", "1 hr", "1 hr 30 min" — hours read better past the hour mark.
 function fmtMins(m) {
   if (m < 60) return `${m} min`;
   const h = Math.floor(m / 60);
   const r = m % 60;
-  return r ? `${h} h ${r} min` : `${h} h`;
+  return r ? `${h} hr ${r} min` : `${h} hr`;
 }
 
 function StationPicker({ label, value, onChange, exclude, stations }) {
@@ -72,6 +72,9 @@ export default function App() {
   // True only while the rows on screen are from the previous query (dim
   // them); cleared the moment fresh data paints, even mid-fetch.
   const [stale, setStale] = useState(false);
+  // Elizabeth line overall status: {description, reason} when disrupted, else
+  // null. Supplementary to the board — never blocks or errors the departures.
+  const [lineStatus, setLineStatus] = useState(null);
   // Monotonic id of the latest fetch cycle: with progressive painting, a
   // superseded cycle (station changed mid-fetch) must not touch state.
   const fetchSeq = useRef(0);
@@ -138,6 +141,43 @@ export default function App() {
   useEffect(() => {
     const t = setInterval(() => tick((n) => n + 1), 30000);
     return () => clearInterval(t);
+  }, []);
+
+  // Elizabeth line status banner, refreshed each minute. Entirely
+  // supplementary: any failure just leaves the banner as-is, never an error.
+  useEffect(() => {
+    let alive = true;
+    const load = async () => {
+      try {
+        const res = await tflFetch(`${TFL}/Line/elizabeth/Status`);
+        if (!res.ok) return;
+        const data = await res.json();
+        const statuses = data?.[0]?.lineStatuses || [];
+        // Severity 10 is "Good Service"; anything else is worth showing.
+        // Lower severity numbers are worse, so surface the most severe.
+        const bad = statuses
+          .filter((s) => s.statusSeverity !== 10)
+          .sort((a, b) => a.statusSeverity - b.statusSeverity)[0];
+        if (alive) {
+          setLineStatus(
+            bad
+              ? {
+                  description: bad.statusSeverityDescription,
+                  reason: (bad.reason || "").replace(/^elizabeth line:\s*/i, ""),
+                }
+              : null
+          );
+        }
+      } catch {
+        /* transient failure — keep whatever banner state we have */
+      }
+    };
+    load();
+    const t = setInterval(load, 60000);
+    return () => {
+      alive = false;
+      clearInterval(t);
+    };
   }, []);
 
   // Primary id source: the line's own stop list, fetched once. These are the
@@ -385,6 +425,15 @@ export default function App() {
         <p className="sub">Direct trains leaving your station that actually call at your destination.</p>
       </header>
 
+      {lineStatus && (
+        <div className="status-banner" role="status">
+          <span className="status-title">⚠ {lineStatus.description}</span>
+          {lineStatus.reason && (
+            <span className="status-reason">{lineStatus.reason}</span>
+          )}
+        </div>
+      )}
+
       <section className="controls">
         <StationPicker label="From" value={fromName} onChange={changeFrom} exclude={toName} stations={stations} />
         <button className="swap" onClick={swap} aria-label="Swap stations" title="Swap">⇅</button>
@@ -480,6 +529,14 @@ const css = `
     margin: 0 0 6px; font-weight: 700;
   }
   .sub { margin: 0; font-size: 14px; color: #5a5a52; line-height: 1.4; }
+  .status-banner {
+    display: flex; flex-direction: column; gap: 3px;
+    background: #fdecec; border: 1px solid var(--amber);
+    border-left: 4px solid var(--amber); border-radius: 8px;
+    padding: 10px 13px; margin-bottom: 18px;
+  }
+  .status-title { font-size: 13px; font-weight: 700; color: var(--amber); }
+  .status-reason { font-size: 12px; color: #7a5560; line-height: 1.4; }
   .controls {
     display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px;
     align-items: end; margin-bottom: 14px;
