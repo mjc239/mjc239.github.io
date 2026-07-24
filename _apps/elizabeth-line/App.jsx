@@ -40,6 +40,45 @@ function fmtMins(m) {
   return r ? `${h} hr ${r} min` : `${h} hr`;
 }
 
+// Minute-of-day from an ISO time, read off the wall clock. Both TfL feeds
+// report London local time, so comparing the literal HH:MM sidesteps any
+// timezone/offset mismatch between them (this is what the spike verified).
+function wallMin(iso) {
+  const m = String(iso || "").match(/T(\d{2}):(\d{2})/);
+  return m ? +m[1] * 60 + +m[2] : null;
+}
+
+// Match one journey to a live ArrivalDepartures row and derive its status.
+// Tolerant to ±2 min (termini drift from the timetable) and biased toward a
+// same-platform row so opposite-direction trains at the same minute don't win.
+function matchLive(j, rows) {
+  if (!rows || !rows.length) return null;
+  const jm = wallMin(j.start);
+  if (jm === null) return null;
+  let best = null;
+  let bestScore = Infinity;
+  for (const r of rows) {
+    const rm = wallMin(r.sched);
+    if (rm === null) continue;
+    const diff = Math.abs(rm - jm);
+    if (diff > 2) continue;
+    const score = diff - (j.platform && r.platform === j.platform ? 3 : 0);
+    if (score < bestScore) {
+      bestScore = score;
+      best = r;
+    }
+  }
+  if (!best) return null;
+  if (/cancel/i.test(best.status)) return { status: "cancelled" };
+  const sm = wallMin(best.sched);
+  const em = wallMin(best.est);
+  const delay = sm !== null && em !== null ? em - sm : null;
+  if (/delay/i.test(best.status) || (delay !== null && delay >= 2)) {
+    return { status: "late", delayMin: delay && delay > 0 ? delay : null, est: best.est };
+  }
+  return { status: "ontime", est: best.est };
+}
+
 function StationPicker({ label, value, onChange, exclude, stations }) {
   return (
     <label className="picker">
@@ -232,6 +271,28 @@ export default function App() {
     return match.id;
   }, [loadLineMap]);
 
+  // Live departure board for a station: on-time/late/cancelled per service.
+  // Supplementary — any failure yields [] and the board falls back to schedule.
+  const fetchArrDepartures = async (id) => {
+    try {
+      const res = await tflFetch(
+        `${TFL}/StopPoint/${id}/ArrivalDepartures?lineIds=elizabeth`
+      );
+      if (!res.ok) return [];
+      const data = await res.json();
+      return (Array.isArray(data) ? data : [])
+        .map((r) => ({
+          sched: r.scheduledTimeOfDeparture,
+          est: r.estimatedTimeOfDeparture,
+          platform: r.platformName,
+          status: r.departureStatus || "",
+        }))
+        .filter((r) => r.sched);
+    } catch {
+      return [];
+    }
+  };
+
   const fetchJourneys = useCallback(async () => {
     const cycle = ++fetchSeq.current;
     const current = () => fetchSeq.current === cycle;
@@ -257,6 +318,9 @@ export default function App() {
       };
       let effFrom = fromId;
       let effTo = toId;
+      // Live departure board for the origin, fetched in parallel with the
+      // journey lookup so status is ready by the time the board paints.
+      let arrDepP = fetchArrDepartures(effFrom);
       let res = await requestJourneys(effFrom, effTo);
       if (res.status === 300) {
         // Ambiguous endpoint (usually a hub id): TfL answers 300 with its
@@ -275,6 +339,7 @@ export default function App() {
           idCache.current[toName] = newTo;
           effFrom = newFrom;
           effTo = newTo;
+          if (newFrom !== fromId) arrDepP = fetchArrDepartures(effFrom);
           res = await requestJourneys(effFrom, effTo);
         }
       }
@@ -314,9 +379,17 @@ export default function App() {
 
       const data = await res.json();
       let list = parseDirect(data);
+      // Overlay live status (on time / late / cancelled) from the origin's
+      // departure board, matched by scheduled time + platform. No match →
+      // the schedule stands, never a false "on time".
+      const arrDep = await arrDepP;
+      const annotate = (l) => l.map((j) => ({ ...j, live: matchLive(j, arrDep) }));
       const sortSlice = (l) =>
-        [...l].sort((a, b) => new Date(a.start) - new Date(b.start))
-          .slice(0, targetCount);
+        annotate(
+          [...l]
+            .sort((a, b) => new Date(a.start) - new Date(b.start))
+            .slice(0, targetCount)
+        );
 
       // Paint the first batch straight away — the Journey API is slow, so
       // waiting for the follow-up calls too made every load feel sluggish.
@@ -464,27 +537,56 @@ export default function App() {
             share a direct service, or none are running right now.
           </div>
         )}
-        {journeys.map((j, i) => {
-          const m = minsUntil(j.start);
-          const soon = m !== null && m <= 3;
-          return (
-            <div className={`row${i === 0 ? " next" : ""}`} key={i}>
-              <div className="row-main">
-                <div className="dep">{fmtTime(j.start)}</div>
-                <div className="meta">
-                  <div className="leg">
-                    arrives {fmtTime(j.arrive)}
-                    <span className="dur"> · {fmtMins(j.duration)}</span>
+        {(() => {
+          // "Scheduled" chips only make sense once we actually have live data
+          // to distinguish from; if nothing matched (feed down / no coverage),
+          // show no chips at all and behave exactly as before.
+          const anyLive = journeys.some((j) => j.live);
+          return journeys.map((j, i) => {
+            const live = j.live;
+            const cancelled = live?.status === "cancelled";
+            // Countdown off the real expected time when we have it.
+            const effIso = live?.est && !cancelled ? live.est : j.start;
+            const m = minsUntil(effIso);
+            const soon = !cancelled && m !== null && m <= 3;
+            return (
+              <div
+                className={`row${i === 0 && !cancelled ? " next" : ""}${cancelled ? " cancelled" : ""}`}
+                key={i}
+              >
+                <div className="row-main">
+                  <div className="dep">{fmtTime(j.start)}</div>
+                  <div className="meta">
+                    <div className="leg">
+                      arrives {fmtTime(j.arrive)}
+                      <span className="dur"> · {fmtMins(j.duration)}</span>
+                    </div>
+                    {j.platform && <div className="plat">Platform {j.platform}</div>}
+                    {live ? (
+                      <div className={`chip ${live.status}`}>
+                        {live.status === "cancelled"
+                          ? "Cancelled"
+                          : live.status === "late"
+                          ? live.delayMin
+                            ? `${live.delayMin} min late`
+                            : "Delayed"
+                          : "On time"}
+                        {live.status === "late" && live.est && (
+                          <span className="chip-exp"> · exp {fmtTime(live.est)}</span>
+                        )}
+                      </div>
+                    ) : anyLive ? (
+                      <div className="chip scheduled">Scheduled</div>
+                    ) : null}
                   </div>
-                  {j.platform && <div className="plat">Platform {j.platform}</div>}
+                </div>
+                <div className={`count${soon ? " soon" : ""}${cancelled ? " off" : ""}`}>
+                  {cancelled ? "—" : m === null ? "—" : m <= 0 ? "due" : fmtMins(m)}
                 </div>
               </div>
-              <div className={`count${soon ? " soon" : ""}`}>
-                {m === null ? "—" : m <= 0 ? "due" : fmtMins(m)}
-              </div>
-            </div>
-          );
-        })}
+            );
+          });
+        })()}
         {status === "ok" && journeys.length > 0 && (
           <button className="more" onClick={showMore} disabled={fetching}>
             {fetching ? <span className="spin small" aria-hidden="true" /> : "Show later trains"}
@@ -606,6 +708,18 @@ const css = `
   .leg { font-weight: 500; }
   .dur { color: #9a958a; }
   .plat { font-size: 12px; color: #8a857a; margin-top: 2px; }
+  .chip {
+    display: inline-block; margin-top: 5px; font-size: 11px; font-weight: 700;
+    padding: 2px 9px; border-radius: 999px; line-height: 1.5;
+  }
+  .chip.ontime { background: #e3f4ea; color: #0a7d3c; }
+  .chip.late { background: #fdecec; color: var(--amber); }
+  .chip.cancelled { background: var(--amber); color: #fff; }
+  .chip.scheduled { background: #eee9e0; color: #8a857a; }
+  .chip-exp { font-weight: 600; }
+  .row.cancelled { border-color: var(--amber); }
+  .row.cancelled .dep { text-decoration: line-through; color: #9a958a; }
+  .count.off { color: #b3ad9f; }
   .count {
     font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums;
     color: var(--purple); white-space: nowrap;
