@@ -280,10 +280,16 @@ export default function App() {
       );
       if (!res.ok) return [];
       const data = await res.json();
+      // TfL tags these times with a "Z" (or offset) even though the digits are
+      // London LOCAL wall clock — so parsing them absolutely runs an hour fast
+      // in BST. Strip the marker so they parse as local, matching Journey
+      // Planner's naive-local times (both feeds are London local anyway).
+      const toLocal = (t) =>
+        typeof t === "string" ? t.replace(/(?:Z|[+-]\d{2}:?\d{2})$/, "") : t;
       return (Array.isArray(data) ? data : [])
         .map((r) => ({
-          sched: r.scheduledTimeOfDeparture,
-          est: r.estimatedTimeOfDeparture,
+          sched: toLocal(r.scheduledTimeOfDeparture),
+          est: toLocal(r.estimatedTimeOfDeparture),
           platform: r.platformName,
           status: r.departureStatus || "",
         }))
