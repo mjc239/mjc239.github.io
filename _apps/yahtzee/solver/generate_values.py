@@ -18,10 +18,24 @@ V(initial) should come out to ~254.5877 (optimum under the strict/forced Joker
 rule; the widely-quoted 254.5894 assumes a slightly more permissive placement).
 """
 import os
+import sys
 from math import factorial
 from itertools import product
 
 import numpy as np
+
+# ---- rule variant ---------------------------------------------------------
+# name -> (extra Yahtzee bonus points, joker rule applies)
+VARIANTS = {
+    "standard": (100, True),
+    "nobonus": (0, True),
+    "nobonus_nojoker": (0, False),
+}
+VARIANT = sys.argv[1] if len(sys.argv) > 1 else "standard"
+if VARIANT not in VARIANTS:
+    raise SystemExit(f"unknown variant {VARIANT!r}; pick one of {sorted(VARIANTS)}")
+EXTRA_BONUS_POINTS, JOKER_RULE = VARIANTS[VARIANT]
+OUT_NAME = "values.bin" if VARIANT == "standard" else f"values_{VARIANT}.bin"
 
 # ---- categories -----------------------------------------------------------
 NC = 13
@@ -30,7 +44,7 @@ THREE_KIND, FOUR_KIND, FULL_HOUSE, SM_STRAIGHT, LG_STRAIGHT, CHANCE, YAHTZEE = r
 UPPER_BONUS = 35
 UPPER_THRESHOLD = 63
 YAHTZEE_POINTS = 50
-EXTRA_YAHTZEE_BONUS = 100
+EXTRA_YAHTZEE_BONUS = EXTRA_BONUS_POINTS
 FULL_HOUSE_POINTS = 25
 SM_STRAIGHT_POINTS = 30
 LG_STRAIGHT_POINTS = 40
@@ -145,7 +159,7 @@ def mask_tables(mask):
     base = np.zeros((NUM_DICE, NC), dtype=np.int64)
     isj = np.zeros(NUM_DICE, dtype=bool)
     for d in range(NUM_DICE):
-        if IS_YAH[d] and yfilled:
+        if IS_YAH[d] and yfilled and JOKER_RULE:
             isj[d] = True
             base[d] = JSCORE[d]
             f = YFACE[d]
@@ -216,7 +230,7 @@ for mask, arr in Vtab.items():
             out[mask * 128 + up * 2 + el] = arr[up, el]
 
 here = os.path.dirname(os.path.abspath(__file__))
-dst = os.path.abspath(os.path.join(here, "..", "..", "..", "apps", "yahtzee", "values.bin"))
+dst = os.path.abspath(os.path.join(here, "..", "..", "..", "apps", "yahtzee", OUT_NAME))
 out.tofile(dst)
-print(f"V(initial) = {out[0]:.6f}")
+print(f"variant {VARIANT}: V(initial) = {out[0]:.6f}")
 print(f"wrote {dst}  ({out.nbytes/1e6:.2f} MB, {out.size} float32)")

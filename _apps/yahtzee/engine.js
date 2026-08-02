@@ -68,7 +68,12 @@ function scoreCat(c, cat) {
 }
 
 // ---- engine ---------------------------------------------------------------
-export function buildEngine(values) {
+// rules.extraYahtzeeBonus: points for an extra Yahtzee (100 official, 0 if the
+// house doesn't play it).  rules.joker: whether the Joker rule applies.
+// The values array must have been generated with the same rules.
+export function buildEngine(values, rules = {}) {
+  const extraBonus = rules.extraYahtzeeBonus ?? EXTRA_YAHTZEE_BONUS;
+  const useJoker = rules.joker ?? true;
   const ALL_DICE = countVectors(5);               // 252 count vectors
   const NUM_DICE = ALL_DICE.length;
   const DICE_IDX = new Map(ALL_DICE.map((v, i) => [keyOf(v), i]));
@@ -116,7 +121,7 @@ export function buildEngine(values) {
   // Legal categories + base score row + joker flag for one dice index in a mask.
   function legalFor(mask, d) {
     const yfilled = (mask & (1 << YAHTZEE)) !== 0;
-    if (IS_YAH[d] && yfilled) {
+    if (IS_YAH[d] && yfilled && useJoker) {
       const f = YFACE[d];
       let cats;
       if ((mask & (1 << f)) === 0) cats = [f];
@@ -144,7 +149,7 @@ export function buildEngine(values) {
       if (upper < UPPER_THRESHOLD && upper + points >= UPPER_THRESHOLD) { reward += UPPER_BONUS; crossedBonus = UPPER_BONUS; }
     }
     let yahtzeeBonus = 0;
-    if (joker && elig) { reward += EXTRA_YAHTZEE_BONUS; yahtzeeBonus = EXTRA_YAHTZEE_BONUS; }
+    if (joker && elig) { reward += extraBonus; yahtzeeBonus = extraBonus; }
     let newElig = elig;
     if (cat === YAHTZEE && points === YAHTZEE_POINTS) newElig = true;
     const newMask = mask | (1 << cat);
@@ -165,7 +170,7 @@ export function buildEngine(values) {
           nu = Math.min(upper + base[c], UPPER_THRESHOLD);
           if (upper < UPPER_THRESHOLD && upper + base[c] >= UPPER_THRESHOLD) reward += UPPER_BONUS;
         }
-        if (joker && elig) reward += EXTRA_YAHTZEE_BONUS;
+        if (joker && elig) reward += extraBonus;
         let ne = elig || (c === YAHTZEE && base[c] === YAHTZEE_POINTS);
         const v = reward + V(mask | (1 << c), nu, ne);
         if (v > best) { best = v; bestC = c; }
@@ -264,7 +269,8 @@ export function buildEngine(values) {
   return {
     NUM_DICE, ALL_DICE, V, legalFor, applyScore, recommend,
     diceToCounts, countsToFaces,
-    UPPER_THRESHOLD, UPPER_BONUS, YAHTZEE_POINTS, EXTRA_YAHTZEE_BONUS,
+    UPPER_THRESHOLD, UPPER_BONUS, YAHTZEE_POINTS,
+    EXTRA_YAHTZEE_BONUS: extraBonus, joker: useJoker,
     initialV: values[0],
   };
 }
