@@ -37,7 +37,10 @@ needed, so the app works offline.
 - `apps/yahtzee/` — what gets served, at <https://mjc239.github.io/apps/yahtzee/>.
   - `index.html` — static shell (committed, hand-written).
   - `app.js` — esbuild bundle (committed build output).
-  - `values.bin` — the precomputed value function (committed data asset).
+  - `values.bin` — the precomputed value function for the standard rules
+    (committed data asset).
+  - `values_nobonus_nojoker.bin` — the same table for a game played without the
+    repeat Yahtzee bonus. Only fetched if you switch the bonus off.
 
 ## Regenerating the value function
 
@@ -45,12 +48,33 @@ Only needed if you change the rules/scoring in `generate_values.py`.
 
 ```bash
 cd _apps/yahtzee
-npm run values          # ~3-5 min; writes ../../apps/yahtzee/values.bin (~4 MB)
+npm run values                          # standard rules -> values.bin
+npm run values -- nobonus_nojoker       # house rules    -> values_nobonus_nojoker.bin
 ```
 
-It prints `V(initial) = 254.5877…` — the optimal expected score under the strict
-(forced) Joker rule. (The often-quoted 254.5894 assumes a slightly more
-permissive Joker placement; see the math review notes.)
+Each run takes about 5 minutes and writes a ~4 MB file to `apps/yahtzee/`.
+
+There is one table per rule variant, because the best play depends on the rules.
+`generate_values.py` takes the variant as its only argument:
+
+| Variant | Extra Yahtzee bonus | Joker rule | V(initial) | Shipped |
+| --- | --- | --- | --- | --- |
+| `standard` (default) | 100 | yes | 254.5877 | yes, as `values.bin` |
+| `nobonus` | 0 | yes | 246.0863 | no |
+| `nobonus_nojoker` | 0 | no | 245.9047 | yes, as `values_nobonus_nojoker.bin` |
+
+The app ships the first and last of these, which are the two settings offered by
+the "Repeat Yahtzee bonus" control on the Play tab. The middle variant is kept in
+the generator in case the house rules ever want it, but it is not committed.
+
+The standard 254.5877 is the optimal expected score under the strict (forced)
+Joker rule. The often-quoted 254.5894 assumes a slightly more permissive Joker
+placement; see the math review notes.
+
+When you add a variant, register it in `VARIANTS` in `generate_values.py` and in
+`MODES` in `YahtzeeAdvisor.jsx`, and pass the matching `rules` to `buildEngine`.
+A table and the rules given to `buildEngine` must always agree, or the advice
+will be computed against the wrong values.
 
 ## Rebuilding the app
 

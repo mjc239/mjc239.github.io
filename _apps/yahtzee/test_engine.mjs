@@ -100,5 +100,47 @@ console.log("== full greedy playthrough (follow recommendations) ==");
   console.log(`     -> final score ${banked}, ${turns} turns`);
 }
 
+console.log("== no-bonus mode (no extra Yahtzee bonus, no Joker rule) ==");
+{
+  const nbPath = path.join(here, "..", "..", "apps", "yahtzee", "values_nobonus_nojoker.bin");
+  const nbBuf = fs.readFileSync(nbPath);
+  const nbValues = new Float32Array(nbBuf.buffer, nbBuf.byteOffset, nbBuf.byteLength / 4);
+  const nb = buildEngine(nbValues, { extraYahtzeeBonus: 0, joker: false });
+
+  check("no-bonus V(initial) below standard", nb.initialV < engine.initialV,
+    `nobonus=${nb.initialV} standard=${engine.initialV}`);
+  check("no-bonus V(initial) in a plausible range (230-255)",
+    nb.initialV > 230 && nb.initialV < 255, `got ${nb.initialV}`);
+  console.log(`     -> no-bonus optimum ${nb.initialV.toFixed(4)} vs standard ${engine.initialV.toFixed(4)}`);
+
+  // Eligibility is irrelevant without the bonus, so both slices must agree.
+  let eligSame = true;
+  for (let m = 0; m < 64 && eligSame; m++) {
+    for (let u = 0; u <= 63; u++) {
+      if (nb.V(m, u, false) !== nb.V(m, u, true)) { eligSame = false; break; }
+    }
+  }
+  check("no-bonus table ignores the eligible flag", eligSame);
+
+  // Yahtzee box filled, five 6s on the last roll: any open box is legal and
+  // the roll scores as five ordinary dice.
+  const mask = (1 << YAHTZEE) | (1 << 5);        // Yahtzee and Sixes used
+  const r = nb.recommend(mask, 0, true, [6, 6, 6, 6, 6], 3);
+  const cats = r.scoreOptions.map((o) => o.cat).sort((a, b) => a - b);
+  const openCats = [];
+  for (let c = 0; c < 13; c++) if ((mask & (1 << c)) === 0) openCats.push(c);
+  check("no-bonus: every open box is legal", cats.join() === openCats.join(),
+    `legal=${cats} open=${openCats}`);
+  check("no-bonus: no +100 awarded", r.scoreOptions.every((o) => o.yahtzeeBonus === 0));
+  const ss = r.scoreOptions.find((o) => o.cat === 9);     // Small Straight
+  check("no-bonus: Small Straight scores 0 for five 6s", ss && ss.points === 0, JSON.stringify(ss));
+  const ls = r.scoreOptions.find((o) => o.cat === 10);    // Large Straight
+  check("no-bonus: Large Straight scores 0 for five 6s", ls && ls.points === 0, JSON.stringify(ls));
+
+  // Standard mode must still award the bonus in the same spot.
+  const rs = engine.recommend(mask, 0, true, [6, 6, 6, 6, 6], 3);
+  check("standard still awards +100 in the same position", rs.scoreOptions[0].yahtzeeBonus === 100);
+}
+
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
