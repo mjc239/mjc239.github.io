@@ -410,7 +410,9 @@ export default function OverheadTracker() {
             <Metric label="V/RATE" value={fmt(view.rate, " fpm")} />
           </div>
         </main>
-      ) : !located ? (
+      ) : !located || status === "starting" ? (
+        // Hold the loading screen through the first poll so "CLEAR SKIES"
+        // can't flash before any result has come back.
         <main className="ovh-empty">
           <div className="ovh-empty-big">LOCATING…</div>
           <div className="ovh-empty-sub">Finding aircraft near you</div>
