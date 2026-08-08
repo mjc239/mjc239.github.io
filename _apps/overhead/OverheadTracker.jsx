@@ -181,21 +181,32 @@ export default function OverheadTracker() {
   const [lastUpdate, setLastUpdate] = useState(null);
   const [nearbyCount, setNearbyCount] = useState(0);
   const [center, setCenter] = useState({ lat: HOME_LAT, lon: HOME_LON });
-  const [label, setLabel] = useState(DEFAULT_LABEL);
+  const [label, setLabel] = useState("LOCATING…");
+  const [located, setLocated] = useState(false); // gates the first poll
   const enrichCache = useRef(new Map()); // hex -> aircraft details
   const routeCache = useRef(new Map()); // callsign -> route
 
-  // Auto-detect the viewer's location so friends can run the same page from
-  // anywhere; fall back to the West Ealing default if denied or unavailable.
+  // Detect the viewer's location BEFORE polling, so friends see planes over
+  // their own location and we never show the West Ealing default first. Only
+  // fall back to West Ealing if geolocation is denied or unavailable. Polling
+  // waits on `located` so the app centres correctly on every (re)load.
   useEffect(() => {
-    if (!navigator.geolocation) return;
+    const fallback = () => {
+      setLabel(DEFAULT_LABEL); // keep the default (West Ealing) centre
+      setLocated(true);
+    };
+    if (!navigator.geolocation) {
+      fallback();
+      return;
+    }
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude, longitude } = pos.coords;
         setCenter({ lat: latitude, lon: longitude });
-        reverseGeocode(latitude, longitude).then((l) => l && setLabel(l));
+        setLocated(true);
+        reverseGeocode(latitude, longitude).then((l) => setLabel(l || "YOUR LOCATION"));
       },
-      () => {}, // denied / unavailable → keep the default centre + label
+      fallback, // denied / unavailable → West Ealing default
       { enableHighAccuracy: false, timeout: 10000, maximumAge: 600000 }
     );
   }, []);
@@ -276,10 +287,11 @@ export default function OverheadTracker() {
   }, [enrich, center.lat, center.lon]);
 
   useEffect(() => {
+    if (!located) return; // wait until we know where to look (or fall back)
     poll();
     const id = setInterval(poll, POLL_MS);
     return () => clearInterval(id);
-  }, [poll]);
+  }, [poll, located]);
 
   // ---- Derived display fields ----
   const view = (() => {
@@ -397,6 +409,11 @@ export default function OverheadTracker() {
             <Metric label="BEARING" value={`${view.compass} · ${fmt(view.track, "°")}`} />
             <Metric label="V/RATE" value={fmt(view.rate, " fpm")} />
           </div>
+        </main>
+      ) : !located ? (
+        <main className="ovh-empty">
+          <div className="ovh-empty-big">LOCATING…</div>
+          <div className="ovh-empty-sub">Finding aircraft near you</div>
         </main>
       ) : (
         <main className="ovh-empty">
