@@ -96,22 +96,29 @@ const ATTEMPT_TIMEOUT_MS = 8000;
 // limit, or any 5xx) quietly falls through to the next proxy. Genuine upstream
 // responses — including 404 (e.g. adsbdb "not in database") — are returned
 // as-is so the caller can handle them.
+// One attempt through one proxy: resolves with a genuine upstream response, or
+// throws on a network error / timeout / transient (408, 429, 5xx) status.
+async function viaProxy(proxy, url) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ATTEMPT_TIMEOUT_MS);
+  try {
+    const res = await fetch(proxied(proxy, url), { signal: controller.signal });
+    if (res.status >= 500 || res.status === 408 || res.status === 429) {
+      throw new Error(`http-${res.status}`);
+    }
+    return res;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 async function proxyFetch(url) {
   let lastErr = null;
   for (const proxy of PROXY_CHAIN) {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), ATTEMPT_TIMEOUT_MS);
     try {
-      const res = await fetch(proxied(proxy, url), { signal: controller.signal });
-      if (res.status >= 500 || res.status === 408 || res.status === 429) {
-        lastErr = new Error(`http-${res.status}`);
-        continue;
-      }
-      return res;
+      return await viaProxy(proxy, url);
     } catch (e) {
       lastErr = e;
-    } finally {
-      clearTimeout(timer);
     }
   }
   throw lastErr || new Error("network");
@@ -161,28 +168,33 @@ function scoreOverhead(ac, lat, lon) {
 // BigDataCloud's free, no-key, CORS-friendly reverse geocoder (called directly,
 // not through the proxy). Returns null on any failure — the caller keeps the
 // previous label.
-// Current aircraft near a point, from the first position source that answers.
-// Returns the raw aircraft list; throws with every source's failure if none do.
+// Current aircraft near a point. Proxies are the OUTER loop: our own proxy
+// tries every source before any (slow, unreliable) public proxy is touched,
+// so one source rate-limiting our proxy's shared IP (adsb.lol does 429 at
+// times) falls straight through to the next source. Returns the raw aircraft
+// list; throws with the last failure per source if nothing answers.
 async function fetchPositions(lat, lon, r) {
-  const errs = [];
-  for (const src of POSITION_SOURCES) {
-    try {
-      const res = await proxyFetch(src.url(lat, lon, r));
-      if (!res.ok) {
-        errs.push(`${src.name} ${res.status}`);
-        continue;
+  const errs = new Map();
+  for (const proxy of PROXY_CHAIN) {
+    for (const src of POSITION_SOURCES) {
+      try {
+        const res = await viaProxy(proxy, src.url(lat, lon, r));
+        if (!res.ok) {
+          errs.set(src.name, res.status);
+          continue;
+        }
+        const list = src.list(await res.json());
+        if (!Array.isArray(list)) {
+          errs.set(src.name, "bad response");
+          continue;
+        }
+        return list;
+      } catch (e) {
+        errs.set(src.name, e.message || "network");
       }
-      const list = src.list(await res.json());
-      if (!Array.isArray(list)) {
-        errs.push(`${src.name} bad response`);
-        continue;
-      }
-      return list;
-    } catch (e) {
-      errs.push(`${src.name} ${e.message || "network"}`);
     }
   }
-  throw new Error(errs.join(", "));
+  throw new Error([...errs].map(([k, v]) => `${k} ${v}`).join(", "));
 }
 
 async function reverseGeocode(lat, lon) {
