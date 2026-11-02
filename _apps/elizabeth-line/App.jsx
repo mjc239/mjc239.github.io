@@ -68,7 +68,11 @@ function matchLive(j, rows) {
       best = r;
     }
   }
-  if (!best) return null;
+  return best ? rowStatus(best) : null;
+}
+
+// Status (on time / late / cancelled) of one ArrivalDepartures row.
+function rowStatus(best) {
   if (/cancel/i.test(best.status)) return { status: "cancelled" };
   const sm = wallMin(best.sched);
   const em = wallMin(best.est);
@@ -292,11 +296,35 @@ export default function App() {
           est: toLocal(r.estimatedTimeOfDeparture),
           platform: r.platformName,
           status: r.departureStatus || "",
+          dest: r.destinationNaptanId || null,
         }))
         .filter((r) => r.sched);
     } catch {
       return [];
     }
+  };
+
+  // The line's stopping patterns (ordered stop-id lists, in travel direction),
+  // fetched once. Used to tell which live departures call at a destination
+  // when the Journey Planner's timetable has a gap (see fetchJourneys).
+  const routesP = useRef(null);
+  const loadRoutes = () => {
+    if (!routesP.current) {
+      routesP.current = Promise.all(
+        ["outbound", "inbound"].map(async (dir) => {
+          const res = await tflFetch(`${TFL}/Line/elizabeth/Route/Sequence/${dir}`);
+          if (!res.ok) throw new Error(`route-${res.status}`);
+          const d = await res.json();
+          return (d.orderedLineRoutes || []).map((r) => r.naptanIds || []);
+        })
+      )
+        .then((parts) => parts.flat())
+        .catch(() => {
+          routesP.current = null; // retry on a later poll
+          return [];
+        });
+    }
+    return routesP.current;
   };
 
   const fetchJourneys = useCallback(async () => {
@@ -350,15 +378,11 @@ export default function App() {
         }
       }
       if (!current()) return;
-      if (res.status === 404) {
-        // TfL's "no journey found for your inputs" — a real answer (e.g.
-        // outside service hours), not a failure. Show the empty state.
-        setJourneys([]);
-        setStatus("empty");
-        setLastUpdated(new Date());
-        return;
-      }
-      if (!res.ok) {
+      // 404 is TfL's "no journey found for your inputs" — a real answer (e.g.
+      // outside service hours), not a failure. Carry on with no planner
+      // journeys so the live-board fallback below can still fill the board;
+      // if it can't, we land in the empty state.
+      if (!res.ok && res.status !== 404) {
         if (res.status === 429) throw new Error("rate");
         throw new Error(`http-${res.status}`);
       }
@@ -383,13 +407,59 @@ export default function App() {
           })
           .filter((j) => j.direct);
 
-      const data = await res.json();
+      const data = res.ok ? await res.json() : { journeys: [] };
       let list = parseDirect(data);
       // Overlay live status (on time / late / cancelled) from the origin's
       // departure board, matched by scheduled time + platform. No match →
       // the schedule stands, never a false "on time".
       const arrDep = await arrDepP;
-      const annotate = (l) => l.map((j) => ({ ...j, live: matchLive(j, arrDep) }));
+
+      // Timetable-gap fallback. TfL's Journey Planner sometimes loses a
+      // station's services for a whole day (seen at West Ealing: every query
+      // jumped to tomorrow's first train while trains were running). If the
+      // planner's next train is far off — or it found none — but the origin's
+      // live board has trains whose stopping pattern calls at the destination
+      // before then, show those. Arrival is estimated from the planner's
+      // typical journey time for this pair, when it gave us one.
+      const firstMs = list.length
+        ? Math.min(...list.map((j) => new Date(j.start).getTime()))
+        : Infinity;
+      const nowMs = Date.now();
+      if (firstMs - nowMs > 30 * 60000 && arrDep.length) {
+        const seqs = await loadRoutes();
+        if (!current()) return;
+        const calls = (dest) =>
+          !!dest &&
+          seqs.some((s) => {
+            const a = s.indexOf(effFrom);
+            const b = s.indexOf(effTo);
+            const c = s.indexOf(dest);
+            return a >= 0 && b > a && c >= b;
+          });
+        const durs = list.map((j) => j.duration).filter((d) => d > 0).sort((a, b) => a - b);
+        const dur = durs.length ? durs[Math.floor(durs.length / 2)] : null;
+        const fromBoard = arrDep
+          .filter((r) => calls(r.dest))
+          .filter((r) => {
+            const t = new Date(r.sched).getTime();
+            const e = r.est ? new Date(r.est).getTime() : t;
+            // Still to leave, and before the planner's own next train.
+            return Math.max(t, e) >= nowMs - 60000 && t < firstMs - 2 * 60000;
+          })
+          .map((r) => ({
+            start: r.sched,
+            arrive: dur ? new Date(new Date(r.sched).getTime() + dur * 60000).toISOString() : null,
+            duration: dur,
+            platform: r.platform && r.platform !== "null"
+              ? r.platform.replace(/^Platform\s+/i, "")
+              : null,
+            direct: true,
+            board: r, // its own live row — status comes straight from it
+          }));
+        list = [...fromBoard, ...list];
+      }
+      const annotate = (l) =>
+        l.map((j) => ({ ...j, live: j.board ? rowStatus(j.board) : matchLive(j, arrDep) }));
       const sortSlice = (l) =>
         annotate(
           [...l]
@@ -543,6 +613,12 @@ export default function App() {
             share a direct service, or none are running right now.
           </div>
         )}
+        {journeys.some((j) => j.board) && (
+          <div className="msg">
+            TfL's timetable is missing some trains here, so the earliest are taken from the
+            live departure board (arrival times approximate).
+          </div>
+        )}
         {(() => {
           // "Scheduled" chips only make sense once we actually have live data
           // to distinguish from; if nothing matched (feed down / no coverage),
@@ -564,8 +640,14 @@ export default function App() {
                   <div className="dep">{fmtTime(j.start)}</div>
                   <div className="meta">
                     <div className="leg">
-                      arrives {fmtTime(j.arrive)}
-                      <span className="dur"> · {fmtMins(j.duration)}</span>
+                      {j.arrive ? (
+                        <>
+                          arrives {j.board ? "~" : ""}{fmtTime(j.arrive)}
+                          <span className="dur"> · {j.board ? "~" : ""}{fmtMins(j.duration)}</span>
+                        </>
+                      ) : (
+                        "arrival time unavailable"
+                      )}
                     </div>
                     {j.platform && <div className="plat">Platform {j.platform}</div>}
                     {live ? (
