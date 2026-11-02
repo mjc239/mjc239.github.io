@@ -54,13 +54,28 @@ Pushing to `master` is the deploy — GitHub Pages runs Jekyll, which copies
   succeeds, the header is set from a reverse-geocode of the viewer's position
   (BigDataCloud's free, no-key, browser-side API — called directly, not via the
   proxy, so no allow-list/redeploy needed).
-- `SEARCH_RADIUS_NM` — search radius in nautical miles (currently 1.5).
-- `POLL_MS` — poll interval (currently 12s; airplanes.live allows ~1 req/sec).
+- `DEFAULT_RADIUS_NM` — search radius in nautical miles (currently 1.5).
+- `POLL_MS` — poll interval (currently 12s; the position APIs allow ~1 req/sec).
+
+## Testing without waiting for a plane
+
+Planes are rarely within 1.5 nm, so the page takes URL overrides:
+
+- `?lat=51.47&lon=-0.4543` — fixed centre, skipping geolocation (that one is
+  Heathrow, which always has traffic).
+- `?radius=10` — wider search radius in nm (max 250).
+
+e.g. <https://mjc239.github.io/apps/overhead/?lat=51.47&lon=-0.4543&radius=5>.
+If no position source can be reached the page says **NO DATA** with the error
+in the footer, rather than "CLEAR SKIES".
 
 ## Data sources
 
-- **Positions:** `airplanes.live` — `GET /v2/point/{lat}/{lon}/{radius_nm}`
-  (1 req/sec, non-commercial).
+- **Positions:** `adsb.lol` — `GET /v2/point/{lat}/{lon}/{radius_nm}` — with
+  `adsb.fi` (`GET /api/v2/lat/{lat}/lon/{lon}/dist/{nm}`) as automatic
+  fallback. Both are open, keyless readsb-style APIs (~1 req/sec) and send no
+  CORS headers, so both go through the proxy. airplanes.live, the original
+  source, now returns 403 "Please contact us…" to every request (Nov 2026).
 - **Enrichment:** `adsbdb.com` (free, no key) — `/v0/aircraft/{hex}` for
   type/operator/photo and `/v0/callsign/{callsign}` for the route. Route
   lookups only resolve for callsigns in their database, so private/military
@@ -95,7 +110,7 @@ A `?proxy=` URL parameter overrides the whole chain, e.g.
 ### Deploying the proxy (Supabase Edge Function — recommended)
 
 `supabase/functions/overhead-proxy/index.ts` is locked to the hosts in its
-`ALLOWED_HOSTS` (`api.airplanes.live`, `api.adsbdb.com`), GET-only, and only
+`ALLOWED_HOSTS` (`api.adsb.lol`, `opendata.adsb.fi`, `api.adsbdb.com`, plus the retired `api.airplanes.live`), GET-only, and only
 answers the origins in its `ALLOWED_ORIGINS` (`mjc239.github.io` + localhost).
 If you ever change `ALLOWED_HOSTS`, redeploy the function — the running copy
 keeps its old allow-list until you do.

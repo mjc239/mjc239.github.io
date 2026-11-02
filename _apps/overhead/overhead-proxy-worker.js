@@ -11,7 +11,7 @@
  *
  * Usage from the browser (path-style — the upstream host is the first path
  * segment, so the same worker can front more than one API):
- *   https://<your-worker>.workers.dev/api.airplanes.live/v2/point/51.5/-0.32/1.5
+ *   https://<your-worker>.workers.dev/api.adsb.lol/v2/point/51.5/-0.32/1.5
  *   https://<your-worker>.workers.dev/api.adsbdb.com/v1/aircraft/4008f3
  *   https://<your-worker>.workers.dev/api.adsbdb.com/v1/callsign/BAW123
  * i.e. take any https://<host>/<PATH> and prefix it with the worker origin.
@@ -27,7 +27,9 @@ const ALLOWED_ORIGINS = [
 
 // Only these upstream API hosts may be proxied.
 const ALLOWED_HOSTS = new Set([
-  "api.airplanes.live",
+  "api.airplanes.live", // now 403s everyone; kept so old page builds still get a clear error
+  "api.adsb.lol",
+  "opendata.adsb.fi",
   "api.adsbdb.com",
 ]);
 
@@ -78,7 +80,7 @@ export default {
       upstream = await fetch(target.toString(), {
         headers: {
           Accept: "application/json",
-          // airplanes.live can reject requests with no/blocked User-Agent.
+          // The position APIs can reject requests with no/blocked User-Agent.
           "User-Agent": "overhead-tracker (+https://mjc239.github.io/apps/overhead/)",
         },
         // Cache identical requests briefly to ease upstream rate limits

@@ -16,7 +16,7 @@
  *
  * Usage from the browser (path-style — the upstream host is the first path
  * segment after the function name, so one function fronts both APIs):
- *   https://<ref>.supabase.co/functions/v1/overhead-proxy/api.airplanes.live/v2/point/51.5/-0.32/1.5
+ *   https://<ref>.supabase.co/functions/v1/overhead-proxy/api.adsb.lol/v2/point/51.5/-0.32/1.5
  *   https://<ref>.supabase.co/functions/v1/overhead-proxy/api.adsbdb.com/v1/aircraft/4008f3
  * i.e. take any https://<host>/<PATH> and put it after .../overhead-proxy/.
  */
@@ -31,7 +31,9 @@ const ALLOWED_ORIGINS = [
 
 // Only these upstream API hosts may be proxied.
 const ALLOWED_HOSTS = new Set([
-  "api.airplanes.live",
+  "api.airplanes.live", // now 403s everyone; kept so old page builds still get a clear error
+  "api.adsb.lol",
+  "opendata.adsb.fi",
   "api.adsbdb.com",
 ]);
 
@@ -59,8 +61,9 @@ const CACHE_MAX = 500;
 
 // Positions change constantly; aircraft/route reference data is effectively
 // static, so it can be held much longer.
+const POSITION_HOSTS = new Set(["api.airplanes.live", "api.adsb.lol", "opendata.adsb.fi"]);
 function ttlMs(host: string): number {
-  return host === "api.airplanes.live" ? 10_000 : 3_600_000;
+  return POSITION_HOSTS.has(host) ? 10_000 : 3_600_000;
 }
 
 Deno.serve(async (request) => {
@@ -115,7 +118,7 @@ Deno.serve(async (request) => {
     upstream = await fetch(target.toString(), {
       headers: {
         Accept: "application/json",
-        // airplanes.live can reject requests with no/blocked User-Agent.
+        // The position APIs can reject requests with no/blocked User-Agent.
         "User-Agent": "overhead-tracker (+https://mjc239.github.io/apps/overhead/)",
       },
     });
