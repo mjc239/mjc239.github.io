@@ -417,16 +417,23 @@ export default function App() {
       // Timetable-gap fallback. TfL's Journey Planner sometimes loses a
       // station's services for a whole day (seen at West Ealing: every query
       // jumped to tomorrow's first train while trains were running). If the
-      // planner's next train is far off — or it found none — but the origin's
-      // live board has trains whose stopping pattern calls at the destination
-      // before then, show those. Arrival is estimated from the planner's
-      // typical journey time for this pair, when it gave us one.
+      // planner's next train is far off — or it found none — build the board
+      // from the live departure boards instead:
+      //   1. take origin departures whose route runs on through the
+      //      destination (line Route/Sequence), then
+      //   2. keep only those that also appear on the DESTINATION's own live
+      //      board, heading to the same terminus at the right time. Not every
+      //      train on a route stops everywhere (at West Ealing, Reading
+      //      trains often don't), and the destination board is the authority
+      //      on what actually calls there. Its time there is the arrival.
+      // If the destination is the train's terminus it has no departure row,
+      // so the arrival is estimated from the planner's usual journey time.
       const firstMs = list.length
         ? Math.min(...list.map((j) => new Date(j.start).getTime()))
         : Infinity;
       const nowMs = Date.now();
       if (firstMs - nowMs > 30 * 60000 && arrDep.length) {
-        const seqs = await loadRoutes();
+        const [seqs, toBoard] = await Promise.all([loadRoutes(), fetchArrDepartures(effTo)]);
         if (!current()) return;
         const calls = (dest) =>
           !!dest &&
@@ -438,24 +445,57 @@ export default function App() {
           });
         const durs = list.map((j) => j.duration).filter((d) => d > 0).sort((a, b) => a - b);
         const dur = durs.length ? durs[Math.floor(durs.length / 2)] : null;
-        const fromBoard = arrDep
+        const ms = (iso) => new Date(iso).getTime();
+        const used = new Set();
+        const fromBoard = [];
+        const candidates = arrDep
           .filter((r) => calls(r.dest))
           .filter((r) => {
-            const t = new Date(r.sched).getTime();
-            const e = r.est ? new Date(r.est).getTime() : t;
+            const t = ms(r.sched);
+            const e = r.est ? ms(r.est) : t;
             // Still to leave, and before the planner's own next train.
             return Math.max(t, e) >= nowMs - 60000 && t < firstMs - 2 * 60000;
           })
-          .map((r) => ({
+          .sort((x, y) => ms(x.sched) - ms(y.sched));
+        for (const r of candidates) {
+          const t = ms(r.sched);
+          let arrive = null;
+          if (r.dest === effTo) {
+            if (dur) arrive = new Date(t + dur * 60000).toISOString();
+          } else {
+            // Same terminus, after departure, nearest the usual journey time
+            // (±8 min) — or, with no typical time, the first one after.
+            let best = null;
+            let bestGap = Infinity;
+            toBoard.forEach((d, i) => {
+              if (used.has(i) || d.dest !== r.dest) return;
+              const dt = ms(d.sched) - t;
+              if (dt <= 0) return;
+              const gap = dur ? Math.abs(dt - dur * 60000) : dt;
+              if (dur && gap > 8 * 60000) return;
+              if (gap < bestGap) {
+                bestGap = gap;
+                best = i;
+              }
+            });
+            // No sighting at the destination → it doesn't stop there (or is
+            // beyond that board's horizon). Leave it out rather than guess.
+            if (best === null) continue;
+            used.add(best);
+            arrive = toBoard[best].sched;
+          }
+          fromBoard.push({
             start: r.sched,
-            arrive: dur ? new Date(new Date(r.sched).getTime() + dur * 60000).toISOString() : null,
-            duration: dur,
+            arrive,
+            duration: arrive ? Math.round((ms(arrive) - t) / 60000) : null,
+            approx: r.dest === effTo,
             platform: r.platform && r.platform !== "null"
               ? r.platform.replace(/^Platform\s+/i, "")
               : null,
             direct: true,
             board: r, // its own live row — status comes straight from it
-          }));
+          });
+        }
         list = [...fromBoard, ...list];
       }
       const annotate = (l) =>
@@ -616,7 +656,7 @@ export default function App() {
         {journeys.some((j) => j.board) && (
           <div className="msg">
             TfL's timetable is missing some trains here, so the earliest are taken from the
-            live departure board (arrival times approximate).
+            live departure boards.
           </div>
         )}
         {(() => {
@@ -642,8 +682,8 @@ export default function App() {
                     <div className="leg">
                       {j.arrive ? (
                         <>
-                          arrives {j.board ? "~" : ""}{fmtTime(j.arrive)}
-                          <span className="dur"> · {j.board ? "~" : ""}{fmtMins(j.duration)}</span>
+                          arrives {j.approx ? "~" : ""}{fmtTime(j.arrive)}
+                          <span className="dur"> · {j.approx ? "~" : ""}{fmtMins(j.duration)}</span>
                         </>
                       ) : (
                         "arrival time unavailable"
