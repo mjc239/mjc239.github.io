@@ -7,17 +7,51 @@ import { useState, useEffect, useRef, useCallback } from "react";
 const HOME_LAT = 51.521287;
 const HOME_LON = -0.323172;
 const DEFAULT_LABEL = "W13 · WEST EALING";
-const SEARCH_RADIUS_NM = 1.5; // airplanes.live takes nautical miles, max 250
-const POLL_MS = 12000; // 1 req/sec limit on airplanes.live — 12s is very safe
+const DEFAULT_RADIUS_NM = 1.5; // nautical miles
+const POLL_MS = 12000; // position APIs allow ~1 req/sec — 12s is very safe
+
+// ---- Test overrides (URL parameters) ----
+// Planes are only rarely within 1.5 nm, so the live app is hard to test.
+//   ?lat=51.47&lon=-0.4543   centre somewhere fixed (skips geolocation) —
+//                            e.g. that's Heathrow, which always has traffic
+//   ?radius=10               widen the search radius (nm, max 250)
+const PARAMS = (() => {
+  try {
+    return new URLSearchParams(window.location.search);
+  } catch {
+    return new URLSearchParams();
+  }
+})();
+const num = (k) => {
+  const v = parseFloat(PARAMS.get(k));
+  return Number.isFinite(v) ? v : null;
+};
+const FIXED_CENTER =
+  num("lat") !== null && num("lon") !== null ? { lat: num("lat"), lon: num("lon") } : null;
+const SEARCH_RADIUS_NM = Math.min(250, Math.max(0.1, num("radius") ?? DEFAULT_RADIUS_NM));
 
 // ---- Endpoints ----
-const POINT_URL = (lat, lon, r) =>
-  `https://api.airplanes.live/v2/point/${lat}/${lon}/${r}`;
+// Live positions. airplanes.live (the original source) now answers every
+// request with 403 "Please contact us…", so use the other open readsb-style
+// aggregators, in order: same aircraft fields, slightly different envelopes.
+const POSITION_SOURCES = [
+  {
+    name: "adsb.lol",
+    url: (lat, lon, r) => `https://api.adsb.lol/v2/point/${lat}/${lon}/${r}`,
+    list: (d) => d.ac,
+  },
+  {
+    name: "adsb.fi",
+    url: (lat, lon, r) =>
+      `https://opendata.adsb.fi/api/v2/lat/${lat}/lon/${lon}/dist/${r}`,
+    list: (d) => d.aircraft,
+  },
+];
 const CALLSIGN_URL = (cs) => `https://api.adsbdb.com/v0/callsign/${cs}`;
 const AIRCRAFT_URL = (hex) => `https://api.adsbdb.com/v0/aircraft/${hex}`;
 
 // ---- CORS proxy chain ----
-// airplanes.live (and sometimes adsbdb) don't send browser-friendly CORS
+// The position APIs (and sometimes adsbdb) don't send browser-friendly CORS
 // headers, so requests go through a proxy that adds them — same pattern as the
 // Elizabeth line app. Two proxy styles are supported:
 //   • path-style:  proxyBase + "/" + host + path + query   (our own Worker)
@@ -30,7 +64,7 @@ const PROXY_CHAIN = (() => {
     if (override) return [override];
   } catch {}
   return [
-    // Your own proxy (primary — airplanes.live rate-limits the shared IPs that
+    // Your own proxy (primary — the position APIs rate-limit the shared IPs that
     // the public proxies below run on). Supabase Edge Function; source in
     // supabase/functions/overhead-proxy/. The trailing slash marks it as
     // path-style.
@@ -53,7 +87,7 @@ const proxied = (proxy, url) => {
   return `${proxy}${encodeURIComponent(url)}`;
 };
 
-// Per-proxy attempt timeout: a public proxy that stalls on airplanes.live
+// Per-proxy attempt timeout: a public proxy that stalls on a position API
 // shouldn't hold up the whole poll — abort it and try the next one.
 const ATTEMPT_TIMEOUT_MS = 8000;
 
@@ -127,6 +161,30 @@ function scoreOverhead(ac, lat, lon) {
 // BigDataCloud's free, no-key, CORS-friendly reverse geocoder (called directly,
 // not through the proxy). Returns null on any failure — the caller keeps the
 // previous label.
+// Current aircraft near a point, from the first position source that answers.
+// Returns the raw aircraft list; throws with every source's failure if none do.
+async function fetchPositions(lat, lon, r) {
+  const errs = [];
+  for (const src of POSITION_SOURCES) {
+    try {
+      const res = await proxyFetch(src.url(lat, lon, r));
+      if (!res.ok) {
+        errs.push(`${src.name} ${res.status}`);
+        continue;
+      }
+      const list = src.list(await res.json());
+      if (!Array.isArray(list)) {
+        errs.push(`${src.name} bad response`);
+        continue;
+      }
+      return list;
+    } catch (e) {
+      errs.push(`${src.name} ${e.message || "network"}`);
+    }
+  }
+  throw new Error(errs.join(", "));
+}
+
 async function reverseGeocode(lat, lon) {
   try {
     const r = await fetch(
@@ -180,9 +238,9 @@ export default function OverheadTracker() {
   const [status, setStatus] = useState("starting");
   const [lastUpdate, setLastUpdate] = useState(null);
   const [nearbyCount, setNearbyCount] = useState(0);
-  const [center, setCenter] = useState({ lat: HOME_LAT, lon: HOME_LON });
-  const [label, setLabel] = useState("LOCATING…");
-  const [located, setLocated] = useState(false); // gates the first poll
+  const [center, setCenter] = useState(FIXED_CENTER || { lat: HOME_LAT, lon: HOME_LON });
+  const [label, setLabel] = useState(FIXED_CENTER ? "TEST LOCATION" : "LOCATING…");
+  const [located, setLocated] = useState(!!FIXED_CENTER); // gates the first poll
   const enrichCache = useRef(new Map()); // hex -> aircraft details
   const routeCache = useRef(new Map()); // callsign -> route
 
@@ -191,6 +249,10 @@ export default function OverheadTracker() {
   // fall back to West Ealing if geolocation is denied or unavailable. Polling
   // waits on `located` so the app centres correctly on every (re)load.
   useEffect(() => {
+    if (FIXED_CENTER) {
+      reverseGeocode(FIXED_CENTER.lat, FIXED_CENTER.lon).then((l) => l && setLabel(l));
+      return;
+    }
     const fallback = () => {
       setLabel(DEFAULT_LABEL); // keep the default (West Ealing) centre
       setLocated(true);
@@ -257,10 +319,8 @@ export default function OverheadTracker() {
 
   const poll = useCallback(async () => {
     try {
-      const res = await proxyFetch(POINT_URL(center.lat, center.lon, SEARCH_RADIUS_NM));
-      if (!res.ok) throw new Error(`airplanes.live ${res.status}`);
-      const data = await res.json();
-      const list = (data.ac || []).filter(
+      const all = await fetchPositions(center.lat, center.lon, SEARCH_RADIUS_NM);
+      const list = all.filter(
         (a) => typeof a.lat === "number" && typeof a.lon === "number"
       );
       setNearbyCount(list.length);
@@ -416,6 +476,14 @@ export default function OverheadTracker() {
         <main className="ovh-empty">
           <div className="ovh-empty-big">LOCATING…</div>
           <div className="ovh-empty-sub">Finding aircraft near you</div>
+        </main>
+      ) : status.startsWith("error") ? (
+        // Don't claim clear skies when we simply couldn't get any data.
+        <main className="ovh-empty">
+          <div className="ovh-empty-big">NO DATA</div>
+          <div className="ovh-empty-sub">
+            Couldn't reach the flight-tracking service — retrying.
+          </div>
         </main>
       ) : (
         <main className="ovh-empty">
