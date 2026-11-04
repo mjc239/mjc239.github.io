@@ -15,7 +15,8 @@ tags:
 
 # How to play one player 501
 
-This post is still a work in progress...
+**Update:** this post simplifies $501$ by treating every dart as a turn of its own, and by counting darts rather than visits. The follow-up, [Count visits, not darts]({% post_url 2026-11-04-count-visits-not-darts %}), solves the full game of three darts a visit, and finds out where the difference matters.
+{: .notice--info}
 
 ## Triple is funny, but double makes money
 
@@ -51,7 +52,7 @@ The grid spacing determines the total number of possible actions in the action s
 
 Once the set of actions is defined, it becomes possible to compute the transition probabilities. Using the player’s throwing distribution parameters (discussed in a previous post) and the chosen aiming point, the probabilities of hitting each scoring region are calculated and cached. Assuming the throwing distribution parameters remain constant over time, these cached probabilities can be efficiently retrieved when evaluating the value of each action, avoiding the need for expensive integral computations with every step.
 
-So how can we decide where to aim when in a particular state (i.e. on a specific score)? This challenge lends itself well to a classic reinforcement learning approach known as value iteration. Each state is assigned a value, which, based on our choice of reward function, represents the expected number of turns required to check out from that state. For each action, the expected value of the resulting state is computed, accounting for the probabilities of different outcomes. The action that maximises the reward — reducing the expected number of remaining turns the most — is the one selected.
+So how can we decide where to aim when in a particular state (i.e. on a specific score)? This challenge lends itself well to a classic reinforcement learning approach known as value iteration. Each state is assigned a value, which, based on our choice of reward function, represents the expected number of darts required to check out from that state. For each action, the expected value of the resulting state is computed, accounting for the probabilities of different outcomes. The action that maximises the reward — reducing the expected number of remaining darts the most — is the one selected.
 
 For each state, the state-value function $v(s)$ satisfies the optimal Bellman equation:
 
@@ -111,7 +112,7 @@ $$
 \end{equation}
 $$
 
-where we choose the variance parameter $\sigma=40$mm. Then, we can follow the above algorithm to find the value function for each starting score:
+where we choose the standard deviation $\sigma=40$mm. Then, we can follow the above algorithm to find the value function for each starting score:
 
 
 ![png](/assets/images/20241120/20241120_output_17_0.png)
@@ -120,7 +121,7 @@ where we choose the variance parameter $\sigma=40$mm. Then, we can follow the ab
 
 Some initial observations from this plot are:
 - For scores above around $50$, the state values are approximately linear. For large enough player scores, given the player's ability, they are looking to maximise the expected score on each dart, so are aiming for roughly the same place on the board each time.
-- For scores below around $50$, the state values oscillate around a value of about $-27$, corresponding to an expected number of $27$ turns until checkout. Clearly, this player has trouble hitting a double to check out, so takes about the same number of throws regardless. There is a difference between odd and even states, due to the player needing to finish on an even score, which can be seen by zooming in on this region:
+- For scores below around $50$, the state values oscillate around a value of about $-27$, corresponding to an expected number of $27$ darts until checkout. Clearly, this player has trouble hitting a double to check out, so takes about the same number of throws regardless. There is a difference between odd and even states, due to the player needing to finish on an even score, which can be seen by zooming in on this region:
 
     
 ![png](/assets/images/20241120/20241120_output_19_0.png)
@@ -142,7 +143,7 @@ This diagram reveals some strategies that any keen darts player might recognise:
 
 ### Skilled player
 
-Let's repeat the analysis for a different player, with a slightly better throwing ability - this time with a variance parameter of $\sigma=10$mm:
+Let's repeat the analysis for a different player, with a slightly better throwing ability - this time with a standard deviation of $\sigma=10$mm:
 
     
 ![png](/assets/images/20241120/20241120_output_29_0.png)

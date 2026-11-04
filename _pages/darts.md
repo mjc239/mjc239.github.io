@@ -22,6 +22,6 @@ A collection of posts, using a statistical approach to analyse the game of darts
 
 🎯[How can I reach checkout before my opponent?](../_posts/2024-02-24-dart-sharpe-ratio.md) - maximising the probability of reaching checkout in N moves
 
-🎯[How do I play on-player continuous 501 optimally?](../_posts/2024-11-20-continuous-dart-rl.md) - where to aim to minimise the number of turns until checkout
+🎯[How do I play on-player continuous 501 optimally?](../_posts/2024-11-20-continuous-dart-rl.md) - where to aim to minimise the number of darts until checkout
 
 🎯[Count visits, not darts](../_posts/2026-11-04-count-visits-not-darts.md) - three darts a visit, busts that cost the whole visit, and why double 1 is the madhouse
