@@ -326,6 +326,7 @@ export function App() {
   const [levelIdx, setLevelIdx] = useState(null);
   const [levels, setLevels] = useState({}); // "shape/index" -> parsed level
   const [view, setView] = useState("board");
+  const [wantAvg, setWantAvg] = useState(START_LEVEL_AVERAGE); // the average the player chose
   const [score, setScore] = useState(START_SCORE);
   const [scoreText, setScoreText] = useState(String(START_SCORE));
   const [dart, setDart] = useState(1);
@@ -395,9 +396,8 @@ export function App() {
 
   const switchModel = (id) => {
     const next = man.models.find((x) => x.id === id);
-    const avg = mLevels[levelIdx] ? mLevels[levelIdx].average : START_LEVEL_AVERAGE;
     setModelId(id);
-    setLevelIdx(nearestLevel(next.levels, avg));
+    setLevelIdx(nearestLevel(next.levels, wantAvg));
     setPinned(null);
   };
 
@@ -567,7 +567,12 @@ export function App() {
               <div className="avg"><b>{Math.round(lvl.average)}</b><span>{lvl.band}</span></div>
               <input id="avg" type="range" min="0" max={mLevels.length - 1} step="1" value={levelIdx}
                 aria-labelledby="avg-label" aria-valuetext={`${Math.round(lvl.average)} average, ${lvl.band}`}
-                onChange={(e) => { setLevelIdx(Number(e.target.value)); setPinned(null); }} />
+                onChange={(e) => {
+                  const k = Number(e.target.value);
+                  setLevelIdx(k);
+                  setWantAvg(mLevels[k].average);
+                  setPinned(null);
+                }} />
               <div className="ticks">
                 <span>{Math.round(mLevels[0].average)}</span>
                 <span>{Math.round(mLevels[mLevels.length - 1].average)}</span>
