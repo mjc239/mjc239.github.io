@@ -5,14 +5,35 @@ require and the dart in your hand. The board is coloured by what each aiming
 spot costs in **visits to finish**, solved exactly for a player of that standard.
 It is the interactive companion to the post *Count visits, not darts*.
 
+Two views share the same average and throw-shape controls:
+
+- **Board**: the heat map for one situation (score left, dart in hand, and the
+  score the visit started on when that matters). Hover or tap to price any spot.
+- **Checkout chart**: 170 down to 2, with the route (where to aim with each dart
+  if it lands where you aim) and the real chance of finishing this visit when
+  you follow the advice after a miss too. On the live site it has a Print button
+  and a print stylesheet; inside an embedded preview the button is hidden.
+
+Four throw shapes, all matched to the same throwing standards:
+
+| Shape | Model | Levels |
+| --- | --- | --- |
+| Round (default) | round Gaussian, as in the blog posts | 14, averages 28-109 |
+| Heavy-tailed | round Student-t, nu = 2.25 (DartsStrats notebook 21), scaled to the same scoring average | 7 |
+| Tall | Gaussian, 1.5x the spread up-and-down as side-to-side, same area | 7 |
+| Wide | the same, turned 90 degrees | 7 |
+
+The exporter checks the tall and wide files point the right way (a tall group
+is better at the side doubles than at D20).
+
 Same layout and tooling as `_apps/yahtzee`.
 
 ## How it works (compute vs memory)
 
 The game is solved offline, once per ability level, by the DartsStrats solver
 (`darts.mdp_3turn.ThreeDartMDP`, counting visits). For each level the browser
-gets the value tables plus, for every point on a 3.52 mm aiming grid, the
-probability of each score. From those it prices **every** aiming point for any
+gets the value tables, the solver's best aim for every state, and, for every
+point on a 3.52 mm aiming grid, the probability of each score. From those it prices **every** aiming point for any
 state `(score left, dart in hand, score the visit started on)` with one pass
 over the grid: about 2 ms. Nothing is solved in the browser, and there is no
 backend.
@@ -31,9 +52,9 @@ on the quantised tables, must reproduce the solver's own values (to within
   - `solver/export_tables.py` — solves each level and writes `apps/darts/data/`.
 - `apps/darts/` — what gets served, at <https://mjc239.github.io/apps/darts/>.
   - `index.html` — static shell. `app.js` — esbuild bundle (committed build output).
-  - `data/levels.json` — the levels (sigma, three-dart average, band) and the file layout.
+  - `data/levels.json` — the throw shapes, their levels (sigma, three-dart average, band) and the file layout.
   - `data/points.json` — the aiming grid in mm and a name for each point.
-  - `data/level-NN.bin` — one per level, 1.3 MB, fetched only when chosen.
+  - `data/<shape>-NN.bin` — one per shape and level, 1.4 MB each (47 MB in all), fetched only when chosen.
 
 ## Regenerating the tables
 
@@ -42,12 +63,13 @@ with its Python requirements installed.
 
 ```bash
 cd _apps/darts
-npm run tables      # ~2 minutes: 14 levels, then the test fixture
+npm run tables      # ~4 minutes: 35 levels, then the test fixture
 npm test
 ```
 
-The levels are set by `SIGMAS` in `export_tables.py` (throwing standard
-deviations in mm; the three-dart averages run from about 28 to 109).
+The shapes and levels are set by `MODELS`, `SIGMAS` and `ALT_SIGMAS` in
+`export_tables.py` (throwing standard deviations in mm). `--models round heavy`
+exports only those shapes, for trying things out.
 
 ## Rebuilding the app
 
@@ -62,7 +84,6 @@ Pushing to `master` is the deploy.
 
 ## Model
 
-A round, unbiased Gaussian throw whose spread gives the stated three-dart
-average, the same model as the blog posts. Real throws are more heavy-tailed
-(DartsStrats notebooks 21-22); swapping in the Student-t throw is a change to
-`export_tables.py` only.
+Every shape is an unbiased throw (no pull to one side). A pull would not need
+new tables: aiming at `a` with a pull `b` lands like aiming at `a + b` without
+one (DartsStrats notebook 13), so it is a shift of the board the app could add.

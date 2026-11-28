@@ -2,129 +2,316 @@
  "game_start": 501,
  "board_pixels": 512,
  "scale": 65535,
- "throw": "Gaussian, round, aimed without bias",
  "objective": "visits",
- "layout": [
-  "P",
-  "CO",
-  "V1",
-  "V2tab",
-  "V3tab",
-  "V2low",
-  "V3low"
- ],
- "levels": [
+ "default_model": "round",
+ "models": [
   {
-   "file": "level-00.bin",
-   "sigma": 33.0,
-   "average": 27.5,
-   "band": "Pub",
-   "visits_501": 19.94,
-   "bytes": 1315306
+   "id": "round",
+   "name": "Round",
+   "blurb": "An even spread in every direction: the model in the blog posts.",
+   "levels": [
+    {
+     "file": "round-00.bin",
+     "sigma": 33.0,
+     "average": 27.5,
+     "band": "Pub",
+     "visits_501": 19.94,
+     "bytes": 1385294
+    },
+    {
+     "file": "round-01.bin",
+     "sigma": 27.0,
+     "average": 32.8,
+     "band": "Pub",
+     "visits_501": 16.422,
+     "bytes": 1385294
+    },
+    {
+     "file": "round-02.bin",
+     "sigma": 23.0,
+     "average": 37.6,
+     "band": "Club",
+     "visits_501": 14.154,
+     "bytes": 1385294
+    },
+    {
+     "file": "round-03.bin",
+     "sigma": 20.0,
+     "average": 42.3,
+     "band": "Club",
+     "visits_501": 12.481,
+     "bytes": 1385294
+    },
+    {
+     "file": "round-04.bin",
+     "sigma": 18.0,
+     "average": 46.4,
+     "band": "League",
+     "visits_501": 11.344,
+     "bytes": 1385294
+    },
+    {
+     "file": "round-05.bin",
+     "sigma": 16.0,
+     "average": 51.4,
+     "band": "League",
+     "visits_501": 10.206,
+     "bytes": 1385294
+    },
+    {
+     "file": "round-06.bin",
+     "sigma": 14.5,
+     "average": 56.2,
+     "band": "League",
+     "visits_501": 9.334,
+     "bytes": 1385294
+    },
+    {
+     "file": "round-07.bin",
+     "sigma": 13.0,
+     "average": 61.8,
+     "band": "Super league",
+     "visits_501": 8.491,
+     "bytes": 1385294
+    },
+    {
+     "file": "round-08.bin",
+     "sigma": 11.5,
+     "average": 68.4,
+     "band": "Super league",
+     "visits_501": 7.685,
+     "bytes": 1385294
+    },
+    {
+     "file": "round-09.bin",
+     "sigma": 10.0,
+     "average": 76.2,
+     "band": "County",
+     "visits_501": 6.915,
+     "bytes": 1385294
+    },
+    {
+     "file": "round-10.bin",
+     "sigma": 8.5,
+     "average": 85.3,
+     "band": "Tour pro",
+     "visits_501": 6.201,
+     "bytes": 1385294
+    },
+    {
+     "file": "round-11.bin",
+     "sigma": 7.5,
+     "average": 92.1,
+     "band": "Tour pro",
+     "visits_501": 5.755,
+     "bytes": 1385294
+    },
+    {
+     "file": "round-12.bin",
+     "sigma": 6.5,
+     "average": 99.9,
+     "band": "World class",
+     "visits_501": 5.322,
+     "bytes": 1385294
+    },
+    {
+     "file": "round-13.bin",
+     "sigma": 5.5,
+     "average": 108.7,
+     "band": "World class",
+     "visits_501": 4.886,
+     "bytes": 1385294
+    }
+   ]
   },
   {
-   "file": "level-01.bin",
-   "sigma": 27.0,
-   "average": 32.8,
-   "band": "Pub",
-   "visits_501": 16.422,
-   "bytes": 1315306
+   "id": "heavy",
+   "name": "Heavy-tailed",
+   "blurb": "Mostly tight, with the odd wild dart. This is the shape measured on professionals' darts (a Student-t), at the same average.",
+   "levels": [
+    {
+     "file": "heavy-00.bin",
+     "sigma": 33.0,
+     "average": 30.3,
+     "band": "Pub",
+     "visits_501": 18.096,
+     "bytes": 1385294
+    },
+    {
+     "file": "heavy-01.bin",
+     "sigma": 23.0,
+     "average": 37.9,
+     "band": "Club",
+     "visits_501": 14.156,
+     "bytes": 1385294
+    },
+    {
+     "file": "heavy-02.bin",
+     "sigma": 18.0,
+     "average": 46.0,
+     "band": "League",
+     "visits_501": 11.509,
+     "bytes": 1385294
+    },
+    {
+     "file": "heavy-03.bin",
+     "sigma": 14.5,
+     "average": 55.9,
+     "band": "League",
+     "visits_501": 9.443,
+     "bytes": 1385294
+    },
+    {
+     "file": "heavy-04.bin",
+     "sigma": 11.5,
+     "average": 68.4,
+     "band": "Super league",
+     "visits_501": 7.713,
+     "bytes": 1385294
+    },
+    {
+     "file": "heavy-05.bin",
+     "sigma": 8.5,
+     "average": 85.8,
+     "band": "Tour pro",
+     "visits_501": 6.178,
+     "bytes": 1385294
+    },
+    {
+     "file": "heavy-06.bin",
+     "sigma": 6.5,
+     "average": 100.6,
+     "band": "World class",
+     "visits_501": 5.295,
+     "bytes": 1385294
+    }
+   ]
   },
   {
-   "file": "level-02.bin",
-   "sigma": 23.0,
-   "average": 37.6,
-   "band": "Club",
-   "visits_501": 14.154,
-   "bytes": 1315306
+   "id": "tall",
+   "name": "Tall",
+   "blurb": "Your darts spread 1.5 times more up and down than side to side.",
+   "levels": [
+    {
+     "file": "tall-00.bin",
+     "sigma": 33.0,
+     "average": 27.4,
+     "band": "Pub",
+     "visits_501": 20.068,
+     "bytes": 1385294
+    },
+    {
+     "file": "tall-01.bin",
+     "sigma": 23.0,
+     "average": 38.2,
+     "band": "Club",
+     "visits_501": 13.917,
+     "bytes": 1385294
+    },
+    {
+     "file": "tall-02.bin",
+     "sigma": 18.0,
+     "average": 47.9,
+     "band": "League",
+     "visits_501": 11.008,
+     "bytes": 1385294
+    },
+    {
+     "file": "tall-03.bin",
+     "sigma": 14.5,
+     "average": 57.4,
+     "band": "League",
+     "visits_501": 9.154,
+     "bytes": 1385294
+    },
+    {
+     "file": "tall-04.bin",
+     "sigma": 11.5,
+     "average": 68.1,
+     "band": "Super league",
+     "visits_501": 7.713,
+     "bytes": 1385294
+    },
+    {
+     "file": "tall-05.bin",
+     "sigma": 8.5,
+     "average": 81.8,
+     "band": "County",
+     "visits_501": 6.427,
+     "bytes": 1385294
+    },
+    {
+     "file": "tall-06.bin",
+     "sigma": 6.5,
+     "average": 93.9,
+     "band": "Tour pro",
+     "visits_501": 5.611,
+     "bytes": 1385294
+    }
+   ]
   },
   {
-   "file": "level-03.bin",
-   "sigma": 20.0,
-   "average": 42.3,
-   "band": "Club",
-   "visits_501": 12.481,
-   "bytes": 1315306
-  },
-  {
-   "file": "level-04.bin",
-   "sigma": 18.0,
-   "average": 46.4,
-   "band": "League",
-   "visits_501": 11.344,
-   "bytes": 1315306
-  },
-  {
-   "file": "level-05.bin",
-   "sigma": 16.0,
-   "average": 51.4,
-   "band": "League",
-   "visits_501": 10.206,
-   "bytes": 1315306
-  },
-  {
-   "file": "level-06.bin",
-   "sigma": 14.5,
-   "average": 56.2,
-   "band": "League",
-   "visits_501": 9.334,
-   "bytes": 1315306
-  },
-  {
-   "file": "level-07.bin",
-   "sigma": 13.0,
-   "average": 61.8,
-   "band": "Super league",
-   "visits_501": 8.491,
-   "bytes": 1315306
-  },
-  {
-   "file": "level-08.bin",
-   "sigma": 11.5,
-   "average": 68.4,
-   "band": "Super league",
-   "visits_501": 7.685,
-   "bytes": 1315306
-  },
-  {
-   "file": "level-09.bin",
-   "sigma": 10.0,
-   "average": 76.2,
-   "band": "County",
-   "visits_501": 6.915,
-   "bytes": 1315306
-  },
-  {
-   "file": "level-10.bin",
-   "sigma": 8.5,
-   "average": 85.3,
-   "band": "Tour pro",
-   "visits_501": 6.201,
-   "bytes": 1315306
-  },
-  {
-   "file": "level-11.bin",
-   "sigma": 7.5,
-   "average": 92.1,
-   "band": "Tour pro",
-   "visits_501": 5.755,
-   "bytes": 1315306
-  },
-  {
-   "file": "level-12.bin",
-   "sigma": 6.5,
-   "average": 99.9,
-   "band": "World class",
-   "visits_501": 5.322,
-   "bytes": 1315306
-  },
-  {
-   "file": "level-13.bin",
-   "sigma": 5.5,
-   "average": 108.7,
-   "band": "World class",
-   "visits_501": 4.886,
-   "bytes": 1315306
+   "id": "wide",
+   "name": "Wide",
+   "blurb": "Your darts spread 1.5 times more side to side than up and down.",
+   "levels": [
+    {
+     "file": "wide-00.bin",
+     "sigma": 33.0,
+     "average": 27.5,
+     "band": "Pub",
+     "visits_501": 19.975,
+     "bytes": 1385294
+    },
+    {
+     "file": "wide-01.bin",
+     "sigma": 23.0,
+     "average": 36.8,
+     "band": "Club",
+     "visits_501": 14.43,
+     "bytes": 1385294
+    },
+    {
+     "file": "wide-02.bin",
+     "sigma": 18.0,
+     "average": 45.3,
+     "band": "League",
+     "visits_501": 11.628,
+     "bytes": 1385294
+    },
+    {
+     "file": "wide-03.bin",
+     "sigma": 14.5,
+     "average": 54.7,
+     "band": "League",
+     "visits_501": 9.582,
+     "bytes": 1385294
+    },
+    {
+     "file": "wide-04.bin",
+     "sigma": 11.5,
+     "average": 67.6,
+     "band": "Super league",
+     "visits_501": 7.757,
+     "bytes": 1385294
+    },
+    {
+     "file": "wide-05.bin",
+     "sigma": 8.5,
+     "average": 87.6,
+     "band": "Tour pro",
+     "visits_501": 6.04,
+     "bytes": 1385294
+    },
+    {
+     "file": "wide-06.bin",
+     "sigma": 6.5,
+     "average": 105.4,
+     "band": "World class",
+     "visits_501": 5.049,
+     "bytes": 1385294
+    }
+   ]
   }
  ],
  "n_points": 9041,
@@ -197,14 +384,98 @@
   40,
   50
  ],
- "V2low": [
-  182,
-  122
- ],
- "V3low": [
-  182,
-  62
- ],
  "u2_indep": 122,
- "u3_indep": 62
+ "u3_indep": 62,
+ "layout": [
+  {
+   "name": "P",
+   "dtype": "u2",
+   "shape": [
+    9041,
+    44
+   ]
+  },
+  {
+   "name": "CO",
+   "dtype": "u2",
+   "shape": [
+    9041,
+    21
+   ]
+  },
+  {
+   "name": "V1",
+   "dtype": "f4",
+   "shape": [
+    502
+   ]
+  },
+  {
+   "name": "V2tab",
+   "dtype": "f4",
+   "shape": [
+    502
+   ]
+  },
+  {
+   "name": "V3tab",
+   "dtype": "f4",
+   "shape": [
+    502
+   ]
+  },
+  {
+   "name": "V2low",
+   "dtype": "f4",
+   "shape": [
+    182,
+    122
+   ]
+  },
+  {
+   "name": "V3low",
+   "dtype": "f4",
+   "shape": [
+    182,
+    62
+   ]
+  },
+  {
+   "name": "pol1",
+   "dtype": "u2",
+   "shape": [
+    502
+   ]
+  },
+  {
+   "name": "pol2tab",
+   "dtype": "u2",
+   "shape": [
+    502
+   ]
+  },
+  {
+   "name": "pol3tab",
+   "dtype": "u2",
+   "shape": [
+    502
+   ]
+  },
+  {
+   "name": "pol2low",
+   "dtype": "u2",
+   "shape": [
+    182,
+    122
+   ]
+  },
+  {
+   "name": "pol3low",
+   "dtype": "u2",
+   "shape": [
+    182,
+    62
+   ]
+  }
+ ]
 }

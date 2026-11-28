@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
-import { makeLevel, aimValues, dartOutcome, isLegalState, startMatters, visitsToFinish } from "./engine.js";
+import {
+  makeLevel, aimValues, dartOutcome, isLegalState, startMatters, visitsToFinish,
+  checkoutChance, checkoutRoute,
+} from "./engine.js";
 
 const DATA = "data/";
 const BLOG_POST = "https://mjc239.github.io/count-visits-not-darts/";
@@ -142,6 +145,40 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .foot { grid-area: foot; color: var(--ink-2); font-size: 13px; max-width: 75ch; display: grid; gap: 6px; border-top: 1px solid var(--hair); padding-top: 14px; }
 .foot p { margin: 0; }
 .foot a { color: inherit; }
+.tabs { display: flex; gap: 4px; margin-top: 10px; border-bottom: 1px solid var(--hair); }
+.tabs button { font: inherit; font-family: var(--display); font-size: 20px; font-weight: 600; padding: 6px 12px;
+  border: 0; border-bottom: 3px solid transparent; background: none; color: var(--ink-3); cursor: pointer; margin-bottom: -1px; }
+.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.seg-words button { font-size: 17px; width: auto; padding: 0 12px; }
+.seg-words { flex-wrap: wrap; }
+.chart { grid-area: board; min-width: 0; display: grid; gap: 10px; align-content: start; }
+@media (min-width: 900px) { .chart { grid-row: 2 / span 2; } }
+.chart-head { display: flex; justify-content: space-between; align-items: end; gap: 12px; }
+.chart h2 { margin: 0; font-family: var(--display); font-size: 30px; line-height: 1; }
+.chart-sub { margin: 4px 0 0; color: var(--ink-2); }
+.printbtn { font: inherit; font-weight: 600; padding: 8px 16px; border-radius: 8px; border: 1px solid var(--ink);
+  background: var(--ink); color: var(--bg); cursor: pointer; }
+.chart-list { list-style: none; margin: 0; padding: 0; columns: 3 230px; column-gap: 24px; }
+.chart-list li { break-inside: avoid; }
+.crow { width: 100%; display: grid; grid-template-columns: 3ch minmax(0, 1fr) 4ch; gap: 10px; align-items: baseline;
+  font: inherit; text-align: left; padding: 3px 4px; border: 0; border-bottom: 1px solid var(--hair);
+  background: none; color: var(--ink); cursor: pointer; font-variant-numeric: tabular-nums; }
+.crow:hover { background: var(--panel); }
+.cs { font-family: var(--display); font-weight: 700; font-size: 18px; text-align: right; }
+.cr { display: flex; flex-wrap: wrap; gap: 6px; font-weight: 600; }
+.setup { font-weight: 400; color: var(--ink-3); font-size: 13px; }
+.cp { text-align: right; color: var(--ink-2); font-size: 13px; }
+@media print {
+  html:root:not(.print-x):not(.print-y) {
+    --bg: #ffffff; --panel: #ffffff; --ink: #000000; --ink-2: #333333; --ink-3: #555555;
+    --hair: #cccccc; --accent: #c8102e; color-scheme: light;
+  }
+  .head p, .tabs, .controls, .foot, .noprint, .chart > .hint { display: none !important; }
+  .daa { display: block; padding: 0; max-width: none; }
+  .chart-list { columns: 3; font-size: 9pt; }
+  .crow { padding: 1px 2px; }
+  .cs { font-size: 11pt; }
+}
 @media (prefers-reduced-motion: no-preference) { .chip, .seg button { transition: background 120ms, color 120ms; } }
 `;
 
@@ -157,6 +194,20 @@ function prettyName(raw) {
   if (/^\d+$/.test(raw)) return `Single ${raw}`;
   if (raw.startsWith("outside ")) return `Just outside ${raw.slice(8)}`;
   return raw;
+}
+
+function shortName(raw) {
+  const name = raw.startsWith("outside ") ? raw.slice(8) : raw;
+  if (name === "BULL") return "Bull";
+  return name;
+}
+
+function nearestLevel(levels, average) {
+  let k = 0;
+  levels.forEach((l, i) => {
+    if (Math.abs(l.average - average) < Math.abs(levels[k].average - average)) k = i;
+  });
+  return k;
 }
 
 function cssVar(name) {
@@ -271,8 +322,10 @@ export function App() {
   const [man, setMan] = useState(null);
   const [pts, setPts] = useState(null);
   const [error, setError] = useState(null);
+  const [modelId, setModelId] = useState(null);
   const [levelIdx, setLevelIdx] = useState(null);
-  const [levels, setLevels] = useState({}); // index -> parsed level
+  const [levels, setLevels] = useState({}); // "shape/index" -> parsed level
+  const [view, setView] = useState("board");
   const [score, setScore] = useState(START_SCORE);
   const [scoreText, setScoreText] = useState(String(START_SCORE));
   const [dart, setDart] = useState(1);
@@ -292,20 +345,23 @@ export function App() {
         const p = await b.json();
         setMan(m);
         setPts(p);
-        let k = 0;
-        m.levels.forEach((l, i) => {
-          if (Math.abs(l.average - START_LEVEL_AVERAGE) < Math.abs(m.levels[k].average - START_LEVEL_AVERAGE)) k = i;
-        });
-        setLevelIdx(k);
+        const first = m.models.find((x) => x.id === m.default_model) || m.models[0];
+        setModelId(first.id);
+        setLevelIdx(nearestLevel(first.levels, START_LEVEL_AVERAGE));
       })
       .catch((e) => setError(e.message || String(e)));
   }, []);
 
+  const model = man && modelId ? man.models.find((x) => x.id === modelId) : null;
+  const mLevels = model ? model.levels : [];
+  const keyOf = (k) => `${modelId}/${k}`;
+
   const fetchLevel = useCallback(
     (k) => {
-      if (!man || k == null || levels[k] || levels[`pending-${k}`]) return;
-      setLevels((L) => ({ ...L, [`pending-${k}`]: true }));
-      const file = man.levels[k].file;
+      const key = `${modelId}/${k}`;
+      if (!man || !model || k == null || !mLevels[k] || levels[key] || levels[`pending-${key}`]) return;
+      setLevels((L) => ({ ...L, [`pending-${key}`]: true }));
+      const file = mLevels[k].file;
       fetch(DATA + file)
         .then((r) => {
           if (!r.ok) throw new Error("A board level did not load.");
@@ -315,10 +371,10 @@ export function App() {
           }
           return r.arrayBuffer();
         })
-        .then((buf) => setLevels((L) => ({ ...L, [k]: makeLevel(buf, man) })))
+        .then((buf) => setLevels((L) => ({ ...L, [key]: makeLevel(buf, man) })))
         .catch((e) => setError(e.message || String(e)));
     },
-    [man, levels]
+    [man, model, mLevels, modelId, levels]
   );
 
   useEffect(() => {
@@ -328,14 +384,32 @@ export function App() {
 
   // warm the neighbouring levels so dragging the slider feels immediate
   useEffect(() => {
-    if (levelIdx == null || !levels[levelIdx] || !man) return;
+    if (levelIdx == null || !levels[keyOf(levelIdx)] || !man) return;
     const t = setTimeout(() => {
-      [levelIdx - 1, levelIdx + 1].forEach((k) => k >= 0 && k < man.levels.length && fetchLevel(k));
+      [levelIdx - 1, levelIdx + 1].forEach((k) => k >= 0 && k < mLevels.length && fetchLevel(k));
     }, 300);
     return () => clearTimeout(t);
-  }, [levelIdx, levels, man, fetchLevel]);
+  }, [levelIdx, levels, man, fetchLevel, mLevels]);
 
-  const L = levelIdx != null ? levels[levelIdx] : null;
+  const L = levelIdx != null ? levels[keyOf(levelIdx)] : null;
+
+  const switchModel = (id) => {
+    const next = man.models.find((x) => x.id === id);
+    const avg = mLevels[levelIdx] ? mLevels[levelIdx].average : START_LEVEL_AVERAGE;
+    setModelId(id);
+    setLevelIdx(nearestLevel(next.levels, avg));
+    setPinned(null);
+  };
+
+  // the checkout chart: built only when it is on screen
+  const chart = useMemo(() => {
+    if (!L || view !== "chart" || !pts) return null;
+    const rows = [];
+    for (let u = 170; u >= 2; u--) {
+      rows.push({ score: u, ...checkoutRoute(L, u, pts), chance: checkoutChance(L, u) });
+    }
+    return rows;
+  }, [L, view, pts]);
 
   // grid lookup for the heat image and the pointer
   const grid = useMemo(() => {
@@ -455,7 +529,8 @@ export function App() {
   }, [man, score, dart, showStart, start]);
 
   const focus = pinned ?? hover;
-  const lvl = man && levelIdx != null ? man.levels[levelIdx] : null;
+  const lvl = mLevels[levelIdx] || null;
+  const canPrint = typeof window !== "undefined" && window.self === window.top;
 
   if (error) {
     return (
@@ -478,6 +553,10 @@ export function App() {
           Where should you aim from here? Set your three-dart average and the score you require. The board shows
           what each spot costs you in visits to finish, solved exactly for a player of your standard.
         </p>
+        <div className="tabs" role="tablist" aria-label="View">
+          <button type="button" role="tab" aria-selected={view === "board"} onClick={() => setView("board")}>Board</button>
+          <button type="button" role="tab" aria-selected={view === "chart"} onClick={() => setView("chart")}>Checkout chart</button>
+        </div>
       </header>
 
       <section className="controls" aria-label="Your situation">
@@ -486,17 +565,31 @@ export function App() {
           {lvl ? (
             <>
               <div className="avg"><b>{Math.round(lvl.average)}</b><span>{lvl.band}</span></div>
-              <input id="avg" type="range" min="0" max={man.levels.length - 1} step="1" value={levelIdx}
+              <input id="avg" type="range" min="0" max={mLevels.length - 1} step="1" value={levelIdx}
                 aria-labelledby="avg-label" aria-valuetext={`${Math.round(lvl.average)} average, ${lvl.band}`}
                 onChange={(e) => { setLevelIdx(Number(e.target.value)); setPinned(null); }} />
               <div className="ticks">
-                <span>{Math.round(man.levels[0].average)}</span>
-                <span>{Math.round(man.levels[man.levels.length - 1].average)}</span>
+                <span>{Math.round(mLevels[0].average)}</span>
+                <span>{Math.round(mLevels[mLevels.length - 1].average)}</span>
               </div>
             </>
           ) : <p className="hint">Loading…</p>}
         </div>
 
+        {model && (
+          <div>
+            <p className="label" id="shape-label">Throw shape</p>
+            <div className="seg seg-words" role="group" aria-labelledby="shape-label">
+              {man.models.map((x) => (
+                <button key={x.id} type="button" aria-pressed={x.id === modelId}
+                  onClick={() => switchModel(x.id)}>{x.name}</button>
+              ))}
+            </div>
+            <p className="hint">{model.blurb}</p>
+          </div>
+        )}
+
+        {view === "board" && <>
         <div>
           <p className="label" id="score-label">Score left</p>
           <div className="require">
@@ -552,8 +645,43 @@ export function App() {
             )
           )}
         </div>
+        </>}
       </section>
 
+      {view === "chart" && (
+        <section className="chart" aria-label="Checkout chart">
+          <div className="chart-head">
+            <div>
+              <h2>Checkout chart</h2>
+              {lvl && <p className="chart-sub">For a {Math.round(lvl.average)} average ({lvl.band}), {model.name.toLowerCase()} throw</p>}
+            </div>
+            {canPrint && <button type="button" className="printbtn noprint" onClick={() => window.print()}>Print</button>}
+          </div>
+          <p className="hint">
+            <b>Route</b>: where to aim with each dart if it lands where you aim. <b>Finish</b>: your chance of checking
+            out this visit, following the advice even after a miss. * means aim just outside the double, so a miss
+            drops off the board instead of busting. Tap a score to see it on the board.
+          </p>
+          {!chart ? <p className="hint">Loading…</p> : (
+            <ol className="chart-list">
+              {chart.map((r) => (
+                <li key={r.score}>
+                  <button type="button" className="crow" onClick={() => { setScoreBoth(r.score); setDartBoth(1); setView("board"); }}>
+                    <span className="cs">{r.score}</span>
+                    <span className="cr">
+                      {r.route.map((t, k) => <span key={k} className="tok">{shortName(t.raw)}{t.outside ? "*" : ""}</span>)}
+                      {!r.finishes && <span className="setup">set up</span>}
+                    </span>
+                    <span className="cp">{r.chance > 0 ? pct(r.chance) : "–"}</span>
+                  </button>
+                </li>
+              ))}
+            </ol>
+          )}
+        </section>
+      )}
+
+      {view === "board" && <>
       <section className="board" aria-label="Dartboard heat map">
         <div className="svgwrap">
           <svg ref={svgRef} viewBox="-200 -200 400 400" role="img"
@@ -617,6 +745,7 @@ export function App() {
           </div>
         )}
       </section>
+      </>}
 
       <footer className="foot">
         <p>

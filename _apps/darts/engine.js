@@ -6,29 +6,20 @@
 // the score the visit started on (a bust goes back there). Values count
 // visits, the unit a race between two players is run in.
 
-const LAYOUT = ["P", "CO", "V1", "V2tab", "V3tab", "V2low", "V3low"];
+const ARRAYS = { u2: Uint16Array, f4: Float32Array };
 
-/** Parse one level's .bin file into typed arrays, using the manifest's layout. */
+/** Parse one level's .bin file into typed arrays, following levels.json's `layout`. */
 export function parseLevel(buffer, man) {
-  const n = man.n_points;
-  const counts = {
-    P: n * man.scores.length,
-    CO: n * man.checkout_scores.length,
-    V1: 502,
-    V2tab: 502,
-    V3tab: 502,
-    V2low: man.V2low[0] * man.V2low[1],
-    V3low: man.V3low[0] * man.V3low[1],
-  };
   const out = {};
   let off = 0;
-  for (const name of LAYOUT) {
-    const isProb = name === "P" || name === "CO";
-    const bytes = counts[name] * (isProb ? 2 : 4);
-    // slice() copies into a fresh, aligned buffer: the float arrays do not
-    // start on a 4-byte boundary in the file.
-    const chunk = buffer.slice(off, off + bytes);
-    out[name] = isProb ? new Uint16Array(chunk) : new Float32Array(chunk);
+  for (const { name, dtype, shape } of man.layout) {
+    const Arr = ARRAYS[dtype];
+    if (!Arr) throw new Error(`unknown dtype ${dtype}`);
+    const count = shape.reduce((a, b) => a * b, 1);
+    const bytes = count * Arr.BYTES_PER_ELEMENT;
+    // slice() copies into a fresh, aligned buffer: arrays do not all start on
+    // a 4-byte boundary in the file.
+    out[name] = new Arr(buffer.slice(off, off + bytes));
     off += bytes;
   }
   if (off !== buffer.byteLength) throw new Error("level file does not match levels.json");
@@ -39,7 +30,8 @@ export function parseLevel(buffer, man) {
 export function makeLevel(buffer, man) {
   const t = parseLevel(buffer, man);
   const coCol = new Map(man.checkout_scores.map((c, k) => [c, k]));
-  return { ...t, man, coCol, inv: 1 / man.scale };
+  const width = Object.fromEntries(man.layout.map((a) => [a.name, a.shape[a.shape.length - 1]]));
+  return { ...t, man, coCol, width, inv: 1 / man.scale };
 }
 
 /** Expected further visits from (u, d, s), not counting a visit already under way. */
@@ -47,8 +39,19 @@ export function value(L, u, d, s) {
   const m = L.man;
   if (u === 0) return 0;
   if (d === 1) return L.V1[u];
-  if (d === 2) return u >= m.u2_indep ? L.V2tab[u] : L.V2low[s * m.V2low[1] + u];
-  return u >= m.u3_indep ? L.V3tab[u] : L.V3low[s * m.V3low[1] + u];
+  if (d === 2) return u >= m.u2_indep ? L.V2tab[u] : L.V2low[s * L.width.V2low + u];
+  return u >= m.u3_indep ? L.V3tab[u] : L.V3low[s * L.width.V3low + u];
+}
+
+/** The solver's best aiming point (an index into points.json) for (u, d, s). */
+export function policy(L, u, d, s) {
+  const m = L.man;
+  let i;
+  if (d === 1) i = L.pol1[u];
+  else if (d === 2) i = u >= m.u2_indep ? L.pol2tab[u] : L.pol2low[s * L.width.pol2low + u];
+  else i = u >= m.u3_indep ? L.pol3tab[u] : L.pol3low[s * L.width.pol3low + u];
+  if (i === 65535) throw new Error(`no aim stored for ${u}/${d}/${s}`);
+  return i;
 }
 
 /** Visits to finish, counting the visit in progress, under best play from (u, d, s). */
@@ -135,4 +138,60 @@ export function isLegalState(man, u, d, s) {
 export function startMatters(man, u, d) {
   if (d === 1) return false;
   return d === 2 ? u < man.u2_indep : u < man.u3_indep;
+}
+
+/**
+ * Chance of checking out within this visit from `start`, following the best
+ * aim for every dart, including after a miss.
+ */
+export function checkoutChance(L, start) {
+  const m = L.man;
+  const S = m.scores;
+  const ns = S.length;
+  let dist = new Map([[start, 1]]);
+  let win = 0;
+  for (let d = 1; d <= 3; d++) {
+    const next = new Map();
+    for (const [u, w] of dist) {
+      const i = policy(L, u, d, start);
+      if (L.coCol.has(u)) win += w * L.CO[i * m.checkout_scores.length + L.coCol.get(u)] * L.inv;
+      for (let j = 0; j < ns && S[j] <= u - 2; j++) {
+        const p = L.P[i * ns + j] * L.inv;
+        if (p > 0) next.set(u - S[j], (next.get(u - S[j]) || 0) + w * p);
+      }
+    }
+    dist = next;
+  }
+  return win;
+}
+
+/** Score of a target named in points.json, and whether it is "just outside" a double. */
+export function targetScore(raw) {
+  const outside = raw.startsWith("outside ");
+  const name = outside ? raw.slice(8) : raw;
+  if (name === "BULL") return { score: 50, finish: true, outside };
+  if (name === "25") return { score: 25, finish: false, outside };
+  if (name[0] === "T") return { score: 3 * Number(name.slice(1)), finish: false, outside };
+  if (name[0] === "D") return { score: 2 * Number(name.slice(1)), finish: true, outside };
+  return { score: Number(name), finish: false, outside };
+}
+
+/**
+ * The conventional chart route from `start`: where to aim with each dart if
+ * each one lands in the bed aimed at. Aiming just outside a double counts as
+ * going for that double. Returns [{ i, raw, outside }], and whether it finishes.
+ */
+export function checkoutRoute(L, start, pts) {
+  const route = [];
+  let u = start;
+  for (let d = 1; d <= 3; d++) {
+    const i = policy(L, u, d, start);
+    const raw = pts.names[pts.name[i]];
+    const t = targetScore(raw);
+    route.push({ i, raw, outside: t.outside });
+    if (t.score === u && t.finish) return { route, finishes: true };
+    if (t.score > u - 2) break; // not going for it with this dart
+    u -= t.score;
+  }
+  return { route, finishes: false };
 }
